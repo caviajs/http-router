@@ -8,5 +8,6 @@
 !/.gitignore
 !/package.json
 !/package-lock.json
+!/README.md
 !/tsconfig.build.json
 !/tsconfig.json
