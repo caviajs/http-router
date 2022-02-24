@@ -1,0 +1,18 @@
+# blacklist all
+*
+!*/
+
+# include whitelist
+!/.github/**
+!/packages/**
+!/.editorconfig
+!/.eslintrc
+!/.gitignore
+!/CODE_OF_CONDUCT.md
+!/CONTRIBUTING.md
+!/lerna.json
+!/LICENSE
+!/package.json
+!/package-lock.json
+!/README.md
+!/tsconfig.json
