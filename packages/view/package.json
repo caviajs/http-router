@@ -1,0 +1,31 @@
+{
+  "name": "@caviajs/view",
+  "description": "view package for cavia framework",
+  "version": "0.0.1",
+  "author": "Paweł Partyka",
+  "license": "MIT",
+  "files": [
+    "dist/**/*"
+  ],
+  "main": "dist/public-api.js",
+  "types": "dist/public-api.d.ts",
+  "repository": "git://github.com/caviajs/caviajs.git",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prebuild": "rimraf dist"
+  },
+  "dependencies": {
+    "edge.js": "^5.3.2"
+  },
+  "devDependencies": {
+    "@caviajs/core": "^0.0.1",
+    "@types/node": "^13.1.6",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.0",
+    "ts-node": "^8.6.1",
+    "typescript": "^4.0.3"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "^0.1.13"
+  }
+}
