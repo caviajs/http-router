@@ -12,6 +12,7 @@
 !/CONTRIBUTING.md
 !/lerna.json
 !/LICENSE
+!/Makefile
 !/package.json
 !/package-lock.json
 !/README.md

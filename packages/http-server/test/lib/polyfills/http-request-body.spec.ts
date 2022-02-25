@@ -1,7 +1,11 @@
 // import http from 'http';
 // import { HttpRouter, HttpServerTest } from '../../../src/public-api';
 //
-// describe('http-request-body', () => {
+describe('http-request-body', () => {
+  it('foo', () => {
+    expect(1).toBe(1);
+  });
+
 //   // limits
 //   // defalte, gzip, Unsupported content encoding
 //
@@ -191,4 +195,4 @@
 //         });
 //     });
 //   });
-// });
+});

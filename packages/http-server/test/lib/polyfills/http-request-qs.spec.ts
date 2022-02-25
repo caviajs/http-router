@@ -1,7 +1,11 @@
 // import http from 'http';
 // import { HttpRouter, HttpServerTest } from '../../../src/public-api';
 //
-// describe('http-request-qs', () => {
+describe('http-request-qs', () => {
+  it('foo', () => {
+    expect(1).toBe(1);
+  });
+
 //   it('should contain appropriate parsed query params', done => {
 //     const router = new HttpRouter();
 //
@@ -21,4 +25,4 @@
 //     HttpServerTest
 //       .get(server, '?foo=bar&baz=qux');
 //   });
-// });
+});

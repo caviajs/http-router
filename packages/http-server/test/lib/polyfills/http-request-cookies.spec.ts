@@ -1,7 +1,11 @@
 // import http from 'http';
 // import { HttpRouter, HttpServerTest } from '../../../src/public-api';
 //
-// describe('http-request-cookies', () => {
+describe('http-request-cookies', () => {
+  it('foo', () => {
+    expect(1).toBe(1);
+  });
+
 //   it('should contain appropriate parsed cookies', done => {
 //     const router = new HttpRouter();
 //
@@ -24,4 +28,4 @@
 //     HttpServerTest
 //       .get(server, '/', { headers: { Cookie: 'foo=bar; baz=qux' } });
 //   });
-// });
+});
