@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-export * from './lib/decorators/cavia-application';
+export * from './lib/decorators/application';
 export * from './lib/decorators/inject';
 export * from './lib/decorators/injectable';
 export * from './lib/decorators/optional';
@@ -26,8 +26,8 @@ export * from './lib/utils/is-type-provider';
 export * from './lib/utils/is-value-provider';
 
 export * from './lib/application-builder';
+export * from './lib/application-factory';
 export * from './lib/application-ref';
-export * from './lib/cavia-factory';
 export * from './lib/constants';
 export * from './lib/injector';
 export * from './lib/test';

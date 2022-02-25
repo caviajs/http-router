@@ -3,7 +3,7 @@ import { Provider } from './types/provider';
 import { ApplicationRef } from './application-ref';
 import { Type } from './types/type';
 import { isTypeProvider } from './utils/is-type-provider';
-import { getCaviaApplicationMetadata, hasCaviaApplicationMetadata } from './decorators/cavia-application';
+import { getApplicationMetadata, hasApplicationMetadata } from './decorators/application';
 import { Package } from './types/package';
 import { Logger } from './providers/logger';
 import { LoggerLevelProvider } from './providers/logger-level';
@@ -17,11 +17,11 @@ const BUILT_IN_SERVICES: Provider[] = [
 
 export class ApplicationBuilder {
   public static init(application: Type): ApplicationBuilder {
-    if (!hasCaviaApplicationMetadata(application)) {
+    if (!hasApplicationMetadata(application)) {
       throw new Error(`The '${ application?.name }' should be annotated as cavia application`);
     }
 
-    const caviaApplicationMetadata = getCaviaApplicationMetadata(application);
+    const caviaApplicationMetadata = getApplicationMetadata(application);
 
     const packages: Package[] = [...caviaApplicationMetadata?.packages || []];
     const providers: Provider[] = [...BUILT_IN_SERVICES, ...caviaApplicationMetadata?.providers || [], application];
@@ -39,7 +39,7 @@ export class ApplicationBuilder {
 
   public async compile(): Promise<ApplicationRef> {
     return await ApplicationRef.compile({
-      providers: this.providers.reverse(), // todo rethink (.reverse())
+      providers: this.providers.reverse(),
     });
   }
 
