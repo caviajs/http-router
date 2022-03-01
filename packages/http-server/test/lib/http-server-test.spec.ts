@@ -1,3 +1,0 @@
-describe('HttpServerTest', () => {
-  it('test', () => {});
-});
