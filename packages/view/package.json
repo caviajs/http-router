@@ -9,7 +9,6 @@
   ],
   "main": "dist/public-api.js",
   "types": "dist/public-api.d.ts",
-  "repository": "git://github.com/caviajs/caviajs.git",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "prebuild": "rimraf dist"
@@ -17,10 +16,9 @@
   "dependencies": {
     "edge.js": "^5.3.2"
   },
-  "devDependencies": {
-    "@caviajs/core": "^0.0.1"
-  },
+  "devDependencies": {},
   "peerDependencies": {
+    "@caviajs/core": "^0.0.1",
     "reflect-metadata": "^0.1.13"
   }
 }

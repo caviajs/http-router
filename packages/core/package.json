@@ -9,7 +9,6 @@
   ],
   "main": "dist/public-api.js",
   "types": "dist/public-api.d.ts",
-  "repository": "git://github.com/caviajs/caviajs.git",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "prebuild": "rimraf dist"
