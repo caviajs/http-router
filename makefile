@@ -1,19 +1,33 @@
 define build
-	npm run build
+	@for package in $(shell ls packages); do\
+		npm run build --workspace packages/$${package};\
+	done
+endef
+
+define npm-install
+	npm install
+
+	@for package in $(shell ls packages); do\
+		npm install --workspace packages/$${package};\
+	done
 endef
 
 define npm-dump-version
-	npm version $1 --no-git-tag-version
+	@for package in $(shell ls packages); do\
+		npm version $1 --no-git-tag-version --workspace packages/$${package};\
+	done
 endef
 
 define npm-publish
-	npm run bootstrap
-	npm run build
-	lerna publish --registry $1
+	@for package in $(shell ls packages); do\
+		npm publish --workspace packages/$$package --registry $1;\
+	done
 endef
 
 define npm-unpublish
-	npm unpublish @caviajs/storage@$(shell cat package.json | grep -m 1 version | sed 's/[^0-9.]//g') --registry $1 || true
+	@for package in $(shell ls packages); do\
+		npm unpublish @caviajs/$${package}@$$(cat packages/$${package}/package.json | grep -m 1 version | sed 's/[^0-9.]//g') --force --registry $1;\
+	done
 endef
 
 verdaccio-run:

@@ -18,18 +18,24 @@
       "node"
     ],
     "paths": {
-      "@caviajs/core": ["./packages/core"],
-      "@caviajs/core/*": ["./packages/core/*"],
-      "@caviajs/env": ["./packages/env"],
-      "@caviajs/env/*": ["./packages/env/*"],
-      "@caviajs/http-client": ["./packages/http-client"],
-      "@caviajs/http-client/*": ["./packages/http-client/*"],
-      "@caviajs/http-server": ["./packages/http-server"],
-      "@caviajs/http-server/*": ["./packages/http-server/*"],
-      "@caviajs/storage": ["./packages/storage"],
-      "@caviajs/storage/*": ["./packages/storage/*"],
-      "@caviajs/view": ["./packages/view"],
-      "@caviajs/view/*": ["./packages/view/*"]
+      "@caviajs/core": [
+        "packages/core/src/public-api.ts"
+      ],
+      "@caviajs/env": [
+        "packages/env/src/public-api.ts"
+      ],
+      "@caviajs/http-client": [
+        "packages/http-client/src/public-api.ts"
+      ],
+      "@caviajs/http-server": [
+        "packages/http-server/src/public-api.ts"
+      ],
+      "@caviajs/storage": [
+        "packages/storage/src/public-api.ts"
+      ],
+      "@caviajs/view": [
+        "packages/view/src/public-api.ts"
+      ]
     }
   }
 }

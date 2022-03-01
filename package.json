@@ -1,8 +1,16 @@
 {
   "name": "root",
+  "workspaces": [
+    "packages/core",
+    "packages/env",
+    "packages/http-client",
+    "packages/http-server",
+    "packages/storage",
+    "packages/view"
+  ],
   "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "build": "lerna run build",
+    "bootstrap": "make install",
+    "build": "",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest",
@@ -17,7 +25,6 @@
     "@typescript-eslint/parser": "^4.21.0",
     "eslint": "^7.24.0",
     "jest": "^27.1.1",
-    "lerna": "^3.20.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.4",
     "ts-jest": "^27.1.2",
@@ -41,6 +48,14 @@
     },
     "setupFiles": [
       "<rootDir>/node_modules/reflect-metadata/Reflect.js"
-    ]
+    ],
+    "moduleNameMapper": {
+      "@caviajs/core": "<rootDir>/packages/core/src/public-api.ts",
+      "@caviajs/env": "<rootDir>/packages/env/src/public-api.ts",
+      "@caviajs/http-client": "<rootDir>/packages/http-client/src/public-api.ts",
+      "@caviajs/http-server": "<rootDir>/packages/http-server/src/public-api.ts",
+      "@caviajs/storage": "<rootDir>/packages/storage/src/public-api.ts",
+      "@caviajs/view": "<rootDir>/packages/view/src/public-api.ts"
+    }
   }
 }

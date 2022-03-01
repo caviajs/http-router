@@ -8,11 +8,8 @@
 !/.editorconfig
 !/.eslintrc
 !/.gitignore
-!/CODE_OF_CONDUCT.md
-!/CONTRIBUTING.md
-!/lerna.json
 !/LICENSE
-!/Makefile
+!/makefile
 !/package.json
 !/package-lock.json
 !/README.md

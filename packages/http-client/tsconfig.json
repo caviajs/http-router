@@ -2,7 +2,13 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "moduleResolution": "Node",
+    "paths": {
+      "@caviajs/core": [
+        "../../core/src/public-api.ts"
+      ]
+    }
   },
   "include": [
     "src/**/*",
