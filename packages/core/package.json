@@ -4,15 +4,6 @@
   "version": "0.0.1",
   "author": "Paweł Partyka",
   "license": "MIT",
-  "files": [
-    "dist/**/*"
-  ],
-  "main": "dist/public-api.js",
-  "types": "dist/public-api.d.ts",
-  "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "prebuild": "rimraf dist"
-  },
   "dependencies": {
     "cli-color": "^2.0.0"
   },

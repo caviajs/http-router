@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "target": "es2017",
     "baseUrl": ".",
+    "outDir": "dist",
     "sourceMap": true,
     "incremental": true,
     "lib": [
@@ -19,23 +20,29 @@
     ],
     "paths": {
       "@caviajs/core": [
-        "packages/core/src/public-api.ts"
+        "packages/core/index.ts"
       ],
       "@caviajs/env": [
-        "packages/env/src/public-api.ts"
+        "packages/env/index.ts"
       ],
       "@caviajs/http-client": [
-        "packages/http-client/src/public-api.ts"
+        "packages/http-client/index.ts"
       ],
       "@caviajs/http-server": [
-        "packages/http-server/src/public-api.ts"
+        "packages/http-server/index.ts"
       ],
       "@caviajs/storage": [
-        "packages/storage/src/public-api.ts"
+        "packages/storage/index.ts"
       ],
       "@caviajs/view": [
-        "packages/view/src/public-api.ts"
+        "packages/view/index.ts"
       ]
     }
-  }
+  },
+  "include": [
+    "packages/**/*"
+  ],
+  "exclude": [
+    "packages/**/*.spec.ts"
+  ]
 }

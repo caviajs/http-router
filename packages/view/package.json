@@ -4,21 +4,11 @@
   "version": "0.0.1",
   "author": "Paweł Partyka",
   "license": "MIT",
-  "files": [
-    "dist/**/*"
-  ],
-  "main": "dist/public-api.js",
-  "types": "dist/public-api.d.ts",
-  "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "prebuild": "rimraf dist"
-  },
   "dependencies": {
     "edge.js": "^5.3.2"
   },
   "devDependencies": {},
   "peerDependencies": {
-    "@caviajs/core": "^0.0.1",
     "reflect-metadata": "^0.1.13"
   }
 }

@@ -1,22 +1,32 @@
 {
   "name": "root",
   "workspaces": [
-    "packages/core",
-    "packages/env",
-    "packages/http-client",
-    "packages/http-server",
-    "packages/storage",
-    "packages/view"
+    "dist/core",
+    "dist/env",
+    "dist/http-client",
+    "dist/http-server",
+    "dist/storage",
+    "dist/view"
   ],
   "scripts": {
-    "bootstrap": "make install",
-    "build": "",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:debug": "node --inspect-brk -r ts-node/register jest --runInBand",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "install": "make install",
+    "clear": "make clear",
+    "build": "make build",
+    "verdaccio:run": "make verdaccio-run",
+    "verdaccio:publish": "make verdaccio-publish",
+    "release:prod:prerelease": "make VERSION=prerelease release",
+    "release:prod:premajor": "make VERSION=premajor release",
+    "release:prod:major": "make VERSION=major release",
+    "release:prod:preminor": "make VERSION=preminor release",
+    "release:prod:minor": "make VERSION=minor release",
+    "release:prod:prepatch": "make VERSION=prepatch release",
+    "release:prod:patch": "make VERSION=patch release"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
@@ -24,6 +34,8 @@
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
     "eslint": "^7.24.0",
+    "gulp": "^4.0.2",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "jest": "^27.1.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.4",
@@ -50,12 +62,12 @@
       "<rootDir>/node_modules/reflect-metadata/Reflect.js"
     ],
     "moduleNameMapper": {
-      "@caviajs/core": "<rootDir>/packages/core/src/public-api.ts",
-      "@caviajs/env": "<rootDir>/packages/env/src/public-api.ts",
-      "@caviajs/http-client": "<rootDir>/packages/http-client/src/public-api.ts",
-      "@caviajs/http-server": "<rootDir>/packages/http-server/src/public-api.ts",
-      "@caviajs/storage": "<rootDir>/packages/storage/src/public-api.ts",
-      "@caviajs/view": "<rootDir>/packages/view/src/public-api.ts"
+      "@caviajs/core": "<rootDir>/packages/core/index.ts",
+      "@caviajs/env": "<rootDir>/packages/env/index.ts",
+      "@caviajs/http-client": "<rootDir>/packages/http-client/index.ts",
+      "@caviajs/http-server": "<rootDir>/packages/http-server/index.ts",
+      "@caviajs/storage": "<rootDir>/packages/storage/index.ts",
+      "@caviajs/view": "<rootDir>/packages/view/index.ts"
     }
   }
 }

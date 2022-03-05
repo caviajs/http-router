@@ -3,11 +3,8 @@
 !*/
 
 # include whitelist
-!/src/**
-!/test/**
+!/lib/**
 !/.gitignore
+!/index.ts
 !/package.json
-!/package-lock.json
 !/README.md
-!/tsconfig.build.json
-!/tsconfig.json

@@ -1,3 +1,10 @@
+define clean
+	@for package in $(shell ls packages); do\
+		rm -rf packages/$${package}/dist;\
+		rm -rf packages/$${package}/node_modules;\
+	done
+endef
+
 define build
 	@for package in $(shell ls packages); do\
 		npm run build --workspace packages/$${package};\
@@ -5,10 +12,8 @@ define build
 endef
 
 define npm-install
-	npm install
-
 	@for package in $(shell ls packages); do\
-		npm install --workspace packages/$${package};\
+		npm install --workspace packages/$$package;\
 	done
 endef
 
@@ -30,25 +35,24 @@ define npm-unpublish
 	done
 endef
 
+install:
+	@$(call npm-install)
+
+build:
+	@$(call build)
+
+clean:
+	@$(call clean)
+
 verdaccio-run:
 	docker run -it -d --rm --name verdaccio -p 4873:4873 verdaccio/verdaccio
 
-release-local:
+verdaccio-publish:
 	@$(call npm-unpublish, 'http://localhost:4873/')
 	@$(call build)
 	@$(call npm-publish, 'http://localhost:4873/')
 
-release-major:
-	@$(call npm-dump-version, 'major')
-	@$(call build)
-	@$(call npm-publish, 'https://registry.npmjs.org/')
-
-release-minor:
-	@$(call npm-dump-version, 'minor')
-	@$(call build)
-	@$(call npm-publish, 'https://registry.npmjs.org/')
-
-release-patch:
-	@$(call npm-dump-version, 'patch')
+release:
+	@$(call npm-dump-version, $$VERSION)
 	@$(call build)
 	@$(call npm-publish, 'https://registry.npmjs.org/')

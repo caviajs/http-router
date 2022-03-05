@@ -4,15 +4,6 @@
   "version": "0.0.1",
   "author": "Paweł Partyka",
   "license": "MIT",
-  "files": [
-    "dist/**/*"
-  ],
-  "main": "dist/public-api.js",
-  "types": "dist/public-api.d.ts",
-  "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "prebuild": "rimraf dist"
-  },
   "dependencies": {
     "dotenv": "^16.0.0",
     "lodash.get": "^4.4.2"
@@ -21,7 +12,6 @@
     "@types/lodash.get": "^4.4.6"
   },
   "peerDependencies": {
-    "@caviajs/core": "^0.0.1",
     "reflect-metadata": "^0.1.13"
   }
 }

@@ -4,15 +4,6 @@
   "version": "0.0.1",
   "author": "Paweł Partyka",
   "license": "MIT",
-  "files": [
-    "dist/**/*"
-  ],
-  "main": "dist/public-api.js",
-  "types": "dist/public-api.d.ts",
-  "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "prebuild": "rimraf dist"
-  },
   "dependencies": {
     "iconv-lite": "^0.6.2",
     "is-stream": "^2.0.0",
@@ -25,8 +16,6 @@
     "@types/qs": "^6.9.6"
   },
   "peerDependencies": {
-    "@caviajs/core": "^0.0.1",
-    "@caviajs/http-client": "^0.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.4"
   }
