@@ -5,20 +5,19 @@ import { Handler, HttpRouter, Method, Path } from './http-router';
 import { ControllerMetadata, getControllerMetadata, hasControllerMetadata } from '../decorators/controller';
 import { getRequestMappingMetadata } from '../decorators/request-mapping';
 import { LOGGER_CONTEXT } from '../http-constants';
-import { RequestParamFactory, getRequestParamMetadata } from '../decorators/request-param';
+import { RequestParamFactory } from '../decorators/request-param';
 import { Interceptor } from '../types/interceptor';
 import { HTTP_GLOBAL_INTERCEPTORS, HttpGlobalInterceptors } from './http-global-interceptors';
 import { Pipe } from '../types/pipe';
 import { HttpInterceptorConsumer } from './http-interceptor-consumer';
 import { HttpPipeConsumer } from './http-pipe-consumer';
 import { HttpMetadataAccessor } from './http-metadata-accessor';
-import { getUseInterceptorMetadata, UseInterceptorMetadata } from '../decorators/use-interceptor';
 
 @Injectable()
 export class HttpRouterExplorer implements OnApplicationBoot {
   constructor(
     private readonly httpInterceptorConsumer: HttpInterceptorConsumer,
-    private readonly httpMetadataAccessor: HttpMetadataAccessor,
+    // private readonly httpMetadataAccessor: HttpMetadataAccessor,
     private readonly httpPipeConsumer: HttpPipeConsumer,
     private readonly httpRouter: HttpRouter,
     private readonly injector: Injector,
@@ -28,23 +27,24 @@ export class HttpRouterExplorer implements OnApplicationBoot {
   }
 
   public async onApplicationBoot(): Promise<void> {
-    const globalInterceptors: Interceptor[] = await this.resolveInterceptors(this.httpInterceptors);
+    const globalInterceptors = await this.resolveInterceptors(this.httpInterceptors);
 
     for (const controllerInstance of await this.injector.filter(it => hasControllerMetadata(it))) {
       const controllerTypeRef: Type = controllerInstance.constructor;
       const controllerTypeRefMetadata: ControllerMetadata = getControllerMetadata(controllerTypeRef);
-      const controllerUseInterceptorMetadata: UseInterceptorMetadata[] = getUseInterceptorMetadata(controllerTypeRef) || [];
 
-      // const controllerTypeRefInterceptors: Interceptor[] = await this.resolveInterceptors(controllerUseInterceptorMetadata);
+      const controllerTypeRefInterceptors = await this.resolveInterceptors(
+        controllerTypeRefMetadata.interceptors?.map(it => typeof it === 'function' ? { interceptor: it } : it) || [],
+      );
 
       for (const requestMappingMetadata of getRequestMappingMetadata(controllerTypeRef) || []) {
         const method: Method = requestMappingMetadata.method;
         const path: Path = `/${ controllerTypeRefMetadata.prefix || '' }/${ requestMappingMetadata.path || '' }`.replace(/\/\//g, '/');
         const handler: Handler = requestMappingMetadata.descriptor.value;
 
-        const routeUseInterceptorMetadata: UseInterceptorMetadata[] = getUseInterceptorMetadata(requestMappingMetadata.descriptor.value) || [];
-
-        // const routeInterceptors: Interceptor[] = await this.resolveInterceptors(routeUseInterceptorMetadata);
+        const routeInterceptors = await this.resolveInterceptors(
+          requestMappingMetadata.interceptors?.map(it => typeof it === 'function' ? { interceptor: it } : it) || [],
+        );
 
         const handlerArgumentFactories: { factory: RequestParamFactory, pipes: Pipe[] }[] = [];
 
@@ -58,12 +58,6 @@ export class HttpRouterExplorer implements OnApplicationBoot {
         //   });
         // }
 
-        const interceptors: Interceptor[] = [
-          ...globalInterceptors,
-          // ...controllerTypeRefInterceptors,
-          // ...routeInterceptors,
-        ];
-
         this.httpRouter.route(
           method,
           path,
@@ -71,7 +65,11 @@ export class HttpRouterExplorer implements OnApplicationBoot {
             return this.httpInterceptorConsumer.intercept(
               request,
               response,
-              interceptors,
+              [
+                ...globalInterceptors,
+                ...controllerTypeRefInterceptors,
+                ...routeInterceptors,
+              ],
               (): Promise<unknown> => {
                 // const args: any[] = handlerArgumentFactories.length <= 0 ? [request, response] : handlerArgumentFactories.map(it => {
                 //   return this.httpPipeConsumer.apply(it.factory(request, response), it.pipes);
@@ -88,15 +86,15 @@ export class HttpRouterExplorer implements OnApplicationBoot {
     }
   }
 
-  protected async resolveInterceptors(interceptors: Type<Interceptor>[]): Promise<Interceptor[]> {
-    return await Promise.all(interceptors.map(async interceptor => {
-      const dependency = await this.injector.find<Interceptor>(provider => getProviderToken(provider) === interceptor);
+  protected async resolveInterceptors(bindings: Array<{ args?: any[]; interceptor: Type<Interceptor>; }>) {
+    return await Promise.all(bindings.map(async binding => {
+      const dependency = await this.injector.find<Interceptor>(provider => getProviderToken(provider) === binding.interceptor);
 
       if (!dependency) {
-        throw new Error(`Cavia can't resolve interceptor '${ getProviderName(interceptor) }'`);
+        throw new Error(`Cavia can't resolve interceptor '${ getProviderName(binding.interceptor) }'`);
       }
 
-      return dependency;
+      return { args: binding.args, interceptor: dependency };
     }));
   }
 

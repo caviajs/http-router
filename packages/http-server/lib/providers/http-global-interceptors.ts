@@ -7,11 +7,14 @@ import { Interceptor } from '../types/interceptor';
  */
 export const HTTP_GLOBAL_INTERCEPTORS: Token<HttpGlobalInterceptors> = Symbol('HTTP_GLOBAL_INTERCEPTORS');
 
-export function createHttpGlobalInterceptorsProvider(interceptors: Type<Interceptor>[]): ValueProvider<HttpGlobalInterceptors> {
+export function createHttpGlobalInterceptorsProvider(interceptors: HttpGlobalInterceptors): ValueProvider<HttpGlobalInterceptors> {
   return {
     provide: HTTP_GLOBAL_INTERCEPTORS,
     useValue: interceptors,
   };
 }
 
-export type HttpGlobalInterceptors = Type<Interceptor>[];
+export type HttpGlobalInterceptors = Array<{
+  args?: any[];
+  interceptor: Type<Interceptor>;
+}>;

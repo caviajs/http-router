@@ -8,13 +8,14 @@ import { HttpRouterExplorer } from './providers/http-router-explorer';
 import { BodyParserInterceptor } from './interceptors/body-parser-interceptor';
 import { MimeTypeParser } from './providers/mime-type-parser';
 import { Interceptor } from './types/interceptor';
-import { createHttpGlobalInterceptorsProvider } from './providers/http-global-interceptors';
+import { createHttpGlobalInterceptorsProvider, HttpGlobalInterceptors } from './providers/http-global-interceptors';
 import { HttpInterceptorConsumer } from './providers/http-interceptor-consumer';
 import { createHttpGlobalPrefixProvider } from './providers/http-global-prefix';
+import { HttpPipeConsumer } from './providers/http-pipe-consumer';
 
 export class HttpServerPackage {
   protected readonly global = {
-    interceptors: [],
+    interceptors: [] as HttpGlobalInterceptors,
     prefix: undefined,
   };
 
@@ -32,6 +33,7 @@ export class HttpServerPackage {
     HttpServerManager,
     httpServerPortProvider,
     MimeTypeParser,
+    HttpPipeConsumer,
   ];
 
   protected constructor() {
@@ -44,7 +46,7 @@ export class HttpServerPackage {
   }
 
   public declareGlobalInterceptor(interceptor: Type<Interceptor>, ...args: any[]): HttpServerPackage {
-    this.global.interceptors.push(interceptor);
+    this.global.interceptors.push({ args: args, interceptor: interceptor });
 
     return this;
   }
