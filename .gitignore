@@ -9,8 +9,9 @@
 !/.eslintrc
 !/.gitignore
 !/LICENSE
-!/makefile
 !/package.json
 !/package-lock.json
 !/README.md
+!/release.ts
+!/tsconfig.build.json
 !/tsconfig.json
