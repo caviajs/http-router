@@ -36,21 +36,21 @@ describe('@Controller', () => {
   });
 
   it('should return the appropriate metadata if the class uses the @Controller decorator', () => {
-    const fooWithoutArgumentsMeta: ControllerMetadata = getControllerMetadata(FooWithoutArguments);
-    const fooWithPrefixMeta: ControllerMetadata = getControllerMetadata(FooWithPrefix);
-    const fooWithOptionsMeta: ControllerMetadata = getControllerMetadata(FooWithOptions);
-    const fooWithPrefixAndOptionsMeta: ControllerMetadata = getControllerMetadata(FooWithPrefixAndOptions);
+    const fooWithoutArgumentsMeta: ControllerMetadata[] = getControllerMetadata(FooWithoutArguments);
+    const fooWithPrefixMeta: ControllerMetadata[] = getControllerMetadata(FooWithPrefix);
+    const fooWithOptionsMeta: ControllerMetadata[] = getControllerMetadata(FooWithOptions);
+    const fooWithPrefixAndOptionsMeta: ControllerMetadata[] = getControllerMetadata(FooWithPrefixAndOptions);
 
-    expect(fooWithoutArgumentsMeta.prefix).toBeUndefined();
-    expect(fooWithoutArgumentsMeta.interceptors).toBeUndefined();
+    expect(fooWithoutArgumentsMeta[0].prefix).toBeUndefined();
+    expect(fooWithoutArgumentsMeta[0].interceptors).toBeUndefined();
 
-    expect(fooWithPrefixMeta.prefix).toEqual('foo');
-    expect(fooWithPrefixMeta.interceptors).toBeUndefined();
+    expect(fooWithPrefixMeta[0].prefix).toEqual('foo');
+    expect(fooWithPrefixMeta[0].interceptors).toBeUndefined();
 
-    expect(fooWithOptionsMeta.prefix).toBeUndefined();
-    expect(fooWithOptionsMeta.interceptors).toEqual(controllerOptions.interceptors);
+    expect(fooWithOptionsMeta[0].prefix).toBeUndefined();
+    expect(fooWithOptionsMeta[0].interceptors).toEqual(controllerOptions.interceptors);
 
-    expect(fooWithPrefixAndOptionsMeta.prefix).toEqual('foo');
-    expect(fooWithPrefixAndOptionsMeta.interceptors).toEqual(controllerOptions.interceptors);
+    expect(fooWithPrefixAndOptionsMeta[0].prefix).toEqual('foo');
+    expect(fooWithPrefixAndOptionsMeta[0].interceptors).toEqual(controllerOptions.interceptors);
   });
 });

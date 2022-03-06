@@ -4,7 +4,7 @@ import https from 'https';
 
 import { HTTP_SERVER } from './http-server';
 import { HttpRouter } from './http-router';
-import { HTTP_SERVER_PORT } from './http-server-port';
+import { HTTP_SERVER_PORT, HttpServerPort } from './http-server-port';
 import { LOGGER_CONTEXT } from '../http-constants';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
@@ -15,7 +15,7 @@ export class HttpServerManager implements OnApplicationBoot, OnApplicationListen
     private readonly logger: Logger,
     private readonly httpRouter: HttpRouter,
     @Inject(HTTP_SERVER) private readonly httpServer: http.Server | https.Server,
-    @Inject(HTTP_SERVER_PORT) private readonly httpServerPort: number,
+    @Inject(HTTP_SERVER_PORT) private readonly httpServerPort: HttpServerPort,
   ) {
   }
 

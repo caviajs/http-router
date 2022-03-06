@@ -9,6 +9,8 @@ import { mergeAll } from 'rxjs/operators';
 import { HttpException } from '../http-exception';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
+import { Path } from '../types/path';
+import { Method } from '../types/method';
 
 declare module 'http' {
   export interface IncomingMessage {
@@ -101,7 +103,7 @@ export class HttpRouter {
       );
   }
 
-  public route(method: Method, path: Path, handler: Handler): HttpRouter {
+  public route(method: Method, path: Path, handler: Handler): void {
     if (!path.startsWith('/')) {
       path = `/${ path }`;
     }
@@ -113,8 +115,6 @@ export class HttpRouter {
     }
 
     this.routes.push({ method, path, handler });
-
-    return this;
   }
 }
 
@@ -127,7 +127,3 @@ export interface Route {
   method: Method;
   path: Path;
 }
-
-export type Method = 'CONNECT' | 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT' | 'TRACE';
-
-export type Path = string;

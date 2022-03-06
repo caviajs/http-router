@@ -1,8 +1,6 @@
 import 'reflect-metadata';
 
 export * from './lib/decorators/controller';
-export * from './lib/decorators/request-mapping';
-export * from './lib/decorators/request-param';
 
 export * from './lib/interceptors/body-parser-interceptor';
 

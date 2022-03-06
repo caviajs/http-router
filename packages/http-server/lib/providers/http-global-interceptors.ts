@@ -14,7 +14,4 @@ export function createHttpGlobalInterceptorsProvider(interceptors: HttpGlobalInt
   };
 }
 
-export type HttpGlobalInterceptors = Array<{
-  args?: any[];
-  interceptor: Type<Interceptor>;
-}>;
+export type HttpGlobalInterceptors = { args?: any[]; interceptor: Type<Interceptor>; }[];
