@@ -5,7 +5,7 @@ import https from 'https';
 
 export const HTTP_SERVER: Token<HttpServer> = Symbol('HTTP_SERVER');
 
-export const httpServerProvider: FactoryProvider<HttpServer> = {
+export const HttpServerProvider: FactoryProvider<HttpServer> = {
   provide: HTTP_SERVER,
   useFactory: (): HttpServer => {
     return http.createServer();

@@ -6,7 +6,7 @@ import { Pipe } from '../types/pipe';
 
 export function Res(options?: ResOptions): ParameterDecorator {
   return (target, propertyKey: string, parameterIndex) => {
-    HttpReflector.addParamMetadata(target.constructor, propertyKey, {
+    HttpReflector.addRouteParamMetadata(target.constructor, propertyKey, {
       factory: (request: Request, response: Response) => {
         return response;
       },

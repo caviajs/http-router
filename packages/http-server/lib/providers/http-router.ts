@@ -1,16 +1,20 @@
+import { getProviderName, Inject, Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
+import { Logger } from '@caviajs/logger';
 import { match } from 'path-to-regexp';
 import { parse } from 'url';
 import { Stream } from 'stream';
 import { readable } from 'is-stream';
-import { Injectable } from '@caviajs/core';
-import { Observable, Subscriber, switchMap } from 'rxjs';
+import { defer, from, observable, Observable, of, Subscriber, switchMap } from 'rxjs';
 import { mergeAll } from 'rxjs/operators';
-
 import { HttpException } from '../http-exception';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
 import { Path } from '../types/path';
 import { Method } from '../types/method';
+import { Interceptor } from '../types/interceptor';
+import { Pipe } from '../types/pipe';
+import { HTTP_GLOBAL_INTERCEPTORS, HttpGlobalInterceptors } from './http-global-interceptors';
+import { LOGGER_CONTEXT } from '../http-constants';
 
 declare module 'http' {
   export interface IncomingMessage {
@@ -19,35 +23,80 @@ declare module 'http' {
 }
 
 @Injectable()
-export class HttpRouter {
+export class HttpRouter implements OnApplicationBoot {
   protected readonly routes: Route[] = [];
+  protected globalInterceptors: RouteInterceptor[] = [];
+
+  constructor(
+    @Inject(HTTP_GLOBAL_INTERCEPTORS) private readonly httpGlobalInterceptors: HttpGlobalInterceptors,
+    private readonly injector: Injector,
+    private readonly logger: Logger,
+  ) {
+  }
+
+  public async onApplicationBoot(): Promise<void> {
+    this.globalInterceptors = await Promise.all(this.httpGlobalInterceptors.map(async ({ args, interceptor }) => {
+      const interceptorInstance = await this.injector.find(interceptor);
+
+      if (!interceptorInstance) {
+        throw new Error(`Cavia can't resolve interceptor '${ getProviderName(interceptor) }'`);
+      }
+
+      return { args: args, interceptor: interceptorInstance };
+    }));
+  }
+
+  protected findRoute(request: Request): Route | undefined {
+    let route: Route | undefined;
+
+    const pathname: string = parse(request.url).pathname;
+
+    for (const it of this.routes.filter(r => r.method === request.method)) {
+      if (match(it.path)(pathname)) {
+        route = it;
+        break;
+      }
+    }
+
+    return route;
+  }
 
   public handle(request: Request, response: Response): void {
-    const route$: Observable<Route> = new Observable((subscriber: Subscriber<Route>) => {
-      let route: Route | undefined;
-
-      const pathname: string = parse(request.url).pathname;
-
-      for (const it of this.routes.filter(it => it.method === request.method)) {
-        if (match(it.path)(pathname)) {
-          route = it;
-          break;
-        }
-      }
-
-      if (!route) {
-        return subscriber.error(new HttpException(404, 'Route not found'));
-      }
-
-      request.path = route.path;
-
-      subscriber.next(route);
+    const route$ = new Observable(subscriber => {
+      subscriber.next(1);
       subscriber.complete();
     });
 
     route$
-      .pipe(switchMap(route => {
-        return route.handler(request, response);
+      .pipe(switchMap(() => {
+        return this.applyInterceptors(
+          request,
+          response,
+          [
+            ...this.globalInterceptors,
+          ],
+          (): Promise<unknown> => {
+            const route: Route | undefined = this.findRoute(request);
+
+            if (!route) {
+              throw new HttpException(404, 'Route not found');
+            }
+
+            request.path = route.path;
+
+            return this.applyInterceptors(
+              request,
+              response,
+              [
+                ...route.controllerInterceptors,
+                ...route.routeInterceptors,
+              ],
+              (): Promise<unknown> => {
+                return Promise.resolve(route.routeHandler.apply(route.controllerInstance, [request, response]));
+              },
+            );
+          },
+        );
       }))
       .pipe(mergeAll())
       .subscribe(
@@ -103,27 +152,93 @@ export class HttpRouter {
       );
   }
 
-  public route(method: Method, path: Path, handler: Handler): void {
-    if (!path.startsWith('/')) {
-      path = `/${ path }`;
+  public addRoute(route: Route): void {
+    if (!route.path.startsWith('/')) {
+      route.path = `/${ route.path }`;
     }
 
-    const matcher = match(path);
+    const matcher = match(route.path);
 
-    if (this.routes.some(it => it.method === method && matcher(it.path))) {
-      throw new Error(`Duplicated {${ path }, ${ method }} HTTP route`);
+    if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
+      throw new Error(`Duplicated {${ route.path }, ${ route.method }} HTTP route`);
     }
 
-    this.routes.push({ method, path, handler });
+    this.routes.push(route);
+    this.logger.trace(`Mapped {${ route.path }, ${ route.method }} HTTP route`, LOGGER_CONTEXT);
+  }
+
+  // public async applyPipes(value: any, pipes: ApplyPipe[]): Promise<any> {
+  //   return pipes.reduce(async (prev, curr: ApplyPipe) => curr.pipe.transform(await prev, { args: curr.args, metaType: curr.metaType }), Promise.resolve(value));
+  // }
+
+  public async applyInterceptors(
+    request: Request,
+    response: Response,
+    interceptors: RouteInterceptor[],
+    handler: () => Promise<any>,
+  ): Promise<any> {
+    if (interceptors.length <= 0) {
+      return handler();
+    }
+
+    const nextFn = async (index: number) => {
+      if (index >= interceptors.length) {
+        return defer(() => from(handler()).pipe(
+          switchMap((result: any) => {
+            if (result instanceof Promise || result instanceof Observable) {
+              return result;
+            } else {
+              return Promise.resolve(result);
+            }
+          }),
+        ));
+      }
+
+      return interceptors[index].interceptor.intercept(
+        {
+          getArgs: () => interceptors[index].args,
+          getClass: () => undefined,
+          getHandler: () => undefined,
+          getRequest: () => request,
+          getResponse: () => response,
+        },
+        {
+          handle: () => from(nextFn(index + 1)).pipe(mergeAll()),
+        },
+      );
+    };
+
+    return nextFn(0);
   }
 }
 
-export interface Handler {
-  (request: Request, response: Response): Promise<any>;
-}
-
 export interface Route {
-  handler: Handler;
+  controllerConstructor: Type;
+  controllerInstance: any;
+  controllerInterceptors: RouteInterceptor[];
+  routeHandler: Function;
+  routeInterceptors: RouteInterceptor[];
+  routeParams: RouteParam[];
   method: Method;
   path: Path;
+}
+
+export interface RouteParam {
+  factory: RouteParamFactory;
+  metaType: any;
+  pipes: RouteParamPipe[];
+}
+
+export interface RouteParamFactory {
+  (request: Request, response: Response): any;
+}
+
+export interface RouteParamPipe {
+  args: any[];
+  pipe: Pipe;
+}
+
+export interface RouteInterceptor {
+  args: any[];
+  interceptor: Interceptor;
 }

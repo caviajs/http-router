@@ -11,7 +11,7 @@ export function Cookies(...args: any[]): ParameterDecorator {
   const property: string | undefined = args.find(it => typeof it === 'string');
 
   return (target, propertyKey: string, parameterIndex) => {
-    HttpReflector.addParamMetadata(target.constructor, propertyKey, {
+    HttpReflector.addRouteParamMetadata(target.constructor, propertyKey, {
       factory: (request: Request, response: Response) => {
         return property ? request.cookies[property] : request.cookies;
       },

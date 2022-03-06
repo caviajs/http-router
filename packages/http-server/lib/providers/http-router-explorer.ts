@@ -1,140 +1,90 @@
-import { getProviderName, getProviderToken, Inject, Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
-import { Logger } from '@caviajs/logger';
-import http from 'http';
-
-import { LOGGER_CONTEXT } from '../http-constants';
+import { getProviderName, Inject, Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
 import { Interceptor } from '../types/interceptor';
-import { HTTP_GLOBAL_INTERCEPTORS, HttpGlobalInterceptors } from './http-global-interceptors';
 import { Pipe } from '../types/pipe';
-import { HttpInterceptorConsumer } from './http-interceptor-consumer';
-import { HttpPipeConsumer } from './http-pipe-consumer';
-import { ControllerMetadata, HttpReflector, RouteMetadata } from '../http-reflector';
-import { Handler, HttpRouter } from './http-router';
+import { HttpReflector } from '../http-reflector';
 import { Method } from '../types/method';
 import { Path } from '../types/path';
+import { HttpRouter, RouteInterceptor, RouteParam } from './http-router';
+import { HTTP_GLOBAL_PREFIX, HttpGlobalPrefix } from './http-global-prefix';
 
 @Injectable()
 export class HttpRouterExplorer implements OnApplicationBoot {
   constructor(
-    private readonly httpInterceptorConsumer: HttpInterceptorConsumer,
-    private readonly httpPipeConsumer: HttpPipeConsumer,
+    @Inject(HTTP_GLOBAL_PREFIX) private readonly httpGlobalPrefix: HttpGlobalPrefix,
     private readonly httpRouter: HttpRouter,
     private readonly injector: Injector,
-    private readonly logger: Logger,
-    @Inject(HTTP_GLOBAL_INTERCEPTORS) private readonly httpGlobalInterceptors: HttpGlobalInterceptors,
   ) {
   }
 
   public async onApplicationBoot(): Promise<void> {
-    const globalInterceptors = await this.resolveInterceptors(this.httpGlobalInterceptors);
-
-    /** Mapping **/
     for (const controllerInstance of await this.injector.filter(provider => HttpReflector.hasControllerMetadata(provider))) {
-      const controllerConstructor: Function = controllerInstance.constructor;
+      const controllerConstructor: Type = controllerInstance.constructor;
       const controllerPrototype: any = Object.getPrototypeOf(controllerInstance);
       const controllerMethodNames: string[] = Object
         .getOwnPropertyNames(controllerPrototype)
-        .filter(name => name !== 'constructor' && typeof controllerPrototype[name] === 'function');
+        .filter(name => name !== 'constructor' && typeof controllerPrototype[name] === 'function')
+        .filter(name => HttpReflector.hasRouteMetadata(controllerConstructor, name));
 
       for (const controllerMetadata of HttpReflector.getAllControllerMetadata(controllerConstructor)) {
-        // controllerMetadata.prefix
-        // controllerMetadata.interceptors
-        const controllerInterceptors = await this.resolveInterceptors(controllerMetadata.interceptors);
+        const controllerInterceptors: RouteInterceptor[] = await Promise.all(controllerMetadata.interceptors.map(async interceptor => {
+          return { args: interceptor.args, interceptor: await this.resolveInterceptor(interceptor.interceptor) };
+        }));
 
         for (const controllerMethodName of controllerMethodNames) {
-          const allParamMetadata = HttpReflector.getAllParamMetadata(controllerConstructor, controllerMethodName);
+          const allRouteParamMetadata = HttpReflector.getAllRouteParamMetadata(controllerConstructor, controllerMethodName);
 
-          for (const routeMetadata of HttpReflector.getAllRouteMetadata(controllerConstructor, controllerMethodName)) {
-            // routeMetadata.method
-            // routeMetadata.path
-            // routeMetadata.interceptors
+          if (allRouteParamMetadata.length > new Set(allRouteParamMetadata.map(it => it.index)).size) {
+            throw new Error(`Multiple parameter metadata per argument in '${ controllerConstructor.name }.${ controllerMethodName }'`);
+          }
 
-            const routeInterceptors = await this.resolveInterceptors(routeMetadata.interceptors);
+          for (const handlerMetadata of HttpReflector.getAllRouteMetadata(controllerConstructor, controllerMethodName)) {
+            const routeHandler: Function = Object.getOwnPropertyDescriptor(controllerPrototype, controllerMethodName).value;
+            const routeInterceptors: RouteInterceptor[] = await Promise.all(handlerMetadata.interceptors.map(async interceptor => {
+              return { args: interceptor.args, interceptor: await this.resolveInterceptor(interceptor.interceptor) };
+            }));
+            const routeParams: RouteParam[] = await Promise.all(allRouteParamMetadata.map(async param => {
+              return {
+                factory: param.factory,
+                metaType: undefined,
+                pipes: await Promise.all(param.pipes.map(async p => ({ args: p.args, pipe: await this.resolvePipe(p.pipe) }))),
+              };
+            }));
+            const method: Method = handlerMetadata.method;
+            const path: Path = `/${ this.httpGlobalPrefix }/${ controllerMetadata.prefix }/${ handlerMetadata.path }`.replace(/\/+/g, '/');
 
-            const handler: Handler = Object.getOwnPropertyDescriptor(controllerPrototype, controllerMethodName).value;
-            const method: Method = routeMetadata.method;
-            const path: Path = `/${ controllerMetadata.prefix }/${ routeMetadata.path }`.replace(/\/\//g, '/');
-
-
+            this.httpRouter.addRoute({
+              controllerConstructor: controllerConstructor,
+              controllerInstance: controllerInstance,
+              controllerInterceptors: controllerInterceptors,
+              method: method,
+              path: path,
+              routeHandler: routeHandler,
+              routeInterceptors: routeInterceptors,
+              routeParams: routeParams,
+            });
           }
         }
-
-
-        // const controllerTypeRefInterceptors = await this.resolveInterceptors(
-        //   controllerTypeRefMetadata.interceptors?.map(it => typeof it === 'function' ? { interceptor: it } : it) || [],
-        // );
-
-        // for (const requestMappingMetadata of getRequestMappingMetadata(controllerTypeRef) || []) {
-        // const method: Method = requestMappingMetadata.method;
-        // const path: Path = `/${ controllerTypeRefMetadata.prefix || '' }/${ requestMappingMetadata.path || '' }`.replace(/\/\//g, '/');
-        // const handler: Handler = requestMappingMetadata.descriptor.value;
-
-        // const routeInterceptors = await this.resolveInterceptors(
-        //   requestMappingMetadata.interceptors?.map(it => typeof it === 'function' ? { interceptor: it } : it) || [],
-        // );
-
-        // const handlerArgumentFactories: { factory: RequestParamFactory, pipes: Pipe[] }[] = [];
-
-        // for (const requestParamMetadata of (getRequestParamMetadata(controllerInstance, requestMappingMetadata.descriptor.value.name) || []).sort((a, b) => (a.index > b.index) ? 1 : -1)) {
-        //
-        //   const meta = this.httpMetadataAccessor.getRequestParamMetaType(requestMappingMetadata.descriptor.value, requestParamMetadata.index);
-        //
-        //   handlerArgumentFactories.push({
-        //     factory: requestParamMetadata.factory,
-        //     pipes: await this.resolvePipes(requestParamMetadata.pipes),
-        //   });
-        // }
-
-        // this.httpRouter.route(
-        //   method,
-        //   path,
-        //   (request: http.IncomingMessage, response: http.ServerResponse): Promise<unknown> => {
-        //     return this.httpInterceptorConsumer.intercept(
-        //       request,
-        //       response,
-        //       [
-        //         ...globalInterceptors,
-        //         ...controllerTypeRefInterceptors,
-        //         ...routeInterceptors,
-        //       ],
-        //       (): Promise<unknown> => {
-        //         // const args: any[] = handlerArgumentFactories.length <= 0 ? [request, response] : handlerArgumentFactories.map(it => {
-        //         //   return this.httpPipeConsumer.apply(it.factory(request, response), it.pipes);
-        //         // });
-        //
-        //         return Promise.resolve(handler.apply(controllerInstance, []));
-        //       },
-        //     );
-        //   },
-        // );
-
-        // this.logger.trace(`Mapped {${ path }, ${ method }} HTTP route`, LOGGER_CONTEXT);
-        // }
       }
     }
   }
 
-  protected async resolveInterceptors(bindings: { args?: any[]; interceptor: Type<Interceptor>; }[]) {
-    return await Promise.all(bindings.map(async binding => {
-      const dependency = await this.injector.find(binding.interceptor);
+  protected async resolveInterceptor(interceptor: Type<Interceptor>): Promise<Interceptor> {
+    const interceptorInstance = await this.injector.find(interceptor);
 
-      if (!dependency) {
-        throw new Error(`Cavia can't resolve interceptor '${ getProviderName(binding.interceptor) }'`);
-      }
+    if (!interceptorInstance) {
+      throw new Error(`Cavia can't resolve interceptor '${ getProviderName(interceptor) }'`);
+    }
 
-      return { args: binding.args, interceptor: dependency };
-    }));
+    return interceptorInstance;
   }
 
-  protected async resolvePipes(pipes: Type<Pipe>[]): Promise<Pipe[]> {
-    return await Promise.all(pipes.map(async pipe => {
-      const dependency = await this.injector.find<Pipe>(pipe);
+  protected async resolvePipe(pipe: Type<Pipe>): Promise<Pipe> {
+    const pipeInstance = await this.injector.find(pipe);
 
-      if (!dependency) {
-        throw new Error(`Cavia can't resolve pipe '${ getProviderName(pipe) }'`);
-      }
+    if (!pipeInstance) {
+      throw new Error(`Cavia can't resolve pipe '${ getProviderName(pipe) }'`);
+    }
 
-      return dependency;
-    }));
+    return pipeInstance;
   }
 }
