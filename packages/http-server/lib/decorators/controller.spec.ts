@@ -37,9 +37,21 @@ describe('@Controller', () => {
   });
 
   it('should return the appropriate metadata if the class uses the @Controller decorator', () => {
-    expect(HttpReflector.getAllControllerMetadata(FooWithoutArguments)).toEqual([{ prefix: '', interceptors: [] }]);
-    expect(HttpReflector.getAllControllerMetadata(FooWithPrefix)).toEqual([{ prefix: 'foo', interceptors: [] }]);
-    expect(HttpReflector.getAllControllerMetadata(FooWithOptions)).toEqual([{ prefix: '', interceptors: controllerOptions.interceptors }]);
-    expect(HttpReflector.getAllControllerMetadata(FooWithPrefixAndOptions)).toEqual([{ prefix: 'foo', interceptors: controllerOptions.interceptors }]);
+    expect(HttpReflector.getAllControllerMetadata(FooWithoutArguments)).toEqual([{
+      prefix: '',
+      interceptors: [],
+    }]);
+    expect(HttpReflector.getAllControllerMetadata(FooWithPrefix)).toEqual([{
+      prefix: 'foo',
+      interceptors: [],
+    }]);
+    expect(HttpReflector.getAllControllerMetadata(FooWithOptions)).toEqual([{
+      prefix: '',
+      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }]
+    }]);
+    expect(HttpReflector.getAllControllerMetadata(FooWithPrefixAndOptions)).toEqual([{
+      prefix: 'foo',
+      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }]
+    }]);
   });
 });
