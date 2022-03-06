@@ -1,4 +1,5 @@
-import { Injectable, Logger, Type } from '@caviajs/core';
+import { Logger } from '@caviajs/logger';
+import { Injectable } from '@caviajs/core';
 import { Method } from '../types/method';
 import { Path } from '../types/path';
 import { Interceptor } from '../types/interceptor';

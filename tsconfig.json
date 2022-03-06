@@ -31,8 +31,14 @@
       "@caviajs/http-server": [
         "packages/http-server/index.ts"
       ],
+      "@caviajs/logger": [
+        "packages/logger/index.ts"
+      ],
       "@caviajs/storage": [
         "packages/storage/index.ts"
+      ],
+      "@caviajs/testing": [
+        "packages/testing/index.ts"
       ],
       "@caviajs/view": [
         "packages/view/index.ts"

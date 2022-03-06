@@ -1,6 +1,6 @@
-import { getProviderName, getProviderToken, Inject, Injectable, Injector, Logger, OnApplicationBoot, Type } from '@caviajs/core';
+import { getProviderName, getProviderToken, Inject, Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
+import { Logger } from '@caviajs/logger';
 import http from 'http';
-
 
 import { LOGGER_CONTEXT } from '../http-constants';
 import { Interceptor } from '../types/interceptor';

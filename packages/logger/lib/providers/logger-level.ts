@@ -1,5 +1,4 @@
-import { Token } from '../types/token';
-import { ValueProvider } from '../types/provider';
+import { Token, ValueProvider } from '@caviajs/core';
 
 export enum LoggerLevel {
   OFF = 0,

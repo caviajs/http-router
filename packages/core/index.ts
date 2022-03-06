@@ -5,10 +5,6 @@ export * from './lib/decorators/inject';
 export * from './lib/decorators/injectable';
 export * from './lib/decorators/optional';
 
-export * from './lib/providers/logger';
-export * from './lib/providers/logger-level';
-export * from './lib/providers/logger-message-factory';
-
 export * from './lib/types/hooks';
 export * from './lib/types/package';
 export * from './lib/types/provider';
@@ -30,4 +26,3 @@ export * from './lib/application-factory';
 export * from './lib/application-ref';
 export * from './lib/constants';
 export * from './lib/injector';
-export * from './lib/test';

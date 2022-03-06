@@ -10,7 +10,10 @@ export function Get(...args: any[]): MethodDecorator {
 
   return (target, propertyKey: string, descriptor) => {
     HttpReflector.addRouteMetadata(target, propertyKey, {
-      interceptors: options?.interceptors?.map(it => typeof it === 'function' ? { interceptor: it } : it) || [],
+      interceptors: (options?.interceptors || []).map(it => typeof it === 'function' ? { args: [], interceptor: it } : {
+        args: it.args || [],
+        interceptor: it.interceptor,
+      }),
       method: 'GET',
       path: path || '',
     });

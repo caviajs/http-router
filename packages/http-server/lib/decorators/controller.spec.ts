@@ -1,4 +1,5 @@
-import { Controller, ControllerMetadata, ControllerOptions, getControllerMetadata, hasControllerMetadata, Interceptor } from '@caviajs/http-server';
+import { Controller, ControllerOptions, Interceptor } from '@caviajs/http-server';
+import { HttpReflector } from '../http-reflector';
 
 class MyInterceptor implements Interceptor {
   intercept(context, next) {
@@ -31,26 +32,14 @@ describe('@Controller', () => {
     class Foo {
     }
 
-    expect(getControllerMetadata(Foo)).toEqual(undefined);
-    expect(hasControllerMetadata(Foo)).toEqual(false);
+    expect(HttpReflector.getAllControllerMetadata(Foo)).toEqual([]);
+    expect(HttpReflector.hasControllerMetadata(Foo)).toEqual(false);
   });
 
   it('should return the appropriate metadata if the class uses the @Controller decorator', () => {
-    const fooWithoutArgumentsMeta: ControllerMetadata[] = getControllerMetadata(FooWithoutArguments);
-    const fooWithPrefixMeta: ControllerMetadata[] = getControllerMetadata(FooWithPrefix);
-    const fooWithOptionsMeta: ControllerMetadata[] = getControllerMetadata(FooWithOptions);
-    const fooWithPrefixAndOptionsMeta: ControllerMetadata[] = getControllerMetadata(FooWithPrefixAndOptions);
-
-    expect(fooWithoutArgumentsMeta[0].prefix).toBeUndefined();
-    expect(fooWithoutArgumentsMeta[0].interceptors).toBeUndefined();
-
-    expect(fooWithPrefixMeta[0].prefix).toEqual('foo');
-    expect(fooWithPrefixMeta[0].interceptors).toBeUndefined();
-
-    expect(fooWithOptionsMeta[0].prefix).toBeUndefined();
-    expect(fooWithOptionsMeta[0].interceptors).toEqual(controllerOptions.interceptors);
-
-    expect(fooWithPrefixAndOptionsMeta[0].prefix).toEqual('foo');
-    expect(fooWithPrefixAndOptionsMeta[0].interceptors).toEqual(controllerOptions.interceptors);
+    expect(HttpReflector.getAllControllerMetadata(FooWithoutArguments)).toEqual([{ prefix: '', interceptors: [] }]);
+    expect(HttpReflector.getAllControllerMetadata(FooWithPrefix)).toEqual([{ prefix: 'foo', interceptors: [] }]);
+    expect(HttpReflector.getAllControllerMetadata(FooWithOptions)).toEqual([{ prefix: '', interceptors: controllerOptions.interceptors }]);
+    expect(HttpReflector.getAllControllerMetadata(FooWithPrefixAndOptions)).toEqual([{ prefix: 'foo', interceptors: controllerOptions.interceptors }]);
   });
 });

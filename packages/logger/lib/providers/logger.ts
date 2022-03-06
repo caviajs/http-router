@@ -1,5 +1,4 @@
-import { Injectable } from '../decorators/injectable';
-import { Inject } from '../decorators/inject';
+import { Inject, Injectable } from '@caviajs/core';
 import { LOGGER_LEVEL, LoggerLevel } from './logger-level';
 import { LOGGER_MESSAGE_FACTORY, LoggerMessageFactory } from './logger-message-factory';
 

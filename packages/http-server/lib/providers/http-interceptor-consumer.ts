@@ -8,7 +8,7 @@ import { Response } from '../types/response';
 
 @Injectable()
 export class HttpInterceptorConsumer {
-  public async intercept(request: Request, response: Response, interceptors: Array<{ args: any[]; interceptor: Interceptor }>, handler: () => Promise<any>): Promise<any> {
+  public async intercept(request: Request, response: Response, interceptors: { args: any[]; interceptor: Interceptor }[], handler: () => Promise<any>): Promise<any> {
     if (interceptors.length <= 0) {
       return handler();
     }
@@ -28,9 +28,11 @@ export class HttpInterceptorConsumer {
 
       return interceptors[index].interceptor.intercept(
         {
-          args: interceptors[index].args,
-          request: request,
-          response: response,
+          getArgs: () => interceptors[index].args,
+          getClass: () => undefined,
+          getHandler: () => undefined,
+          getRequest: () => request,
+          getResponse: () => response,
         },
         {
           handle: () => from(nextFn(index + 1)).pipe(mergeAll()),

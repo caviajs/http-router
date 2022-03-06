@@ -1,6 +1,6 @@
 {
-  "name": "@caviajs/core",
-  "description": "core package for cavia framework",
+  "name": "@caviajs/testing",
+  "description": "testing package for cavia framework",
   "version": "0.0.1",
   "author": "Paweł Partyka",
   "license": "MIT",

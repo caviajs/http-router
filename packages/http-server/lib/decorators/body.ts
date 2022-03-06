@@ -16,7 +16,7 @@ export function Body(...args: any[]): ParameterDecorator {
         return property ? request.body[property] : request.body;
       },
       index: parameterIndex,
-      pipes: options?.pipes?.map(it => typeof it === 'function' ? { pipe: it } : it) || [],
+      pipes: (options?.pipes || []).map(it => typeof it === 'function' ? { args: [], pipe: it } : { args: it.args || [], pipe: it.pipe }),
     });
   };
 }

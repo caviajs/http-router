@@ -1,5 +1,4 @@
-import { Token } from '../types/token';
-import { FactoryProvider } from '../types/provider';
+import { FactoryProvider, Token } from '@caviajs/core';
 import clc from 'cli-color';
 import { LoggerLevel } from './logger-level';
 

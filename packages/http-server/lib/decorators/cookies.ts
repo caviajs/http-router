@@ -16,7 +16,7 @@ export function Cookies(...args: any[]): ParameterDecorator {
         return property ? request.cookies[property] : request.cookies;
       },
       index: parameterIndex,
-      pipes: options?.pipes?.map(it => typeof it === 'function' ? { pipe: it } : it) || [],
+      pipes: (options?.pipes || []).map(it => typeof it === 'function' ? { args: [], pipe: it } : { args: it.args || [], pipe: it.pipe }),
     });
   };
 }

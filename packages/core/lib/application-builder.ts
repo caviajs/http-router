@@ -5,15 +5,8 @@ import { Type } from './types/type';
 import { isTypeProvider } from './utils/is-type-provider';
 import { getApplicationMetadata, hasApplicationMetadata } from './decorators/application';
 import { Package } from './types/package';
-import { Logger } from './providers/logger';
-import { LoggerLevelProvider } from './providers/logger-level';
-import { LoggerMessageFactoryProvider } from './providers/logger-message-factory';
 
-const BUILT_IN_SERVICES: Provider[] = [
-  Logger,
-  LoggerLevelProvider,
-  LoggerMessageFactoryProvider,
-];
+const BUILT_IN_SERVICES: Provider[] = [];
 
 export class ApplicationBuilder {
   public static init(application: Type): ApplicationBuilder {

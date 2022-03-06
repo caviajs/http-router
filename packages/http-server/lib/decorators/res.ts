@@ -11,7 +11,7 @@ export function Res(options?: ResOptions): ParameterDecorator {
         return response;
       },
       index: parameterIndex,
-      pipes: options?.pipes?.map(it => typeof it === 'function' ? { pipe: it } : it) || [],
+      pipes: (options?.pipes || []).map(it => typeof it === 'function' ? { args: [], pipe: it } : { args: it.args || [], pipe: it.pipe }),
     });
   };
 }

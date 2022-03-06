@@ -1,9 +1,9 @@
+import { Logger } from '@caviajs/logger';
 import { Injector } from './injector';
 import { Provider } from './types/provider';
 import { OnApplicationBoot, OnApplicationListen, OnApplicationShutdown } from './types/hooks';
 import { isTypeProvider } from './utils/is-type-provider';
 import { isClassProvider } from './utils/is-class-provider';
-import { Logger } from './providers/logger';
 import { LOGGER_CONTEXT } from './constants';
 import { getProviderToken } from './utils/get-provider-token';
 
