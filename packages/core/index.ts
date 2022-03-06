@@ -18,6 +18,7 @@ export * from './lib/utils/get-token-name';
 export * from './lib/utils/is-class-provider';
 export * from './lib/utils/is-existing-provider';
 export * from './lib/utils/is-factory-provider';
+export * from './lib/utils/is-token';
 export * from './lib/utils/is-type-provider';
 export * from './lib/utils/is-value-provider';
 

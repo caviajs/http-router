@@ -13,6 +13,7 @@ import { getInjectMetadata, InjectMetadata } from './decorators/inject';
 import { getOptionalMetadata, OptionalMetadata } from './decorators/optional';
 import { isForwardRef } from './utils/forward-ref';
 import { getTokenName } from './utils/get-token-name';
+import { isToken } from './utils/is-token';
 
 export class Injector {
   public static async create(providers: Provider[]): Promise<Injector> {
@@ -25,15 +26,15 @@ export class Injector {
     this.providers.unshift({ provide: Injector, useValue: this });
   }
 
-  public async filter(predicateOrToken: Token[]): Promise<any[]>;
-  public async filter(predicateOrToken: (provider: Provider) => boolean): Promise<any[]>;
-  public async filter(predicateOrToken: any): Promise<any[]> {
+  public async filter(predicateOrTokens: Token[]): Promise<any[]>;
+  public async filter(predicateOrTokens: (provider: Provider) => boolean): Promise<any[]>;
+  public async filter(predicateOrTokens: any): Promise<any[]> {
     let predicate: (provider: Provider) => boolean;
 
-    if (typeof predicateOrToken === 'function') {
-      predicate = predicateOrToken;
+    if (Array.isArray(predicateOrTokens)) {
+      predicate = provider => predicateOrTokens.includes(getProviderToken(provider));
     } else {
-      predicate = provider => getProviderToken(provider) === predicateOrToken;
+      predicate = predicateOrTokens;
     }
 
     const resolvedProviders: ResolvedProvider[] = [];
@@ -50,10 +51,10 @@ export class Injector {
   public async find<T>(predicateOrToken: any): Promise<T | undefined> {
     let predicate: (provider: Provider) => boolean;
 
-    if (typeof predicateOrToken === 'function') {
-      predicate = predicateOrToken;
-    } else {
+    if (isToken(predicateOrToken)) {
       predicate = provider => getProviderToken(provider) === predicateOrToken;
+    } else {
+      predicate = predicateOrToken;
     }
 
     const provider: Provider | undefined = this.providers.find(predicate);

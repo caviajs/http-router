@@ -5,14 +5,13 @@ import { OnApplicationBoot, OnApplicationListen, OnApplicationShutdown } from '.
 import { isTypeProvider } from './utils/is-type-provider';
 import { isClassProvider } from './utils/is-class-provider';
 import { LOGGER_CONTEXT } from './constants';
-import { getProviderToken } from './utils/get-provider-token';
 
 export class ApplicationRef {
   public static async compile(options: ApplicationRefOptions): Promise<ApplicationRef> {
     const injector: Injector = await Injector.create(options.providers);
-    const logger: Logger = await injector.find(provider => getProviderToken(provider) === Logger);
+    const logger: Logger = await injector.find(Logger);
 
-    logger.trace('Starting application...', LOGGER_CONTEXT);
+    logger?.trace('Starting application...', LOGGER_CONTEXT);
 
     return new ApplicationRef(injector).boot();
   }

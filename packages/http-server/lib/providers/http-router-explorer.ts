@@ -116,7 +116,7 @@ export class HttpRouterExplorer implements OnApplicationBoot {
 
   protected async resolveInterceptors(bindings: { args?: any[]; interceptor: Type<Interceptor>; }[]) {
     return await Promise.all(bindings.map(async binding => {
-      const dependency = await this.injector.find<Interceptor>(provider => getProviderToken(provider) === binding.interceptor);
+      const dependency = await this.injector.find(binding.interceptor);
 
       if (!dependency) {
         throw new Error(`Cavia can't resolve interceptor '${ getProviderName(binding.interceptor) }'`);
@@ -128,7 +128,7 @@ export class HttpRouterExplorer implements OnApplicationBoot {
 
   protected async resolvePipes(pipes: Type<Pipe>[]): Promise<Pipe[]> {
     return await Promise.all(pipes.map(async pipe => {
-      const dependency = await this.injector.find<Pipe>(provider => getProviderToken(provider) === pipe);
+      const dependency = await this.injector.find<Pipe>(pipe);
 
       if (!dependency) {
         throw new Error(`Cavia can't resolve pipe '${ getProviderName(pipe) }'`);
