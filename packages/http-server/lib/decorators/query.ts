@@ -11,7 +11,7 @@ export function Query(...args: any[]): ParameterDecorator {
   const property: string | undefined = args.find(it => typeof it === 'string');
 
   return (target, propertyKey: string, parameterIndex) => {
-    HttpReflector.addParamMetadata(target, propertyKey, {
+    HttpReflector.addParamMetadata(target.constructor, propertyKey, {
       factory: (request: Request, response: Response) => {
         return property ? request.query[property] : request.query;
       },

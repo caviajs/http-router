@@ -9,7 +9,7 @@ export function Delete(...args: any[]): MethodDecorator {
   const path: string | undefined = args.find(it => typeof it === 'string');
 
   return (target, propertyKey: string, descriptor) => {
-    HttpReflector.addRouteMetadata(target, propertyKey, {
+    HttpReflector.addRouteMetadata(target.constructor, propertyKey, {
       interceptors: (options?.interceptors || []).map(it => typeof it === 'function' ? { args: [], interceptor: it } : {
         args: it.args || [],
         interceptor: it.interceptor,
