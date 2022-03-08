@@ -4,10 +4,10 @@ import { Response } from '../types/response';
 import { Pipe } from '../types/pipe';
 import { HttpReflector } from '../http-reflector';
 
-export function Body(options?: BodyOptions): ParameterDecorator;
-export function Body(property?: string, options?: BodyOptions): ParameterDecorator;
+export function Body(...pipes: BodyPipe[]): ParameterDecorator;
+export function Body(property?: string, ...pipes: BodyPipe[]): ParameterDecorator;
 export function Body(...args: any[]): ParameterDecorator {
-  const options: BodyOptions | undefined = args.find(it => typeof it === 'object');
+  const pipes: BodyPipe[] = args.filter(it => typeof it === 'function' || typeof it === 'object');
   const property: string | undefined = args.find(it => typeof it === 'string');
 
   return (target, propertyKey: string, parameterIndex) => {
@@ -16,11 +16,12 @@ export function Body(...args: any[]): ParameterDecorator {
         return property ? request.body[property] : request.body;
       },
       index: parameterIndex,
-      pipes: (options?.pipes || []).map(it => typeof it === 'function' ? { args: [], pipe: it } : { args: it.args || [], pipe: it.pipe }),
+      pipes: pipes.map(it => ({
+        args: typeof it === 'function' ? [] : (it.args || []),
+        pipe: typeof it === 'function' ? it : it.pipe,
+      })),
     });
   };
 }
 
-export interface BodyOptions {
-  pipes?: (Type<Pipe> | { args?: any[]; pipe: Type<Pipe>; })[];
-}
+export type BodyPipe = Type<Pipe> | { args?: any[]; pipe: Type<Pipe>; };

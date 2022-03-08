@@ -8,11 +8,15 @@ export interface Interceptor<T = any, R = any> {
 }
 
 export interface ExecutionContext {
-  getArgs: () => any[];
-  getClass: () => Type;
-  getHandler: () => Function;
-  getRequest: () => Request;
-  getResponse: () => Response;
+  getArgs(): any[];
+
+  getClass(): Type;
+
+  getHandler(): Function;
+
+  getRequest(): Request;
+
+  getResponse(): Response;
 }
 
 export interface Next<T = any> {

@@ -1,4 +1,4 @@
-import { Controller, ControllerOptions, Interceptor } from '@caviajs/http-server';
+import { Controller, ControllerInterceptor, Interceptor } from '@caviajs/http-server';
 import { HttpReflector } from '../http-reflector';
 
 class MyInterceptor implements Interceptor {
@@ -6,10 +6,6 @@ class MyInterceptor implements Interceptor {
     return next.handle();
   }
 }
-
-const controllerOptions: ControllerOptions = {
-  interceptors: [MyInterceptor, { args: ['bar'], interceptor: MyInterceptor }],
-};
 
 @Controller()
 class FooWithoutArguments {
@@ -19,11 +15,11 @@ class FooWithoutArguments {
 class FooWithPrefix {
 }
 
-@Controller(controllerOptions)
+@Controller(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
 class FooWithOptions {
 }
 
-@Controller('foo', controllerOptions)
+@Controller('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
 class FooWithPrefixAndOptions {
 }
 

@@ -1,21 +1,15 @@
-import { Type } from '@caviajs/core';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
 import { HttpReflector } from '../http-reflector';
-import { Pipe } from '../types/pipe';
 
-export function Req(options?: ReqOptions): ParameterDecorator {
+export function Req(): ParameterDecorator {
   return (target, propertyKey: string, parameterIndex) => {
     HttpReflector.addRouteParamMetadata(target.constructor, propertyKey, {
       factory: (request: Request, response: Response) => {
         return request;
       },
       index: parameterIndex,
-      pipes: (options?.pipes || []).map(it => typeof it === 'function' ? { args: [], pipe: it } : { args: it.args || [], pipe: it.pipe }),
+      pipes: [],
     });
   };
-}
-
-export interface ReqOptions {
-  pipes?: (Type<Pipe> | { args?: any[]; pipe: Type<Pipe>; })[];
 }
