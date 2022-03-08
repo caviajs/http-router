@@ -1,53 +1,73 @@
 import { Controller, Interceptor } from '@caviajs/http-server';
 import { HttpReflector } from '../http-reflector';
 
-describe('@Controller', () => {
-  it('should return false if the class does not use the @Controller decorator', () => {
-    class Foo {
-    }
+class MyInterceptor implements Interceptor {
+  intercept(context, next) {
+    return next.handle();
+  }
+}
 
-    expect(HttpReflector.getAllControllerMetadata(Foo)).toEqual([]);
-    expect(HttpReflector.hasControllerMetadata(Foo)).toEqual(false);
+describe('@Controller', () => {
+  let addControllerMetadataSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    addControllerMetadataSpy = jest.spyOn(HttpReflector, 'addControllerMetadata');
   });
 
-  it('should return the appropriate metadata if the class uses the @Controller decorator', () => {
-    class MyInterceptor implements Interceptor {
-      intercept(context, next) {
-        return next.handle();
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should not execute addControllerMetadata when the @Controller decorator is not used', () => {
+    class Foo {
+      foo() {
       }
     }
 
+    expect(addControllerMetadataSpy).not.toHaveBeenCalled();
+  });
+
+  it('should execute the addControllerMetadata method with the appropriate arguments while using the @Controller decorator without any arguments', () => {
     @Controller()
-    class FooWithoutArguments {
+    class Foo {
     }
 
+    expect(addControllerMetadataSpy).toHaveBeenNthCalledWith(1, Foo, {
+      interceptors: [],
+      prefix: '',
+    });
+  });
+
+  it('should execute the addControllerMetadata method with the appropriate arguments while using the @Controller decorator with prefix only', () => {
     @Controller('foo')
-    class FooWithPrefix {
+    class Foo {
     }
 
+    expect(addControllerMetadataSpy).toHaveBeenNthCalledWith(1, Foo, {
+      interceptors: [],
+      prefix: 'foo',
+    });
+  });
+
+  it('should execute the addControllerMetadata method with the appropriate arguments while using the @Controller decorator with interceptors only', () => {
     @Controller(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-    class FooWithInterceptors {
+    class Foo {
     }
 
+    expect(addControllerMetadataSpy).toHaveBeenNthCalledWith(1, Foo, {
+      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
+      prefix: '',
+    });
+  });
+
+  it('should execute the addControllerMetadata method with the appropriate arguments while using the @Controller decorator with prefix and interceptors', () => {
     @Controller('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-    class FooWithPrefixAndInterceptors {
+    class Foo {
     }
 
-    expect(HttpReflector.getAllControllerMetadata(FooWithoutArguments)).toEqual([{
-      prefix: '',
-      interceptors: [],
-    }]);
-    expect(HttpReflector.getAllControllerMetadata(FooWithPrefix)).toEqual([{
+    expect(addControllerMetadataSpy).toHaveBeenNthCalledWith(1, Foo, {
+      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
       prefix: 'foo',
-      interceptors: [],
-    }]);
-    expect(HttpReflector.getAllControllerMetadata(FooWithInterceptors)).toEqual([{
-      prefix: '',
-      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }]
-    }]);
-    expect(HttpReflector.getAllControllerMetadata(FooWithPrefixAndInterceptors)).toEqual([{
-      prefix: 'foo',
-      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }]
-    }]);
+    });
   });
 });
