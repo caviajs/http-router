@@ -1,15 +1,7 @@
-import { Request } from '../types/request';
-import { Response } from '../types/response';
-import { HttpReflector } from '../http-reflector';
+import { createRouteParamDecorator, RouteParamDecoratorFactory } from '../utils/create-route-param-decorator';
 
-export function Res(): ParameterDecorator {
-  return (target, propertyKey: string, parameterIndex) => {
-    HttpReflector.addRouteParamMetadata(target.constructor, propertyKey, {
-      factory: (request: Request, response: Response) => {
-        return response;
-      },
-      index: parameterIndex,
-      pipes: [],
-    });
-  };
-}
+export const resRouteParamDecoratorFactory: RouteParamDecoratorFactory = (data: string, context) => {
+  return context.getResponse();
+};
+
+export const Res = createRouteParamDecorator(resRouteParamDecoratorFactory);

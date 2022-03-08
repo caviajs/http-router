@@ -1,11 +1,5 @@
-import { Options, Interceptor } from '@caviajs/http-server';
+import { Options } from '@caviajs/http-server';
 import { HttpReflector } from '../http-reflector';
-
-class MyInterceptor implements Interceptor {
-  intercept(context, next) {
-    return next.handle();
-  }
-}
 
 describe('@Options', () => {
   let addRouteMetadataSpy: jest.SpyInstance;
@@ -27,59 +21,23 @@ describe('@Options', () => {
     expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Options decorator without any arguments', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Options decorator without path', () => {
     class Foo {
       @Options()
       hello() {
       }
     }
 
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [],
-      method: 'OPTIONS',
-      path: '',
-    });
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', { method: 'OPTIONS', path: '/' });
   });
 
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Options decorator with prefix only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Options decorator with path', () => {
     class Foo {
       @Options('foo')
       hello() {
       }
     }
 
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [],
-      method: 'OPTIONS',
-      path: 'foo',
-    });
-  });
-
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Options decorator with interceptors only', () => {
-    class Foo {
-      @Options(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      hello() {
-      }
-    }
-
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
-      method: 'OPTIONS',
-      path: '',
-    });
-  });
-
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Options decorator with prefix and interceptors', () => {
-    class Foo {
-      @Options('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      hello() {
-      }
-    }
-
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
-      method: 'OPTIONS',
-      path: 'foo',
-    });
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', { method: 'OPTIONS', path: 'foo' });
   });
 });

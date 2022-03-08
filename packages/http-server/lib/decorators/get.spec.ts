@@ -1,11 +1,5 @@
-import { Get, Interceptor } from '@caviajs/http-server';
+import { Get } from '@caviajs/http-server';
 import { HttpReflector } from '../http-reflector';
-
-class MyInterceptor implements Interceptor {
-  intercept(context, next) {
-    return next.handle();
-  }
-}
 
 describe('@Get', () => {
   let addRouteMetadataSpy: jest.SpyInstance;
@@ -27,59 +21,23 @@ describe('@Get', () => {
     expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Get decorator without any arguments', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Get decorator without path', () => {
     class Foo {
       @Get()
       hello() {
       }
     }
 
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [],
-      method: 'GET',
-      path: '',
-    });
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', { method: 'GET', path: '/' });
   });
 
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Get decorator with prefix only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Get decorator with path', () => {
     class Foo {
       @Get('foo')
       hello() {
       }
     }
 
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [],
-      method: 'GET',
-      path: 'foo',
-    });
-  });
-
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Get decorator with interceptors only', () => {
-    class Foo {
-      @Get(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      hello() {
-      }
-    }
-
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
-      method: 'GET',
-      path: '',
-    });
-  });
-
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Get decorator with prefix and interceptors', () => {
-    class Foo {
-      @Get('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      hello() {
-      }
-    }
-
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
-      method: 'GET',
-      path: 'foo',
-    });
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', { method: 'GET', path: 'foo' });
   });
 });

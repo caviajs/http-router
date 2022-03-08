@@ -31,8 +31,13 @@ export * from './lib/providers/http-server-manager';
 export * from './lib/providers/http-server-port';
 export * from './lib/providers/mime-type-parser';
 
+export * from './lib/types/execution-context';
 export * from './lib/types/interceptor';
+export * from './lib/types/method';
+export * from './lib/types/path';
 export * from './lib/types/pipe';
+export * from './lib/types/request';
+export * from './lib/types/response';
 
 export * from './lib/utils/get-content-disposition';
 export * from './lib/utils/get-content-disposition-parameter';

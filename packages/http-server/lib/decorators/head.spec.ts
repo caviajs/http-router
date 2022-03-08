@@ -1,11 +1,5 @@
-import { Head, Interceptor } from '@caviajs/http-server';
+import { Head } from './head';
 import { HttpReflector } from '../http-reflector';
-
-class MyInterceptor implements Interceptor {
-  intercept(context, next) {
-    return next.handle();
-  }
-}
 
 describe('@Head', () => {
   let addRouteMetadataSpy: jest.SpyInstance;
@@ -27,59 +21,23 @@ describe('@Head', () => {
     expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Head decorator without any arguments', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Head decorator without path', () => {
     class Foo {
       @Head()
       hello() {
       }
     }
 
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [],
-      method: 'HEAD',
-      path: '',
-    });
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', { method: 'HEAD', path: '/' });
   });
 
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Head decorator with prefix only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Head decorator with path', () => {
     class Foo {
       @Head('foo')
       hello() {
       }
     }
 
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [],
-      method: 'HEAD',
-      path: 'foo',
-    });
-  });
-
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Head decorator with interceptors only', () => {
-    class Foo {
-      @Head(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      hello() {
-      }
-    }
-
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
-      method: 'HEAD',
-      path: '',
-    });
-  });
-
-  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Head decorator with prefix and interceptors', () => {
-    class Foo {
-      @Head('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      hello() {
-      }
-    }
-
-    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
-      interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
-      method: 'HEAD',
-      path: 'foo',
-    });
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', { method: 'HEAD', path: 'foo' });
   });
 });
