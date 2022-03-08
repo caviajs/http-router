@@ -27,7 +27,7 @@ describe('@Delete', () => {
     expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Delete decorator without any arguments', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Delete decorator without any arguments', () => {
     class Foo {
       @Delete()
       hello() {
@@ -41,7 +41,7 @@ describe('@Delete', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Delete decorator with prefix only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Delete decorator with prefix only', () => {
     class Foo {
       @Delete('foo')
       hello() {
@@ -55,7 +55,7 @@ describe('@Delete', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Delete decorator with interceptors only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Delete decorator with interceptors only', () => {
     class Foo {
       @Delete(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {
@@ -69,7 +69,7 @@ describe('@Delete', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Delete decorator with prefix and interceptors', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Delete decorator with prefix and interceptors', () => {
     class Foo {
       @Delete('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {

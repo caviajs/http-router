@@ -27,7 +27,7 @@ describe('@Patch', () => {
     expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Patch decorator without any arguments', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Patch decorator without any arguments', () => {
     class Foo {
       @Patch()
       hello() {
@@ -41,7 +41,7 @@ describe('@Patch', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Patch decorator with prefix only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Patch decorator with prefix only', () => {
     class Foo {
       @Patch('foo')
       hello() {
@@ -55,7 +55,7 @@ describe('@Patch', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Patch decorator with interceptors only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Patch decorator with interceptors only', () => {
     class Foo {
       @Patch(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {
@@ -69,7 +69,7 @@ describe('@Patch', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Patch decorator with prefix and interceptors', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Patch decorator with prefix and interceptors', () => {
     class Foo {
       @Patch('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {

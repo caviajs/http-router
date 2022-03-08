@@ -27,7 +27,7 @@ describe('@Head', () => {
     expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Head decorator without any arguments', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Head decorator without any arguments', () => {
     class Foo {
       @Head()
       hello() {
@@ -41,7 +41,7 @@ describe('@Head', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Head decorator with prefix only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Head decorator with prefix only', () => {
     class Foo {
       @Head('foo')
       hello() {
@@ -55,7 +55,7 @@ describe('@Head', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Head decorator with interceptors only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Head decorator with interceptors only', () => {
     class Foo {
       @Head(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {
@@ -69,7 +69,7 @@ describe('@Head', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Head decorator with prefix and interceptors', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Head decorator with prefix and interceptors', () => {
     class Foo {
       @Head('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {

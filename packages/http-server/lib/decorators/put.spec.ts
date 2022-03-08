@@ -18,7 +18,7 @@ describe('@Put', () => {
     jest.clearAllMocks();
   });
 
-  it('should not execute addRouteMetadataSpy when the @Put decorator is not used', () => {
+  it('should not execute addRouteMetadata when the @Put decorator is not used', () => {
     class Foo {
       foo() {
       }
@@ -27,7 +27,7 @@ describe('@Put', () => {
     expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Put decorator without any arguments', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Put decorator without any arguments', () => {
     class Foo {
       @Put()
       hello() {
@@ -41,7 +41,7 @@ describe('@Put', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Put decorator with prefix only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Put decorator with prefix only', () => {
     class Foo {
       @Put('foo')
       hello() {
@@ -55,7 +55,7 @@ describe('@Put', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Put decorator with interceptors only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Put decorator with interceptors only', () => {
     class Foo {
       @Put(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {
@@ -69,7 +69,7 @@ describe('@Put', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Put decorator with prefix and interceptors', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Put decorator with prefix and interceptors', () => {
     class Foo {
       @Put('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {

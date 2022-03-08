@@ -27,7 +27,7 @@ describe('@Post', () => {
     expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Post decorator without any arguments', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Post decorator without any arguments', () => {
     class Foo {
       @Post()
       hello() {
@@ -41,7 +41,7 @@ describe('@Post', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Post decorator with prefix only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Post decorator with prefix only', () => {
     class Foo {
       @Post('foo')
       hello() {
@@ -55,7 +55,7 @@ describe('@Post', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Post decorator with interceptors only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Post decorator with interceptors only', () => {
     class Foo {
       @Post(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {
@@ -69,7 +69,7 @@ describe('@Post', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Post decorator with prefix and interceptors', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Post decorator with prefix and interceptors', () => {
     class Foo {
       @Post('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {

@@ -27,7 +27,7 @@ describe('@Options', () => {
     expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Options decorator without any arguments', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Options decorator without any arguments', () => {
     class Foo {
       @Options()
       hello() {
@@ -41,7 +41,7 @@ describe('@Options', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Options decorator with prefix only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Options decorator with prefix only', () => {
     class Foo {
       @Options('foo')
       hello() {
@@ -55,7 +55,7 @@ describe('@Options', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Options decorator with interceptors only', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Options decorator with interceptors only', () => {
     class Foo {
       @Options(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {
@@ -69,7 +69,7 @@ describe('@Options', () => {
     });
   });
 
-  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Options decorator with prefix and interceptors', () => {
+  it('should execute the addRouteMetadata method with the appropriate arguments while using the @Options decorator with prefix and interceptors', () => {
     class Foo {
       @Options('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
       hello() {
