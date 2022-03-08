@@ -10,9 +10,9 @@ export function hasInjectableMetadata(target: object): boolean {
 
 export function Injectable(): ClassDecorator {
   return target => {
-    const value: InjectableMetadata = true;
+    const injectableMetadata: InjectableMetadata = true;
 
-    Reflect.defineMetadata(INJECTABLE_METADATA, value, target);
+    Reflect.defineMetadata(INJECTABLE_METADATA, injectableMetadata, target);
   };
 }
 

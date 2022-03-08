@@ -10,11 +10,11 @@ export function hasOptionalMetadata(target: object): boolean {
 
 export function Optional(): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {
-    const meta: OptionalMetadata = (getOptionalMetadata(target) || new Map());
+    const optionalMetadata: OptionalMetadata = (getOptionalMetadata(target) || new Map());
 
-    meta.set(parameterIndex, true);
+    optionalMetadata.set(parameterIndex, true);
 
-    Reflect.defineMetadata(OPTIONAL_METADATA, meta, target);
+    Reflect.defineMetadata(OPTIONAL_METADATA, optionalMetadata, target);
   };
 }
 

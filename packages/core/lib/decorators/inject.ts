@@ -13,11 +13,11 @@ export function hasInjectMetadata(target: object): boolean {
 
 export function Inject(tokenOrForwardRef: Token | ForwardRef): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {
-    const meta: InjectMetadata = (getInjectMetadata(target) || new Map());
+    const injectMetadata: InjectMetadata = (getInjectMetadata(target) || new Map());
 
-    meta.set(parameterIndex, tokenOrForwardRef);
+    injectMetadata.set(parameterIndex, tokenOrForwardRef);
 
-    Reflect.defineMetadata(INJECT_METADATA, meta, target);
+    Reflect.defineMetadata(INJECT_METADATA, injectMetadata, target);
   };
 }
 

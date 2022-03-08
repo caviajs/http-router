@@ -14,8 +14,10 @@ export function hasApplicationMetadata(target: object): boolean {
 
 export function Application(options?: ApplicationOptions): ClassDecorator {
   return target => {
+    const applicationMetadata: ApplicationMetadata = options;
+
     Reflect.decorate([Injectable()], target);
-    Reflect.defineMetadata(APPLICATION_METADATA, options, target);
+    Reflect.defineMetadata(APPLICATION_METADATA, applicationMetadata, target);
   };
 }
 
