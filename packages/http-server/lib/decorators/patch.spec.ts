@@ -1,61 +1,85 @@
 import { Patch, Interceptor } from '@caviajs/http-server';
 import { HttpReflector } from '../http-reflector';
 
+class MyInterceptor implements Interceptor {
+  intercept(context, next) {
+    return next.handle();
+  }
+}
+
 describe('@Patch', () => {
-  it('should return false if the method does not use the @Patch decorator', () => {
+  let addRouteMetadataSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    addRouteMetadataSpy = jest.spyOn(HttpReflector, 'addRouteMetadata');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should not execute addRouteMetadataSpy when the @Patch decorator is not used', () => {
     class Foo {
       foo() {
       }
     }
 
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'foo')).toEqual([]);
-    expect(HttpReflector.hasRouteMetadata(Foo, 'foo')).toEqual(false);
+    expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should return the appropriate metadata if the method uses the @Patch decorator', () => {
-    class MyInterceptor implements Interceptor {
-      intercept(context, next) {
-        return next.handle();
-      }
-    }
-
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Patch decorator without any arguments', () => {
     class Foo {
       @Patch()
-      fooWithoutArguments() {
-      }
-
-      @Patch('foo')
-      fooWithPrefix() {
-      }
-
-      @Patch(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      fooWithInterceptors() {
-      }
-
-      @Patch('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      fooWithPrefixAndInterceptors() {
+      hello() {
       }
     }
 
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithoutArguments')).toEqual([{
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [],
       method: 'PATCH',
       path: '',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithPrefix')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Patch decorator with prefix only', () => {
+    class Foo {
+      @Patch('foo')
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [],
       method: 'PATCH',
       path: 'foo',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithInterceptors')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Patch decorator with interceptors only', () => {
+    class Foo {
+      @Patch(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
       method: 'PATCH',
       path: '',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithPrefixAndInterceptors')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Patch decorator with prefix and interceptors', () => {
+    class Foo {
+      @Patch('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
       method: 'PATCH',
       path: 'foo',
-    }]);
+    });
   });
 });

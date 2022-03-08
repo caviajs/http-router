@@ -1,61 +1,85 @@
 import { Post, Interceptor } from '@caviajs/http-server';
 import { HttpReflector } from '../http-reflector';
 
+class MyInterceptor implements Interceptor {
+  intercept(context, next) {
+    return next.handle();
+  }
+}
+
 describe('@Post', () => {
-  it('should return false if the method does not use the @Post decorator', () => {
+  let addRouteMetadataSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    addRouteMetadataSpy = jest.spyOn(HttpReflector, 'addRouteMetadata');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should not execute addRouteMetadataSpy when the @Post decorator is not used', () => {
     class Foo {
       foo() {
       }
     }
 
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'foo')).toEqual([]);
-    expect(HttpReflector.hasRouteMetadata(Foo, 'foo')).toEqual(false);
+    expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should return the appropriate metadata if the method uses the @Post decorator', () => {
-    class MyInterceptor implements Interceptor {
-      intercept(context, next) {
-        return next.handle();
-      }
-    }
-
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Post decorator without any arguments', () => {
     class Foo {
       @Post()
-      fooWithoutArguments() {
-      }
-
-      @Post('foo')
-      fooWithPrefix() {
-      }
-
-      @Post(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      fooWithInterceptors() {
-      }
-
-      @Post('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      fooWithPrefixAndInterceptors() {
+      hello() {
       }
     }
 
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithoutArguments')).toEqual([{
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [],
       method: 'POST',
       path: '',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithPrefix')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Post decorator with prefix only', () => {
+    class Foo {
+      @Post('foo')
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [],
       method: 'POST',
       path: 'foo',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithInterceptors')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Post decorator with interceptors only', () => {
+    class Foo {
+      @Post(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
       method: 'POST',
       path: '',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithPrefixAndInterceptors')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Post decorator with prefix and interceptors', () => {
+    class Foo {
+      @Post('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
       method: 'POST',
       path: 'foo',
-    }]);
+    });
   });
 });

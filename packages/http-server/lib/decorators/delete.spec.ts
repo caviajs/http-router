@@ -1,61 +1,85 @@
 import { Delete, Interceptor } from '@caviajs/http-server';
 import { HttpReflector } from '../http-reflector';
 
+class MyInterceptor implements Interceptor {
+  intercept(context, next) {
+    return next.handle();
+  }
+}
+
 describe('@Delete', () => {
-  it('should return false if the method does not use the @Delete decorator', () => {
+  let addRouteMetadataSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    addRouteMetadataSpy = jest.spyOn(HttpReflector, 'addRouteMetadata');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should not execute addRouteMetadataSpy when the @Delete decorator is not used', () => {
     class Foo {
       foo() {
       }
     }
 
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'foo')).toEqual([]);
-    expect(HttpReflector.hasRouteMetadata(Foo, 'foo')).toEqual(false);
+    expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should return the appropriate metadata if the method uses the @Delete decorator', () => {
-    class MyInterceptor implements Interceptor {
-      intercept(context, next) {
-        return next.handle();
-      }
-    }
-
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Delete decorator without any arguments', () => {
     class Foo {
       @Delete()
-      fooWithoutArguments() {
-      }
-
-      @Delete('foo')
-      fooWithPrefix() {
-      }
-
-      @Delete(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      fooWithInterceptors() {
-      }
-
-      @Delete('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      fooWithPrefixAndInterceptors() {
+      hello() {
       }
     }
 
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithoutArguments')).toEqual([{
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [],
       method: 'DELETE',
       path: '',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithPrefix')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Delete decorator with prefix only', () => {
+    class Foo {
+      @Delete('foo')
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [],
       method: 'DELETE',
       path: 'foo',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithInterceptors')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Delete decorator with interceptors only', () => {
+    class Foo {
+      @Delete(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
       method: 'DELETE',
       path: '',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithPrefixAndInterceptors')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Delete decorator with prefix and interceptors', () => {
+    class Foo {
+      @Delete('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
       method: 'DELETE',
       path: 'foo',
-    }]);
+    });
   });
 });

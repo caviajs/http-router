@@ -1,61 +1,85 @@
 import { Options, Interceptor } from '@caviajs/http-server';
 import { HttpReflector } from '../http-reflector';
 
+class MyInterceptor implements Interceptor {
+  intercept(context, next) {
+    return next.handle();
+  }
+}
+
 describe('@Options', () => {
-  it('should return false if the method does not use the @Options decorator', () => {
+  let addRouteMetadataSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    addRouteMetadataSpy = jest.spyOn(HttpReflector, 'addRouteMetadata');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should not execute addRouteMetadataSpy when the @Options decorator is not used', () => {
     class Foo {
       foo() {
       }
     }
 
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'foo')).toEqual([]);
-    expect(HttpReflector.hasRouteMetadata(Foo, 'foo')).toEqual(false);
+    expect(addRouteMetadataSpy).not.toHaveBeenCalled();
   });
 
-  it('should return the appropriate metadata if the method uses the @Options decorator', () => {
-    class MyInterceptor implements Interceptor {
-      intercept(context, next) {
-        return next.handle();
-      }
-    }
-
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Options decorator without any arguments', () => {
     class Foo {
       @Options()
-      fooWithoutArguments() {
-      }
-
-      @Options('foo')
-      fooWithPrefix() {
-      }
-
-      @Options(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      fooWithInterceptors() {
-      }
-
-      @Options('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
-      fooWithPrefixAndInterceptors() {
+      hello() {
       }
     }
 
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithoutArguments')).toEqual([{
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [],
       method: 'OPTIONS',
       path: '',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithPrefix')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Options decorator with prefix only', () => {
+    class Foo {
+      @Options('foo')
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [],
       method: 'OPTIONS',
       path: 'foo',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithInterceptors')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Options decorator with interceptors only', () => {
+    class Foo {
+      @Options(MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
       method: 'OPTIONS',
       path: '',
-    }]);
-    expect(HttpReflector.getAllRouteMetadata(Foo, 'fooWithPrefixAndInterceptors')).toEqual([{
+    });
+  });
+
+  it('should execute the addRouteMetadataSpy method with the appropriate arguments while using the @Options decorator with prefix and interceptors', () => {
+    class Foo {
+      @Options('foo', MyInterceptor, { args: ['bar'], interceptor: MyInterceptor })
+      hello() {
+      }
+    }
+
+    expect(addRouteMetadataSpy).toHaveBeenNthCalledWith(1, Foo, 'hello', {
       interceptors: [{ args: [], interceptor: MyInterceptor }, { args: ['bar'], interceptor: MyInterceptor }],
       method: 'OPTIONS',
       path: 'foo',
-    }]);
+    });
   });
 });
