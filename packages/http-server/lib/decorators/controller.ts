@@ -1,14 +1,16 @@
 import { Injectable } from '@caviajs/core';
-import { HttpReflector } from '../http-reflector';
 
 const DEFAULT_PREFIX: string = '/';
 
-export function Controller(prefix?: string): ClassDecorator {
-  return target => {
-    HttpReflector.addControllerMetadata(target, {
-      prefix: prefix || DEFAULT_PREFIX,
-    });
+export const CONTROLLER_PATH_METADATA: Symbol = Symbol('CONTROLLER_PATH_METADATA');
+
+export function Controller(prefix?: string | string[]): ClassDecorator {
+  return (target: Function) => {
+    const controllerPathMetadata: ControllerPathMetadata = prefix || DEFAULT_PREFIX;
 
     Reflect.decorate([Injectable()], target);
+    Reflect.defineMetadata(CONTROLLER_PATH_METADATA, controllerPathMetadata, target);
   };
 }
+
+export type ControllerPathMetadata = string | string[];

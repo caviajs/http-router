@@ -1,39 +1,34 @@
-import { Controller } from '@caviajs/http-server';
-import { HttpReflector } from '../http-reflector';
+import { INJECTABLE_METADATA } from '@caviajs/core';
+import { Controller, CONTROLLER_PATH_METADATA } from './controller';
 
 describe('@Controller', () => {
-  let addControllerMetadataSpy: jest.SpyInstance;
+  let defineMetadataSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    addControllerMetadataSpy = jest.spyOn(HttpReflector, 'addControllerMetadata');
+    defineMetadataSpy = jest.spyOn(Reflect, 'defineMetadata');
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should not execute addControllerMetadata when the @Controller decorator is not used', () => {
-    class Foo {
-      foo() {
-      }
-    }
-
-    expect(addControllerMetadataSpy).not.toHaveBeenCalled();
-  });
-
-  it('should execute the addControllerMetadata method with the appropriate arguments while using the @Controller decorator without prefix', () => {
+  it('should add the appropriate metadata while using the @Controller decorator without prefix', () => {
     @Controller()
     class Foo {
     }
 
-    expect(addControllerMetadataSpy).toHaveBeenNthCalledWith(1, Foo, { prefix: '/' });
+    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(INJECTABLE_METADATA, true, Foo);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, '/', Foo);
   });
 
-  it('should execute the addControllerMetadata method with the appropriate arguments while using the @Controller decorator with prefix', () => {
+  it('should add the appropriate metadata while using the @Controller decorator with prefix', () => {
     @Controller('foo')
     class Foo {
     }
 
-    expect(addControllerMetadataSpy).toHaveBeenNthCalledWith(1, Foo, { prefix: 'foo' });
+    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(INJECTABLE_METADATA, true, Foo);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, 'foo', Foo);
   });
 });
