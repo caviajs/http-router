@@ -1,4 +1,4 @@
-import { isValueProvider } from '../../index';
+import { isValueProvider } from './is-value-provider';
 
 describe('isValueProvider', () => {
   it('should return false for a null', () => {

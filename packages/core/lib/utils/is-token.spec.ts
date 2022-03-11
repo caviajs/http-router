@@ -1,4 +1,4 @@
-import { isToken } from '@caviajs/core';
+import { isToken } from './is-token';
 
 describe('isToken', () => {
   it('should return true for the string', () => {

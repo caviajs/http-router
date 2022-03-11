@@ -1,4 +1,4 @@
-import { isExistingProvider } from '../../index';
+import { isExistingProvider } from './is-existing-provider';
 
 describe('isExistingProvider', () => {
   it('should return false for a null', () => {

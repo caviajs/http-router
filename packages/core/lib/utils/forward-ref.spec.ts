@@ -1,4 +1,4 @@
-import { ForwardRef, forwardRef, isForwardRef } from '../../index';
+import { ForwardRef, forwardRef, isForwardRef } from './forward-ref';
 
 describe('forwardRef', () => {
   it('should return ForwardRef', () => {

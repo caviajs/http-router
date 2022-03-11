@@ -1,4 +1,5 @@
-import { getProviderName, Token } from '../../index';
+import { getProviderName } from './get-provider-name';
+import { Token } from '../types/token';
 
 describe('getProviderName', () => {
   it('should return correct provider name for a class provider', () => {

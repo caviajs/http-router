@@ -1,4 +1,4 @@
-import { isClassProvider } from '../../index';
+import { isClassProvider } from './is-class-provider';
 
 describe('isClassProvider', () => {
   it('should return false for a null', () => {

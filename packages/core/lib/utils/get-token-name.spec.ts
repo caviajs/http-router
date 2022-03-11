@@ -1,4 +1,5 @@
-import { Token, getTokenName } from '../../index';
+import { getTokenName } from './get-token-name';
+import { Token } from '../types/token';
 
 describe('getTokenName', () => {
   it('should return correct token name for a string token', () => {

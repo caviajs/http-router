@@ -1,4 +1,4 @@
-import { isTypeProvider } from '../../index';
+import { isTypeProvider } from './is-type-provider';
 
 describe('isTypeProvider', () => {
   it('should return false for a null', () => {

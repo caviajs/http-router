@@ -1,4 +1,4 @@
-import { isFactoryProvider } from '../../index';
+import { isFactoryProvider } from './is-factory-provider';
 
 describe('isFactoryProvider', () => {
   it('should return false for a null', () => {
