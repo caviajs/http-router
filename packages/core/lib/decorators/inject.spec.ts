@@ -2,6 +2,16 @@ import { INJECT_METADATA, Inject, InjectMetadata } from './inject';
 import { forwardRef } from '../utils/forward-ref';
 
 describe('@Inject', () => {
+  let defineMetadataSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    defineMetadataSpy = jest.spyOn(Reflect, 'defineMetadata');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should add the appropriate metadata while using decorator', () => {
     const baz = 'baz';
     const quz = forwardRef(() => 'quz');
@@ -16,10 +26,9 @@ describe('@Inject', () => {
       }
     }
 
-    const metadata: InjectMetadata = Reflect.getMetadata(INJECT_METADATA, Foo);
+    const metadata: InjectMetadata = new Map().set(1, baz).set(3, quz);
 
-    expect(metadata.size).toBe(2);
-    expect(metadata.get(1)).toBe(baz);
-    expect(metadata.get(3)).toBe(quz);
+    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
+    expect(defineMetadataSpy).toHaveBeenLastCalledWith(INJECT_METADATA, metadata, Foo);
   });
 });
