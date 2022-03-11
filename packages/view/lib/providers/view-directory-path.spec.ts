@@ -1,7 +1,7 @@
 import path from 'path';
 import { VIEW_DIRECTORY_PATH, ViewDirectoryPathProvider } from './view-directory-path';
 
-describe('viewDirectoryPathProvider', () => {
+describe('ViewDirectoryPathProvider', () => {
   it('should have the appropriate token', () => {
     expect(ViewDirectoryPathProvider.provide).toEqual(VIEW_DIRECTORY_PATH);
   });
