@@ -5,9 +5,13 @@ export const USE_PIPE_METADATA: Symbol = Symbol('USE_PIPE_METADATA');
 
 export function UsePipe(pipe: Type<Pipe>, args?: any[]): ParameterDecorator {
   return (target: Function, propertyKey: string, parameterIndex: number) => {
-    const usePipeMetadata: UsePipeMetadata = (Reflect.getMetadata(USE_PIPE_METADATA, target.constructor, propertyKey) || []).push({
+    const designParamTypesMetadata: any[] = Reflect.getMetadata('design:paramtypes', target, propertyKey) || [];
+    const usePipeMetadata: UsePipeMetadata = (Reflect.getMetadata(USE_PIPE_METADATA, target.constructor, propertyKey) || []);
+
+    usePipeMetadata.push({
       args: args || [],
       index: parameterIndex,
+      metaType: designParamTypesMetadata[parameterIndex],
       pipe: pipe,
     });
 
@@ -15,4 +19,4 @@ export function UsePipe(pipe: Type<Pipe>, args?: any[]): ParameterDecorator {
   };
 }
 
-export type UsePipeMetadata = { args: any[]; index: number; pipe: Type<Pipe>; }[];
+export type UsePipeMetadata = { args: any[]; index: number; metaType: any; pipe: Type<Pipe>; }[];
