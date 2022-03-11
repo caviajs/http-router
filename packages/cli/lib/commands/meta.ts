@@ -3,9 +3,9 @@ import { CommandModule } from 'yargs';
 
 export const MetaCommand: CommandModule = {
   command: [
-    'meta generate http-client',
+    'generate',
   ],
   handler: async yargs => {
-
+    console.log('siema');
   },
 };
