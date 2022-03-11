@@ -3,18 +3,18 @@ import { Provider } from './types/provider';
 import { ApplicationRef } from './application-ref';
 import { Type } from './types/type';
 import { isTypeProvider } from './utils/is-type-provider';
-import { getApplicationMetadata, hasApplicationMetadata } from './decorators/application';
 import { Package } from './types/package';
+import { APPLICATION_METADATA } from './decorators/application';
 
 const BUILT_IN_SERVICES: Provider[] = [];
 
 export class ApplicationBuilder {
   public static init(application: Type): ApplicationBuilder {
-    if (!hasApplicationMetadata(application)) {
+    if (Reflect.hasMetadata(APPLICATION_METADATA, application) === false) {
       throw new Error(`The '${ application?.name }' should be annotated as cavia application`);
     }
 
-    const caviaApplicationMetadata = getApplicationMetadata(application);
+    const caviaApplicationMetadata = Reflect.getMetadata(APPLICATION_METADATA, application);
 
     const packages: Package[] = [...caviaApplicationMetadata?.packages || []];
     const providers: Provider[] = [...BUILT_IN_SERVICES, ...caviaApplicationMetadata?.providers || [], application];

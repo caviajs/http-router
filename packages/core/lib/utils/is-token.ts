@@ -1,4 +1,4 @@
-import { Token } from '@caviajs/core';
+import { Token } from '../types/token';
 
 export function isToken(token: any): token is Token {
   return (

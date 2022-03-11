@@ -8,9 +8,9 @@ import { isFactoryProvider } from './utils/is-factory-provider';
 import { isTypeProvider } from './utils/is-type-provider';
 import { isValueProvider } from './utils/is-value-provider';
 import { Type } from './types/type';
-import { hasInjectableMetadata } from './decorators/injectable';
-import { getInjectMetadata, InjectMetadata } from './decorators/inject';
-import { getOptionalMetadata, OptionalMetadata } from './decorators/optional';
+import { INJECTABLE_METADATA } from './decorators/injectable';
+import { INJECT_METADATA, InjectMetadata } from './decorators/inject';
+import { OPTIONAL_METADATA, OptionalMetadata } from './decorators/optional';
 import { isForwardRef } from './utils/forward-ref';
 import { getTokenName } from './utils/get-token-name';
 import { isToken } from './utils/is-token';
@@ -133,12 +133,12 @@ export class Injector {
     if (isClassProvider(provider) || isTypeProvider(provider)) {
       const type: Type = isTypeProvider(provider) ? provider : provider.useClass;
 
-      if (hasInjectableMetadata(type) === false) {
+      if (Reflect.hasMetadata(INJECTABLE_METADATA, type) === false) {
         throw new Error(`The '${ type.name }' should be annotated as a injectable`);
       }
 
-      const injectMetadata: InjectMetadata = getInjectMetadata(type);
-      const optionalMetadata: OptionalMetadata = getOptionalMetadata(type);
+      const injectMetadata: InjectMetadata = Reflect.getMetadata(INJECT_METADATA, type);
+      const optionalMetadata: OptionalMetadata = Reflect.getMetadata(OPTIONAL_METADATA, type);
 
       for (const [index, value] of (Reflect.getMetadata('design:paramtypes', type) || []).entries()) {
         if (value === undefined) {
