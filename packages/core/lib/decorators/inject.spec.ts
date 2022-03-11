@@ -26,9 +26,9 @@ describe('@Inject', () => {
       }
     }
 
-    const metadata: InjectMetadata = new Map().set(1, baz).set(3, quz);
+    const injectMetadata: InjectMetadata = new Map().set(1, baz).set(3, quz);
 
     expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
-    expect(defineMetadataSpy).toHaveBeenLastCalledWith(INJECT_METADATA, metadata, Foo);
+    expect(defineMetadataSpy).toHaveBeenLastCalledWith(INJECT_METADATA, injectMetadata, Foo);
   });
 });
