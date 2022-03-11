@@ -1,4 +1,4 @@
-import { Storage } from '../../index';
+import { Storage } from './storage';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import { Readable, Writable } from 'stream';

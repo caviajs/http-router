@@ -1,4 +1,5 @@
-import { Storage, StoragePackage } from '../index';
+import { StoragePackage } from './storage-package';
+import { Storage } from './providers/storage';
 
 describe('StoragePackage', () => {
   it('should contain built-in providers', () => {
