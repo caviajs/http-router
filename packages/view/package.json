@@ -7,7 +7,6 @@
   "dependencies": {
     "edge.js": "^5.3.2"
   },
-  "devDependencies": {},
   "peerDependencies": {
     "reflect-metadata": "^0.1.13"
   }

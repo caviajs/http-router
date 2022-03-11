@@ -12,9 +12,6 @@
     "qs": "^6.10.1",
     "ramda": "^0.27.1"
   },
-  "devDependencies": {
-    "@types/qs": "^6.9.6"
-  },
   "peerDependencies": {
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.4"

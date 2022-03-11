@@ -7,9 +7,6 @@
   "dependencies": {
     "cli-color": "^2.0.0"
   },
-  "devDependencies": {
-    "@types/cli-color": "^2.0.0"
-  },
   "peerDependencies": {
     "reflect-metadata": "^0.1.13"
   }

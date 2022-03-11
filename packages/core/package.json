@@ -4,8 +4,6 @@
   "version": "0.0.1",
   "author": "Paweł Partyka",
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {},
   "peerDependencies": {
     "reflect-metadata": "^0.1.13"
   }

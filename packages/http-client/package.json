@@ -4,14 +4,9 @@
   "version": "0.0.1",
   "author": "Paweł Partyka",
   "license": "MIT",
-  "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "prebuild": "rimraf dist"
-  },
   "dependencies": {
     "is-stream": "^2.0.0"
   },
-  "devDependencies": {},
   "peerDependencies": {
     "reflect-metadata": "^0.1.13"
   }
