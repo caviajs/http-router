@@ -1,4 +1,4 @@
-import { HttpClient, RequestOptions, RequestResult } from '../../index';
+import { HttpClient, RequestOptions, RequestResult } from './http-client';
 
 describe('HttpClient', () => {
   describe('http methods', () => {
