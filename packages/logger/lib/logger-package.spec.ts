@@ -3,7 +3,7 @@ import { Logger } from './providers/logger';
 import { LoggerLevelProvider } from './providers/logger-level';
 import { LoggerMessageFactoryProvider } from './providers/logger-message-factory';
 
-describe('StoragePackage', () => {
+describe('LoggerPackage', () => {
   it('should contain built-in providers', () => {
     const bullPackage = LoggerPackage
       .configure()
