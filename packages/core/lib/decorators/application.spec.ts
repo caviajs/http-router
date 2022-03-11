@@ -1,30 +1,34 @@
-import { getApplicationMetadata, hasApplicationMetadata, Application, ApplicationOptions } from '../../index';
+import { APPLICATION_METADATA, Application, ApplicationOptions } from './application';
+import { INJECTABLE_METADATA } from './injectable';
 
 describe('@Application', () => {
-  it('should return false if the class does not use the @Application decorator', () => {
-    class Foo {
-    }
+  let defineMetadataSpy: jest.SpyInstance;
 
-    expect(getApplicationMetadata(Foo)).toEqual(undefined);
-    expect(hasApplicationMetadata(Foo)).toEqual(false);
+  beforeEach(() => {
+    defineMetadataSpy = jest.spyOn(Reflect, 'defineMetadata');
   });
 
-  it('should return the appropriate metadata if the class uses the @Application decorator', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should add the appropriate metadata while using decorator', () => {
     const options: ApplicationOptions = {
       packages: [
         { providers: [{ provide: 'bar', useFactory: () => 'bar' }] },
         { providers: [{ provide: 'baz', useValue: 'baz' }] },
       ],
       providers: [
-        { provide: 'foo', useValue: 'foo' }
+        { provide: 'foo', useValue: 'foo' },
       ],
     };
 
     @Application(options)
-    class Foo {
+    class Popcorn {
     }
 
-    expect(getApplicationMetadata(Foo)).toEqual(options);
-    expect(hasApplicationMetadata(Foo)).toEqual(true);
+    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(INJECTABLE_METADATA, true, Popcorn);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(APPLICATION_METADATA, options, Popcorn);
   });
 });
