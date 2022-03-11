@@ -1,6 +1,6 @@
 import { Edge } from 'edge.js';
 
-import { View } from '../../index';
+import { View } from './view';
 
 describe('View', () => {
   afterEach(() => {

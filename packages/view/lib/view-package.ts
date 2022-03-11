@@ -1,6 +1,6 @@
 import { Package, Provider } from '@caviajs/core';
 import { View } from './providers/view';
-import { viewDirectoryPathProvider } from './providers/view-directory-path';
+import { ViewDirectoryPathProvider } from './providers/view-directory-path';
 
 export class ViewPackage {
   public static configure(): ViewPackage {
@@ -9,7 +9,7 @@ export class ViewPackage {
 
   private readonly providers: Provider[] = [
     View,
-    viewDirectoryPathProvider,
+    ViewDirectoryPathProvider,
   ];
 
   protected constructor() {
