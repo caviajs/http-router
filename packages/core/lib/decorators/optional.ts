@@ -1,16 +1,8 @@
 export const OPTIONAL_METADATA = Symbol('OPTIONAL_METADATA');
 
-export function getOptionalMetadata(target: object): OptionalMetadata | undefined {
-  return Reflect.getMetadata(OPTIONAL_METADATA, target);
-}
-
-export function hasOptionalMetadata(target: object): boolean {
-  return Reflect.hasMetadata(OPTIONAL_METADATA, target);
-}
-
 export function Optional(): ParameterDecorator {
-  return (target, propertyKey, parameterIndex) => {
-    const optionalMetadata: OptionalMetadata = (getOptionalMetadata(target) || new Map());
+  return (target: Function, propertyKey: string, parameterIndex: number) => {
+    const optionalMetadata: OptionalMetadata = (Reflect.getMetadata(OPTIONAL_METADATA, target) || new Map());
 
     optionalMetadata.set(parameterIndex, true);
 
