@@ -1,4 +1,5 @@
-import { Logger, LoggerLevel } from '../../index';
+import { Logger } from './logger';
+import { LoggerLevel } from './logger-level';
 
 describe('Logger', () => {
   const logger: Logger = new Logger(LoggerLevel.TRACE, () => '');

@@ -1,4 +1,4 @@
-import { LOGGER_MESSAGE_FACTORY, LoggerMessageFactoryProvider } from '../../index';
+import { LOGGER_MESSAGE_FACTORY, LoggerMessageFactoryProvider } from './logger-message-factory';
 
 describe('LoggerMessageFactoryProvider', () => {
   it('should have the appropriate token', () => {

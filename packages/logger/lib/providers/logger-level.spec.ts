@@ -1,4 +1,4 @@
-import { LOGGER_LEVEL, LoggerLevel, LoggerLevelProvider } from '../../index';
+import { LOGGER_LEVEL, LoggerLevel, LoggerLevelProvider } from './logger-level';
 
 describe('LoggerLevelProvider', () => {
   it('should have the appropriate token', () => {
