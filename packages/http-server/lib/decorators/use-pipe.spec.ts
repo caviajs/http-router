@@ -22,7 +22,7 @@ describe('@UsePipe', () => {
     jest.clearAllMocks();
   });
 
-  it('should add the appropriate metadata param types while using decorator', () => {
+  it('should add the appropriate metadata while using decorator', () => {
     class Popcorn {
       updatePig(@UsePipe(FooPipe) body) {
       }
@@ -36,7 +36,7 @@ describe('@UsePipe', () => {
     expect(defineMetadataSpy).toHaveBeenLastCalledWith(USE_PIPE_METADATA, meta, Popcorn, 'updatePig');
   });
 
-  it('should add the appropriate metadata param types while using decorator with args', () => {
+  it('should add the appropriate metadata while using decorator with args', () => {
     class Popcorn {
       updatePig(@UsePipe(FooPipe, [1245, 'foo']) body) {
       }
@@ -50,7 +50,7 @@ describe('@UsePipe', () => {
     expect(defineMetadataSpy).toHaveBeenLastCalledWith(USE_PIPE_METADATA, usePipeMetadata, Popcorn, 'updatePig');
   });
 
-  it('should add the appropriate metadata param types when the decorator is used multiple times', () => {
+  it('should add the appropriate metadata when the decorator is used multiple times', () => {
     class Body {
       name: string;
     }
