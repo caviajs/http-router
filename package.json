@@ -66,6 +66,7 @@
       "<rootDir>/node_modules/reflect-metadata/Reflect.js"
     ],
     "moduleNameMapper": {
+      "@caviajs/cli": "<rootDir>/packages/cli/index.ts",
       "@caviajs/core": "<rootDir>/packages/core/index.ts",
       "@caviajs/env": "<rootDir>/packages/env/index.ts",
       "@caviajs/http-client": "<rootDir>/packages/http-client/index.ts",

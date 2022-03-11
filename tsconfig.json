@@ -19,6 +19,9 @@
       "node"
     ],
     "paths": {
+      "@caviajs/cli": [
+        "packages/cli/index.ts"
+      ],
       "@caviajs/core": [
         "packages/core/index.ts"
       ],
