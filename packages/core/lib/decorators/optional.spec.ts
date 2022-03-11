@@ -1,6 +1,16 @@
 import { OPTIONAL_METADATA, Optional, OptionalMetadata } from './optional';
 
 describe('@Optional', () => {
+  let defineMetadataSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    defineMetadataSpy = jest.spyOn(Reflect, 'defineMetadata');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should add the appropriate metadata while using decorator', () => {
     class Foo {
       constructor(
@@ -12,10 +22,9 @@ describe('@Optional', () => {
       }
     }
 
-    const metadata: OptionalMetadata = Reflect.getMetadata(OPTIONAL_METADATA, Foo);
+    const optionalMetadata: OptionalMetadata = new Map().set(1, true).set(3, true);
 
-    expect(metadata.size).toBe(2);
-    expect(metadata.get(1)).toBe(true);
-    expect(metadata.get(3)).toBe(true);
+    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
+    expect(defineMetadataSpy).toHaveBeenLastCalledWith(OPTIONAL_METADATA, optionalMetadata, Foo);
   });
 });
