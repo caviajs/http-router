@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Env } from '../../index';
+import { Env } from './env';
 
 jest.mock('dotenv');
 jest.mock('fs');

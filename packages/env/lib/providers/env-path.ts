@@ -3,7 +3,7 @@ import path from 'path';
 
 export const ENV_PATH: Token<EnvPath> = Symbol('ENV_PATH');
 
-export const envPathProvider: ValueProvider<EnvPath> = {
+export const EnvPathProvider: ValueProvider<EnvPath> = {
   provide: ENV_PATH,
   useValue: path.join(process.cwd(), '.env'),
 };
