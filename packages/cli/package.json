@@ -4,7 +4,13 @@
   "version": "0.0.1",
   "author": "Paweł Partyka",
   "license": "MIT",
-  "dependencies": {},
+  "bin": {
+    "cavia": "index.js"
+  },
+  "dependencies": {
+    "inquirer": "^7.1.0",
+    "yargs": "^17.3.1"
+  },
   "peerDependencies": {
     "reflect-metadata": "^0.1.13"
   }
