@@ -1,70 +1,161 @@
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
 
+const message: string = 'Hello Cavia';
+
 describe('Logger', () => {
-  const logger: Logger = new Logger(LoggerLevel.TRACE, () => '');
+  let writeSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(jest.fn());
+  });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  describe('debug method', () => {
-    it('should call process.stdout.write', () => {
-      const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(jest.fn());
+  describe('LoggerLevel.OFF', () => {
+    const logger: Logger = new Logger(LoggerLevel.OFF, () => '');
 
-      logger.debug('foo');
+    it('should not call process.stdout.write for the appropriate levels', () => {
+      logger.fatal(message);
+      logger.error(message);
+      logger.warn(message);
+      logger.info(message);
+      logger.debug(message);
+      logger.trace(message);
 
-      expect(writeSpy).toHaveBeenCalledTimes(1);
+      expect(writeSpy).not.toHaveBeenCalled();
     });
   });
 
-  describe('error method', () => {
-    it('should call process.stdout.write', () => {
-      const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(jest.fn());
+  describe('LoggerLevel.FATAL', () => {
+    const logger: Logger = new Logger(LoggerLevel.FATAL, () => '');
 
-      logger.error('foo');
-
-      expect(writeSpy).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('fatal method', () => {
-    it('should call process.stdout.write', () => {
-      const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(jest.fn());
-
-      logger.fatal('foo');
+    it('should call process.stdout.write for the appropriate levels', () => {
+      logger.fatal(message);
 
       expect(writeSpy).toHaveBeenCalledTimes(1);
     });
-  });
 
-  describe('info method', () => {
-    it('should call process.stdout.write', () => {
-      const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(jest.fn());
+    it('should not call process.stdout.write for the appropriate levels', () => {
+      logger.error(message);
+      logger.warn(message);
+      logger.info(message);
+      logger.debug(message);
+      logger.trace(message);
 
-      logger.info('foo');
-
-      expect(writeSpy).toHaveBeenCalledTimes(1);
+      expect(writeSpy).not.toHaveBeenCalled();
     });
   });
 
-  describe('trace method', () => {
-    it('should call process.stdout.write', () => {
-      const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(jest.fn());
+  describe('LoggerLevel.ERROR', () => {
+    const logger: Logger = new Logger(LoggerLevel.ERROR, () => '');
 
-      logger.trace('foo');
+    it('should call process.stdout.write for the appropriate levels', () => {
+      logger.fatal(message);
+      logger.error(message);
 
-      expect(writeSpy).toHaveBeenCalledTimes(1);
+      expect(writeSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should not call process.stdout.write for the appropriate levels', () => {
+      logger.warn(message);
+      logger.info(message);
+      logger.debug(message);
+      logger.trace(message);
+
+      expect(writeSpy).not.toHaveBeenCalled();
     });
   });
 
-  describe('warn method', () => {
-    it('should call process.stdout.write', () => {
-      const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(jest.fn());
+  describe('LoggerLevel.WARN', () => {
+    const logger: Logger = new Logger(LoggerLevel.WARN, () => '');
 
-      logger.warn('foo');
+    it('should call process.stdout.write for the appropriate levels', () => {
+      logger.fatal(message);
+      logger.error(message);
+      logger.warn(message);
 
-      expect(writeSpy).toHaveBeenCalledTimes(1);
+      expect(writeSpy).toHaveBeenCalledTimes(3);
+    });
+
+    it('should not call process.stdout.write for the appropriate levels', () => {
+      logger.info(message);
+      logger.debug(message);
+      logger.trace(message);
+
+      expect(writeSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('LoggerLevel.INFO', () => {
+    const logger: Logger = new Logger(LoggerLevel.INFO, () => '');
+
+    it('should call process.stdout.write for the appropriate levels', () => {
+      logger.fatal(message);
+      logger.error(message);
+      logger.warn(message);
+      logger.info(message);
+
+      expect(writeSpy).toHaveBeenCalledTimes(4);
+    });
+
+    it('should not call process.stdout.write for the appropriate levels', () => {
+      logger.debug(message);
+      logger.trace(message);
+
+      expect(writeSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('LoggerLevel.DEBUG', () => {
+    const logger: Logger = new Logger(LoggerLevel.DEBUG, () => '');
+
+    it('should call process.stdout.write for the appropriate levels', () => {
+      logger.fatal(message);
+      logger.error(message);
+      logger.warn(message);
+      logger.info(message);
+      logger.debug(message);
+
+      expect(writeSpy).toHaveBeenCalledTimes(5);
+    });
+
+    it('should not call process.stdout.write for the appropriate levels', () => {
+      logger.trace(message);
+
+      expect(writeSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('LoggerLevel.TRACE', () => {
+    const logger: Logger = new Logger(LoggerLevel.TRACE, () => '');
+
+    it('should call process.stdout.write for the appropriate levels', () => {
+      logger.fatal(message);
+      logger.error(message);
+      logger.warn(message);
+      logger.info(message);
+      logger.debug(message);
+      logger.trace(message);
+
+      expect(writeSpy).toHaveBeenCalledTimes(6);
+    });
+  });
+
+  describe('LoggerLevel.ALL', () => {
+    const logger: Logger = new Logger(LoggerLevel.ALL, () => '');
+
+    it('should call process.stdout.write for the appropriate levels', () => {
+      logger.fatal(message);
+      logger.error(message);
+      logger.warn(message);
+      logger.info(message);
+      logger.debug(message);
+      logger.trace(message);
+
+      expect(writeSpy).toHaveBeenCalledTimes(6);
     });
   });
 });
