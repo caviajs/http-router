@@ -7,7 +7,7 @@ export const LOGGER_MESSAGE_FACTORY: Token<LoggerMessageFactory> = Symbol('LOGGE
 export const LoggerMessageFactoryProvider: FactoryProvider<LoggerMessageFactory> = {
   provide: LOGGER_MESSAGE_FACTORY,
   useFactory: (): LoggerMessageFactory => {
-    return ({ message, context, level }) => {
+    return ({ context, level, message }): string => {
       let color: clc.Format;
 
       switch (level) {
@@ -54,5 +54,5 @@ export const LoggerMessageFactoryProvider: FactoryProvider<LoggerMessageFactory>
 };
 
 export interface LoggerMessageFactory {
-  (payload: { level: LoggerLevel, message: string, context: string }): string;
+  (payload: { context?: string; level: LoggerLevel; message: string; }): string;
 }
