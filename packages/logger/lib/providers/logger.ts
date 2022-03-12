@@ -12,37 +12,37 @@ export class Logger {
 
   public debug(message: string, context?: string): void {
     if (LoggerLevel.DEBUG <= this.loggerLevel) {
-      process.stdout.write(this.loggerMessageFactory({ message, context, level: LoggerLevel.DEBUG }));
+      process.stdout.write(this.loggerMessageFactory({ context, level: LoggerLevel.DEBUG, message }));
     }
   }
 
   public error(message: string, context?: string): void {
     if (LoggerLevel.ERROR <= this.loggerLevel) {
-      process.stdout.write(this.loggerMessageFactory({ message, context, level: LoggerLevel.ERROR }));
+      process.stdout.write(this.loggerMessageFactory({ context, level: LoggerLevel.ERROR, message }));
     }
   }
 
   public fatal(message: string, context?: string): void {
     if (LoggerLevel.FATAL <= this.loggerLevel) {
-      process.stdout.write(this.loggerMessageFactory({ message, context, level: LoggerLevel.FATAL }));
+      process.stdout.write(this.loggerMessageFactory({ context, level: LoggerLevel.FATAL, message }));
     }
   }
 
   public info(message: string, context?: string): void {
     if (LoggerLevel.INFO <= this.loggerLevel) {
-      process.stdout.write(this.loggerMessageFactory({ message, context, level: LoggerLevel.INFO }));
+      process.stdout.write(this.loggerMessageFactory({ context, level: LoggerLevel.INFO, message }));
     }
   }
 
   public trace(message: string, context?: string): void {
     if (LoggerLevel.TRACE <= this.loggerLevel) {
-      process.stdout.write(this.loggerMessageFactory({ message, context, level: LoggerLevel.TRACE }));
+      process.stdout.write(this.loggerMessageFactory({ context, level: LoggerLevel.TRACE, message }));
     }
   }
 
   public warn(message: string, context?: string): void {
     if (LoggerLevel.WARN <= this.loggerLevel) {
-      process.stdout.write(this.loggerMessageFactory({ message, context, level: LoggerLevel.WARN }));
+      process.stdout.write(this.loggerMessageFactory({ context, level: LoggerLevel.WARN, message }));
     }
   }
 }
