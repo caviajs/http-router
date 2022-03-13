@@ -1,6 +1,24 @@
 import 'reflect-metadata';
 
 export * from './lib/decorators/controller';
+export * from './lib/decorators/route-mapping';
+export * from './lib/decorators/route-mapping-delete';
+export * from './lib/decorators/route-mapping-get';
+export * from './lib/decorators/route-mapping-head';
+export * from './lib/decorators/route-mapping-options';
+export * from './lib/decorators/route-mapping-patch';
+export * from './lib/decorators/route-mapping-post';
+export * from './lib/decorators/route-mapping-put';
+export * from './lib/decorators/route-param';
+export * from './lib/decorators/route-param-body';
+export * from './lib/decorators/route-param-cookies';
+export * from './lib/decorators/route-param-headers';
+export * from './lib/decorators/route-param-params';
+export * from './lib/decorators/route-param-query';
+export * from './lib/decorators/route-param-req';
+export * from './lib/decorators/route-param-res';
+export * from './lib/decorators/use-interceptor';
+export * from './lib/decorators/use-pipe';
 
 export * from './lib/interceptors/body-parser-interceptor';
 
