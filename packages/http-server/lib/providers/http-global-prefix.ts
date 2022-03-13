@@ -7,7 +7,7 @@ export const HTTP_GLOBAL_PREFIX: Token<HttpGlobalPrefix> = Symbol('HTTP_GLOBAL_P
 
 export const HttpGlobalPrefixProvider: ValueProvider<HttpGlobalPrefix> = {
   provide: HTTP_GLOBAL_PREFIX,
-  useValue: '',
+  useValue: '/',
 };
 
 export type HttpGlobalPrefix = string;
