@@ -50,7 +50,6 @@ export class HttpServerPackage {
       this.providers.push(HttpGlobalInterceptorsProvider);
     }
 
-
     return {
       providers: this.providers,
     };
