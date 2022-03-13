@@ -1,13 +1,12 @@
 import { HttpServerPackage } from './http-server-package';
+import { BodyParserInterceptor } from './providers/body-parser-interceptor';
 import { HttpGlobalPrefixProvider } from './providers/http-global-prefix';
-import { HttpGlobalInterceptorsProvider } from './providers/http-global-interceptors';
-import { MimeTypeParser } from './providers/mime-type-parser';
-import { HttpServerManager } from './providers/http-server-manager';
-import { HttpServerProvider } from './providers/http-server';
-import { HttpRouterExplorer } from './providers/http-router-explorer';
-import { BodyParserInterceptor } from './interceptors/body-parser-interceptor';
-import { HttpServerPortProvider } from './providers/http-server-port';
+import { HttpMetadataScanner } from './providers/http-metadata-scanner';
 import { HttpRouter } from './providers/http-router';
+import { HttpServerProvider } from './providers/http-server';
+import { HttpServerManager } from './providers/http-server-manager';
+import { HttpServerPortProvider } from './providers/http-server-port';
+import { MimeTypeParser } from './providers/mime-type-parser';
 
 describe('HttpServerPackage', () => {
   it('should contain built-in providers', () => {
@@ -15,17 +14,16 @@ describe('HttpServerPackage', () => {
       .configure()
       .register();
 
-    expect(httpServerPackage.providers.length).toBe(9);
+    expect(httpServerPackage.providers.length).toBe(8);
     expect(httpServerPackage.providers).toEqual([
       BodyParserInterceptor,
+      HttpGlobalPrefixProvider,
+      HttpMetadataScanner,
       HttpRouter,
-      HttpRouterExplorer,
       HttpServerProvider,
       HttpServerManager,
       HttpServerPortProvider,
       MimeTypeParser,
-      HttpGlobalPrefixProvider,
-      HttpGlobalInterceptorsProvider,
     ]);
   });
 });

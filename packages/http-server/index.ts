@@ -20,7 +20,7 @@ export * from './lib/decorators/route-param-res';
 export * from './lib/decorators/use-interceptor';
 export * from './lib/decorators/use-pipe';
 
-export * from './lib/interceptors/body-parser-interceptor';
+export * from './lib/providers/body-parser-interceptor';
 
 export * from './lib/polyfills/http-request-cookies';
 export * from './lib/polyfills/http-request-params';
@@ -28,10 +28,9 @@ export * from './lib/polyfills/http-request-query';
 export * from './lib/polyfills/http-response-remove-cookie';
 export * from './lib/polyfills/http-response-set-cookie';
 
-export * from './lib/providers/http-global-interceptors';
 export * from './lib/providers/http-global-prefix';
+export * from './lib/providers/http-metadata-scanner';
 export * from './lib/providers/http-router';
-export * from './lib/providers/http-router-explorer';
 export * from './lib/providers/http-server';
 export * from './lib/providers/http-server-manager';
 export * from './lib/providers/http-server-port';

@@ -1,10 +1,10 @@
-import { getProviderName, Inject, Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
+import { Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
 import { Logger } from '@caviajs/logger';
 import { match } from 'path-to-regexp';
 import { parse } from 'url';
 import { Stream } from 'stream';
 import { readable } from 'is-stream';
-import { defer, from, observable, Observable, of, Subscriber, switchMap } from 'rxjs';
+import { defer, from, Observable, switchMap } from 'rxjs';
 import { mergeAll } from 'rxjs/operators';
 import { HttpException } from '../http-exception';
 import { Request } from '../types/request';
@@ -13,7 +13,6 @@ import { Path } from '../types/path';
 import { Method } from '../types/method';
 import { Interceptor } from '../types/interceptor';
 import { Pipe } from '../types/pipe';
-import { HTTP_GLOBAL_INTERCEPTORS, HttpGlobalInterceptors } from './http-global-interceptors';
 import { LOGGER_CONTEXT } from '../http-constants';
 
 declare module 'http' {
@@ -28,22 +27,21 @@ export class HttpRouter implements OnApplicationBoot {
   protected globalInterceptors: RouteInterceptor[] = [];
 
   constructor(
-    @Inject(HTTP_GLOBAL_INTERCEPTORS) private readonly httpGlobalInterceptors: HttpGlobalInterceptors,
     private readonly injector: Injector,
     private readonly logger: Logger,
   ) {
   }
 
   public async onApplicationBoot(): Promise<void> {
-    this.globalInterceptors = await Promise.all(this.httpGlobalInterceptors.map(async ({ args, interceptor }) => {
-      const interceptorInstance = await this.injector.find(interceptor);
-
-      if (!interceptorInstance) {
-        throw new Error(`Cavia can't resolve interceptor '${ getProviderName(interceptor) }'`);
-      }
-
-      return { args: args, interceptor: interceptorInstance };
-    }));
+    // this.globalInterceptors = await Promise.all(this.httpGlobalInterceptors.map(async ({ args, interceptor }) => {
+    //   const interceptorInstance = await this.injector.find(interceptor);
+    //
+    //   if (!interceptorInstance) {
+    //     throw new Error(`Cavia can't resolve interceptor '${ getProviderName(interceptor) }'`);
+    //   }
+    //
+    //   return { args: args, interceptor: interceptorInstance };
+    // }));
   }
 
   protected findRoute(request: Request): Route | undefined {

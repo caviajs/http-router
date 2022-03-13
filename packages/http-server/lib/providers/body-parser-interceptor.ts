@@ -2,7 +2,7 @@ import { Injectable } from '@caviajs/core';
 import zlib from 'zlib';
 import stream from 'stream';
 import { Next, Interceptor } from '../types/interceptor';
-import { MimeTypeParser } from '../providers/mime-type-parser';
+import { MimeTypeParser } from './mime-type-parser';
 import { getContentTypeMime } from '../utils/get-content-type-mime';
 import { HttpException } from '../http-exception';
 import { Request } from '../types/request';
