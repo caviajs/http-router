@@ -8,6 +8,7 @@
     "cavia": "index.js"
   },
   "dependencies": {
+    "edge.js": "^5.3.2",
     "inquirer": "^7.1.0",
     "yargs": "^17.3.1"
   },
