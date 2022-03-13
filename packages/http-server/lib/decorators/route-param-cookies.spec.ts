@@ -2,7 +2,7 @@ import { ROUTE_PARAM_METADATA, RouteParamMetadata } from './route-param';
 import { cookiesRouteParamDecoratorFactory, Cookies } from './route-param-cookies';
 import { ExecutionContext } from '../types/execution-context';
 
-describe('bodyRouteParamDecoratorFactory', () => {
+describe('cookiesRouteParamDecoratorFactory', () => {
   it('should return the appropriate data', () => {
     const cookies = { name: 'foo' };
 

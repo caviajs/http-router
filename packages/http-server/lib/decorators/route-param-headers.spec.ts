@@ -2,7 +2,7 @@ import { ROUTE_PARAM_METADATA, RouteParamMetadata } from './route-param';
 import { headersRouteParamDecoratorFactory, Headers } from './route-param-headers';
 import { ExecutionContext } from '../types/execution-context';
 
-describe('bodyRouteParamDecoratorFactory', () => {
+describe('headersRouteParamDecoratorFactory', () => {
   it('should return the appropriate data', () => {
     const headers = { name: 'foo' };
 
