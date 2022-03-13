@@ -28,6 +28,8 @@ export * from './lib/polyfills/http-request-query';
 export * from './lib/polyfills/http-response-remove-cookie';
 export * from './lib/polyfills/http-response-set-cookie';
 
+export * from './lib/providers/http-global-interceptors';
+export * from './lib/providers/http-global-prefix';
 export * from './lib/providers/http-router';
 export * from './lib/providers/http-router-explorer';
 export * from './lib/providers/http-server';
