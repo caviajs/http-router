@@ -22,4 +22,16 @@ describe('@RouteMapping', () => {
     expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_METHOD_METADATA, 'GET', Popcorn, 'getPigs');
     expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_PATH_METADATA, ['/pigs'], Popcorn, 'getPigs');
   });
+
+  it('should add the appropriate metadata while using decorator with multiple paths', () => {
+    class Popcorn {
+      @RouteMapping('GET', ['/pigs', '/cavia'])
+      getPigs() {
+      }
+    }
+
+    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_METHOD_METADATA, 'GET', Popcorn, 'getPigs');
+    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_PATH_METADATA, ['/pigs', '/cavia'], Popcorn, 'getPigs');
+  });
 });

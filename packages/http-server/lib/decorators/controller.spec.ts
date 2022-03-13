@@ -12,23 +12,33 @@ describe('@Controller', () => {
     jest.clearAllMocks();
   });
 
-  it('should add the appropriate metadata while using the @Controller decorator without prefix', () => {
+  it('should add the appropriate metadata while using decorator without path', () => {
     @Controller()
     class Foo {
     }
 
     expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
     expect(defineMetadataSpy).toHaveBeenCalledWith(INJECTABLE_METADATA, true, Foo);
-    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, '/', Foo);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, ['/'], Foo);
   });
 
-  it('should add the appropriate metadata while using the @Controller decorator with prefix', () => {
+  it('should add the appropriate metadata while using decorator with path', () => {
     @Controller('foo')
     class Foo {
     }
 
     expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
     expect(defineMetadataSpy).toHaveBeenCalledWith(INJECTABLE_METADATA, true, Foo);
-    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, 'foo', Foo);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, ['foo'], Foo);
+  });
+
+  it('should add the appropriate metadata while using decorator with multiple paths', () => {
+    @Controller(['foo', 'bar'])
+    class Foo {
+    }
+
+    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(INJECTABLE_METADATA, true, Foo);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, ['foo', 'bar'], Foo);
   });
 });
