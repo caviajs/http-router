@@ -1,5 +1,5 @@
 import { ROUTE_PARAM_METADATA, createRouteParamDecorator, RouteParamMetadata, RouteParamDecoratorFactory } from './route-param';
-import { ExecutionContext } from '@caviajs/http-server';
+import { ExecutionContext } from '../types/execution-context';
 
 const exampleFactory: RouteParamDecoratorFactory = (data: unknown, context: ExecutionContext) => {
   return context.getRequest();
