@@ -4,14 +4,14 @@ import { ExecutionContext } from '../types/execution-context';
 
 describe('paramsRouteParamDecoratorFactory', () => {
   it('should return the appropriate data', () => {
-    const headers = { name: 'foo' };
+    const params = { name: 'foo' };
 
     const executionContext: Partial<ExecutionContext> = {
-      getRequest: () => ({ headers } as any),
+      getRequest: () => ({ params } as any),
     };
 
-    expect(paramsRouteParamDecoratorFactory(undefined, executionContext as any)).toEqual(headers);
-    expect(paramsRouteParamDecoratorFactory('name', executionContext as any)).toEqual(headers.name);
+    expect(paramsRouteParamDecoratorFactory(undefined, executionContext as any)).toEqual(params);
+    expect(paramsRouteParamDecoratorFactory('name', executionContext as any)).toEqual(params.name);
     expect(paramsRouteParamDecoratorFactory('age', executionContext as any)).toBeUndefined();
   });
 });
