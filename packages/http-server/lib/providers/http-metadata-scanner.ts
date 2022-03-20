@@ -21,11 +21,11 @@ export class HttpMetadataScanner implements OnApplicationBoot {
   }
 
   public async onApplicationBoot(): Promise<void> {
-    const controllers: any[] = await this
+    const controllerInstances: any[] = await this
       .injector
       .filter(provider => Reflect.hasMetadata(CONTROLLER_PATH_METADATA, provider));
 
-    for (const controllerInstance of controllers) {
+    for (const controllerInstance of controllerInstances) {
       const controllerConstructor: Type = controllerInstance.constructor;
       const controllerPrototype: any = Object.getPrototypeOf(controllerInstance);
       const controllerMethodNames: string[] = Object

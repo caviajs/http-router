@@ -1,4 +1,4 @@
-import { Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
+import { Injectable, OnApplicationBoot, Type } from '@caviajs/core';
 import { Logger } from '@caviajs/logger';
 import { match } from 'path-to-regexp';
 import { parse } from 'url';
@@ -27,7 +27,6 @@ export class HttpRouter implements OnApplicationBoot {
   protected globalInterceptors: RouteInterceptor[] = [];
 
   constructor(
-    private readonly injector: Injector,
     private readonly logger: Logger,
   ) {
   }
