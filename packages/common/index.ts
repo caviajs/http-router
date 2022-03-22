@@ -1,3 +1,3 @@
 import 'reflect-metadata';
 
-export * from './lib/http/http-request';
+export * from './lib/http';

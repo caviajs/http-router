@@ -1,4 +1,4 @@
-describe('httpRequest', () => {
+describe('Http', () => {
   it('should', () => {
     expect(1).toBe(1);
   });
