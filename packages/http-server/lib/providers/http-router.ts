@@ -43,7 +43,7 @@ export class HttpRouter implements OnApplicationBoot {
     // }));
   }
 
-  public addRoute(route: Route): void {
+  public route(route: Route): void {
     if (!route.path.startsWith('/')) {
       route.path = `/${ route.path }`;
     }
