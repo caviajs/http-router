@@ -1,7 +1,7 @@
 import { ApplicationBuilder } from '@caviajs/core';
 import { LOGGER_LEVEL, LoggerLevel } from '@caviajs/logger';
 
-export class Test {
+export class ApplicationTest {
   public static configureTestingApplication(application: any): ApplicationBuilder {
     return ApplicationBuilder
       .init(application)

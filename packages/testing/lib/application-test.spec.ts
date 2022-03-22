@@ -1,6 +1,6 @@
-import { Test } from '@caviajs/testing';
 import { Application, Injectable, Package } from '@caviajs/core';
 import { LOGGER_LEVEL, LoggerLevel, LoggerPackage } from '@caviajs/logger';
+import { ApplicationTest } from './application-test';
 
 @Injectable()
 class FooService {
@@ -32,9 +32,9 @@ class BarService {
 class App {
 }
 
-describe('Test', () => {
+describe('ApplicationTest', () => {
   it('should disable the logger by default', async () => {
-    const app = await Test.configureTestingApplication(App).compile();
+    const app = await ApplicationTest.configureTestingApplication(App).compile();
     const loggerLevel = await app.injector.find(LOGGER_LEVEL);
 
     expect(loggerLevel).toEqual(LoggerLevel.OFF);
@@ -52,7 +52,7 @@ describe('Test', () => {
         }
       }
 
-      const app = await Test
+      const app = await ApplicationTest
         .configureTestingApplication(App)
         .overrideProvider(BarService)
         .useClass(TestBarService)
