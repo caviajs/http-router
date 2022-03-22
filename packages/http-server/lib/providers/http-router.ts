@@ -43,19 +43,19 @@ export class HttpRouter implements OnApplicationBoot {
     // }));
   }
 
-  protected findRoute(request: Request): Route | undefined {
-    let route: Route | undefined;
-
-    const pathname: string = parse(request.url).pathname;
-
-    for (const it of this.routes.filter(r => r.method === request.method)) {
-      if (match(it.path)(pathname)) {
-        route = it;
-        break;
-      }
+  public addRoute(route: Route): void {
+    if (!route.path.startsWith('/')) {
+      route.path = `/${ route.path }`;
     }
 
-    return route;
+    const matcher = match(route.path);
+
+    if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
+      throw new Error(`Duplicated {${ route.path }, ${ route.method }} HTTP route`);
+    }
+
+    this.routes.push(route);
+    this.logger.trace(`Mapped {${ route.path }, ${ route.method }} HTTP route`, LOGGER_CONTEXT);
   }
 
   public handle(request: Request, response: Response): void {
@@ -149,19 +149,19 @@ export class HttpRouter implements OnApplicationBoot {
       );
   }
 
-  public addRoute(route: Route): void {
-    if (!route.path.startsWith('/')) {
-      route.path = `/${ route.path }`;
+  protected findRoute(request: Request): Route | undefined {
+    let route: Route | undefined;
+
+    const pathname: string = parse(request.url).pathname;
+
+    for (const it of this.routes.filter(r => r.method === request.method)) {
+      if (match(it.path)(pathname)) {
+        route = it;
+        break;
+      }
     }
 
-    const matcher = match(route.path);
-
-    if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
-      throw new Error(`Duplicated {${ route.path }, ${ route.method }} HTTP route`);
-    }
-
-    this.routes.push(route);
-    this.logger.trace(`Mapped {${ route.path }, ${ route.method }} HTTP route`, LOGGER_CONTEXT);
+    return route;
   }
 
   // public async applyPipes(value: any, pipes: ApplyPipe[]): Promise<any> {
