@@ -5,24 +5,24 @@ import https from 'https';
 import http from 'http';
 import zlib from 'zlib';
 
-const DEFAULT_REQUEST_OPTIONS: Partial<RequestOptions> = {
+const DEFAULT_REQUEST_OPTIONS_BASE: Partial<HttpOptionsBase> = {
   responseType: 'buffer',
   method: 'GET',
 };
 
 export class Http {
-  public static request(options: RequestOptions & { responseType?: 'buffer' }): Promise<RequestResponse<Buffer>>;
-  public static request<T = any>(options: RequestOptions & { responseType?: 'json' }): Promise<RequestResponse<T>>;
-  public static request(options: RequestOptions & { responseType?: 'stream' }): Promise<RequestResponse<Readable>>;
-  public static request(options: RequestOptions & { responseType?: 'text' }): Promise<RequestResponse<string>>;
-  public static request(options: RequestOptions): Promise<RequestResponse<any>> {
-    return new Promise<RequestResponse<any>>((resolve, reject) => {
+  public static request(options: HttpOptionsBase & { responseType?: 'buffer' }): Promise<HttpResponseBase<Buffer>>;
+  public static request<T = any>(options: HttpOptionsBase & { responseType?: 'json' }): Promise<HttpResponseBase<T>>;
+  public static request(options: HttpOptionsBase & { responseType?: 'stream' }): Promise<HttpResponseBase<Readable>>;
+  public static request(options: HttpOptionsBase & { responseType?: 'text' }): Promise<HttpResponseBase<string>>;
+  public static request(options: HttpOptionsBase): Promise<HttpResponseBase<any>> {
+    return new Promise<HttpResponseBase<any>>((resolve, reject) => {
       options = {
         body: options.body,
         headers: options.headers,
         params: options.params,
-        method: options.method || DEFAULT_REQUEST_OPTIONS.method,
-        responseType: options.responseType || DEFAULT_REQUEST_OPTIONS.responseType,
+        method: options.method || DEFAULT_REQUEST_OPTIONS_BASE.method,
+        responseType: options.responseType || DEFAULT_REQUEST_OPTIONS_BASE.responseType,
         timeout: options.timeout,
         url: options.url,
       };
@@ -146,7 +146,7 @@ export class Http {
   }
 }
 
-export interface RequestOptions {
+export interface HttpOptionsBase {
   body?: any;
   headers?: { [key: string]: string | number };
   params?: { [key: string]: string };
@@ -156,7 +156,7 @@ export interface RequestOptions {
   url: string;
 }
 
-export interface RequestResponse<T> {
+export interface HttpResponseBase<T> {
   readonly body: T;
   readonly headers: { readonly [key: string]: string | string[] };
   readonly statusCode: number;

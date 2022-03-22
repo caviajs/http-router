@@ -1,9 +1,9 @@
 import { Http } from '@caviajs/common';
-import { HttpClient, Options } from './http-client';
+import { HttpClient, HttpOptions } from './http-client';
 
 const url: string = 'https://caviajs.com/api';
 const body: any = { foo: 'bar' };
-const options: Options = {
+const options: HttpOptions = {
   headers: { 'X-Foo': 'Foo' },
   params: { foo: 'bar' },
   timeout: 15000,
