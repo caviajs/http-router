@@ -13,6 +13,13 @@ describe('isTypeProvider', () => {
     expect(isTypeProvider({})).toBe(false);
   });
 
+  it('should return false for the function reference', () => {
+    const fn = function () {
+    };
+
+    expect(isTypeProvider(fn)).toBe(false);
+  });
+
   it('should return true for a class reference', () => {
     class Foo {
     }
