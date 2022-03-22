@@ -1,0 +1,13 @@
+{
+  "name": "@caviajs/common",
+  "description": "common package for cavia framework",
+  "version": "0.0.1",
+  "author": "Paweł Partyka",
+  "license": "MIT",
+  "dependencies": {
+    "is-stream": "^2.0.0"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "^0.1.13"
+  }
+}
