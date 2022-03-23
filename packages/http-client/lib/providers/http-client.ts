@@ -45,6 +45,6 @@ export class HttpClient {
   }
 }
 
-export type HttpOptions = Pick<HttpOptionsBase, 'headers' & 'params' & 'timeout'>;
+export type HttpOptions = Pick<HttpOptionsBase, 'headers' | 'params' | 'timeout'>;
 
 export type HttpResponse<T> = HttpResponseBase<T>;
