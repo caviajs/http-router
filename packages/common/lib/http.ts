@@ -15,7 +15,7 @@ export class Http {
   public static request<T = any>(options: HttpOptionsBase & { responseType?: 'json' }): Promise<HttpResponseBase<T>>;
   public static request(options: HttpOptionsBase & { responseType?: 'stream' }): Promise<HttpResponseBase<Readable>>;
   public static request(options: HttpOptionsBase & { responseType?: 'text' }): Promise<HttpResponseBase<string>>;
-  public static request(options: HttpOptionsBase): Promise<HttpResponseBase<any>> {
+  public static request(options: HttpOptionsBase & { responseType?: any }): Promise<HttpResponseBase<any>> {
     return new Promise<HttpResponseBase<any>>((resolve, reject) => {
       options = {
         body: options.body,
