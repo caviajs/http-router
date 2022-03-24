@@ -4,18 +4,18 @@ import { Readable } from 'stream';
 
 @Injectable()
 export class HttpClient {
-  public delete(url: string, options?: HttpOptions & { responseType: 'buffer'; }): Promise<HttpResponse<Buffer>>;
-  public delete<T = any>(url: string, options?: HttpOptions & { responseType: 'json'; }): Promise<HttpResponse<T>>;
-  public delete(url: string, options?: HttpOptions & { responseType: 'stream'; }): Promise<HttpResponse<Readable>>;
-  public delete(url: string, options?: HttpOptions & { responseType: 'text'; }): Promise<HttpResponse<string>>;
+  public delete(url: string, options?: HttpOptions & { responseType?: 'buffer'; }): Promise<HttpResponse<Buffer>>;
+  public delete<T = any>(url: string, options?: HttpOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
+  public delete(url: string, options?: HttpOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
+  public delete(url: string, options?: HttpOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
   public delete(url: string, options?: HttpOptions): Promise<HttpResponse<any>> {
     return Http.request({ ...options, method: 'DELETE', url: url });
   }
 
-  public get(url: string, options?: HttpOptions & { responseType: 'buffer'; }): Promise<HttpResponse<Buffer>>;
-  public get<T = any>(url: string, options?: HttpOptions & { responseType: 'json'; }): Promise<HttpResponse<T>>;
-  public get(url: string, options?: HttpOptions & { responseType: 'stream'; }): Promise<HttpResponse<Readable>>;
-  public get(url: string, options?: HttpOptions & { responseType: 'text'; }): Promise<HttpResponse<string>>;
+  public get(url: string, options?: HttpOptions & { responseType?: 'buffer'; }): Promise<HttpResponse<Buffer>>;
+  public get<T = any>(url: string, options?: HttpOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
+  public get(url: string, options?: HttpOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
+  public get(url: string, options?: HttpOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
   public get(url: string, options?: HttpOptions): Promise<HttpResponse<any>> {
     return Http.request({ ...options, method: 'GET', url: url });
   }
