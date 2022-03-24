@@ -8,7 +8,7 @@ export class HttpClient {
   public delete<T = any>(url: string, options?: HttpOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
   public delete(url: string, options?: HttpOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
   public delete(url: string, options?: HttpOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public delete(url: string, options?: HttpOptions): Promise<HttpResponse<any>> {
+  public delete(url: string, options?: HttpOptions & { responseType?: any }): Promise<HttpResponse<any>> {
     return Http.request({ ...options, method: 'DELETE', url: url });
   }
 
@@ -16,7 +16,7 @@ export class HttpClient {
   public get<T = any>(url: string, options?: HttpOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
   public get(url: string, options?: HttpOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
   public get(url: string, options?: HttpOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public get(url: string, options?: HttpOptions): Promise<HttpResponse<any>> {
+  public get(url: string, options?: HttpOptions & { responseType?: any }): Promise<HttpResponse<any>> {
     return Http.request({ ...options, method: 'GET', url: url });
   }
 
@@ -24,7 +24,7 @@ export class HttpClient {
   public patch<T = any>(url: string, body?: any, options?: HttpOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
   public patch(url: string, body?: any, options?: HttpOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
   public patch(url: string, body?: any, options?: HttpOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public patch(url: string, body?: any, options?: HttpOptions): Promise<HttpResponse<any>> {
+  public patch(url: string, body?: any, options?: HttpOptions & { responseType?: any }): Promise<HttpResponse<any>> {
     return Http.request({ ...options, body: body, method: 'PATCH', url: url });
   }
 
@@ -32,7 +32,7 @@ export class HttpClient {
   public post<T = any>(url: string, body?: any, options?: HttpOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
   public post(url: string, body?: any, options?: HttpOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
   public post(url: string, body?: any, options?: HttpOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public post(url: string, body?: any, options?: HttpOptions): Promise<HttpResponse<any>> {
+  public post(url: string, body?: any, options?: HttpOptions & { responseType?: any }): Promise<HttpResponse<any>> {
     return Http.request({ ...options, body: body, method: 'POST', url: url });
   }
 
@@ -40,7 +40,7 @@ export class HttpClient {
   public put<T = any>(url: string, body?: any, options?: HttpOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
   public put(url: string, body?: any, options?: HttpOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
   public put(url: string, body?: any, options?: HttpOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public put(url: string, body?: any, options?: HttpOptions): Promise<HttpResponse<any>> {
+  public put(url: string, body?: any, options?: HttpOptions & { responseType?: any }): Promise<HttpResponse<any>> {
     return Http.request({ ...options, body: body, method: 'PUT', url: url });
   }
 }
