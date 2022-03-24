@@ -1,12 +1,18 @@
 import { Http } from '@caviajs/common';
-import { HttpClient, HttpOptions } from './http-client';
+import { HttpClient, HttpOptions, HttpResponse } from './http-client';
 
 const url: string = 'https://caviajs.com/api';
 const body: any = { foo: 'bar' };
-const options: HttpOptions = {
+const httpOptions: HttpOptions = {
   headers: { 'X-Foo': 'Foo' },
   params: { foo: 'bar' },
   timeout: 15000,
+};
+const httpResponse: HttpResponse<undefined> = {
+  body: undefined,
+  headers: {},
+  statusCode: 200,
+  statusMessage: 'OK',
 };
 
 describe('HttpClient', () => {
@@ -15,7 +21,7 @@ describe('HttpClient', () => {
 
   beforeEach(() => {
     httpClient = new HttpClient();
-    httpRequestSpy = jest.spyOn(Http, 'request').mockImplementation(jest.fn());
+    httpRequestSpy = jest.spyOn(Http, 'request').mockReturnValue(Promise.resolve(httpResponse));
   });
 
   afterEach(() => {
@@ -23,171 +29,236 @@ describe('HttpClient', () => {
   });
 
   describe('delete', () => {
-    describe('buffer', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.delete(url, { ...options, responseType: 'buffer' });
+    describe('without response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.delete(url, httpOptions);
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, responseType: 'buffer', method: 'DELETE', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, method: 'DELETE', url: url });
       });
     });
 
-    describe('json', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.delete(url, { ...options, responseType: 'json' });
+    describe('buffer response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.delete(url, { ...httpOptions, responseType: 'buffer' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, responseType: 'json', method: 'DELETE', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, responseType: 'buffer', method: 'DELETE', url: url });
       });
     });
 
-    describe('stream', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.delete(url, { ...options, responseType: 'stream' });
+    describe('json response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.delete(url, { ...httpOptions, responseType: 'json' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, responseType: 'stream', method: 'DELETE', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, responseType: 'json', method: 'DELETE', url: url });
       });
     });
 
-    describe('text', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.delete(url, { ...options, responseType: 'text' });
+    describe('stream response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.delete(url, { ...httpOptions, responseType: 'stream' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, responseType: 'text', method: 'DELETE', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, responseType: 'stream', method: 'DELETE', url: url });
+      });
+    });
+
+    describe('text response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.delete(url, { ...httpOptions, responseType: 'text' });
+
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, responseType: 'text', method: 'DELETE', url: url });
       });
     });
   });
 
   describe('get', () => {
-    describe('buffer', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.get(url, { ...options, responseType: 'buffer' });
+    describe('without response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.get(url, httpOptions);
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, responseType: 'buffer', method: 'GET', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, method: 'GET', url: url });
       });
     });
 
-    describe('json', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.get(url, { ...options, responseType: 'json' });
+    describe('buffer response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.get(url, { ...httpOptions, responseType: 'buffer' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, responseType: 'json', method: 'GET', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, responseType: 'buffer', method: 'GET', url: url });
       });
     });
 
-    describe('stream', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.get(url, { ...options, responseType: 'stream' });
+    describe('json response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.get(url, { ...httpOptions, responseType: 'json' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, responseType: 'stream', method: 'GET', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, responseType: 'json', method: 'GET', url: url });
       });
     });
 
-    describe('text', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.get(url, { ...options, responseType: 'text' });
+    describe('stream response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.get(url, { ...httpOptions, responseType: 'stream' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, responseType: 'text', method: 'GET', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, responseType: 'stream', method: 'GET', url: url });
+      });
+    });
+
+    describe('text response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.get(url, { ...httpOptions, responseType: 'text' });
+
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, responseType: 'text', method: 'GET', url: url });
       });
     });
   });
 
   describe('patch', () => {
-    describe('buffer', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.patch(url, body, { ...options, responseType: 'buffer' });
+    describe('without response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.patch(url, body, httpOptions);
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'buffer', method: 'PATCH', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, method: 'PATCH', url: url });
       });
     });
 
-    describe('json', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.patch(url, body, { ...options, responseType: 'json' });
+    describe('buffer response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.patch(url, body, { ...httpOptions, responseType: 'buffer' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'json', method: 'PATCH', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'buffer', method: 'PATCH', url: url });
       });
     });
 
-    describe('stream', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.patch(url, body, { ...options, responseType: 'stream' });
+    describe('json response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.patch(url, body, { ...httpOptions, responseType: 'json' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'stream', method: 'PATCH', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'json', method: 'PATCH', url: url });
       });
     });
 
-    describe('text', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.patch(url, body, { ...options, responseType: 'text' });
+    describe('stream response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.patch(url, body, { ...httpOptions, responseType: 'stream' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'text', method: 'PATCH', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'stream', method: 'PATCH', url: url });
+      });
+    });
+
+    describe('text response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.patch(url, body, { ...httpOptions, responseType: 'text' });
+
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'text', method: 'PATCH', url: url });
       });
     });
   });
 
   describe('post', () => {
-    describe('buffer', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.post(url, body, { ...options, responseType: 'buffer' });
+    describe('without response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.post(url, body, httpOptions);
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'buffer', method: 'POST', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, method: 'POST', url: url });
       });
     });
 
-    describe('json', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.post(url, body, { ...options, responseType: 'json' });
+    describe('buffer response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.post(url, body, { ...httpOptions, responseType: 'buffer' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'json', method: 'POST', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'buffer', method: 'POST', url: url });
       });
     });
 
-    describe('stream', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.post(url, body, { ...options, responseType: 'stream' });
+    describe('json response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.post(url, body, { ...httpOptions, responseType: 'json' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'stream', method: 'POST', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'json', method: 'POST', url: url });
       });
     });
 
-    describe('text', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.post(url, body, { ...options, responseType: 'text' });
+    describe('stream response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.post(url, body, { ...httpOptions, responseType: 'stream' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'text', method: 'POST', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'stream', method: 'POST', url: url });
+      });
+    });
+
+    describe('text response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.post(url, body, { ...httpOptions, responseType: 'text' });
+
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'text', method: 'POST', url: url });
       });
     });
   });
 
   describe('put', () => {
-    describe('buffer', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.put(url, body, { ...options, responseType: 'buffer' });
+    describe('without response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.put(url, body, httpOptions);
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'buffer', method: 'PUT', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, method: 'PUT', url: url });
       });
     });
 
-    describe('json', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.put(url, body, { ...options, responseType: 'json' });
+    describe('buffer response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.put(url, body, { ...httpOptions, responseType: 'buffer' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'json', method: 'PUT', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'buffer', method: 'PUT', url: url });
       });
     });
 
-    describe('stream', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.put(url, body, { ...options, responseType: 'stream' });
+    describe('json response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.put(url, body, { ...httpOptions, responseType: 'json' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'stream', method: 'PUT', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'json', method: 'PUT', url: url });
       });
     });
 
-    describe('text', () => {
-      it('should execute the request with the correct options', async () => {
-        await httpClient.put(url, body, { ...options, responseType: 'text' });
+    describe('stream response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.put(url, body, { ...httpOptions, responseType: 'stream' });
 
-        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...options, body: body, responseType: 'text', method: 'PUT', url: url });
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'stream', method: 'PUT', url: url });
+      });
+    });
+
+    describe('text response type', () => {
+      it('should execute Http.request with the correct options and return appropriate data', async () => {
+        const response = await httpClient.put(url, body, { ...httpOptions, responseType: 'text' });
+
+        expect(response).toEqual(httpResponse);
+        expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'text', method: 'PUT', url: url });
       });
     });
   });
