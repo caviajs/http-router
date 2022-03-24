@@ -25,5 +25,6 @@ export * from './lib/utils/is-value-provider';
 export * from './lib/application-builder';
 export * from './lib/application-factory';
 export * from './lib/application-ref';
+export * from './lib/application-test';
 export * from './lib/constants';
 export * from './lib/injector';

@@ -74,7 +74,6 @@
       "@caviajs/http-server": "<rootDir>/packages/http-server/index.ts",
       "@caviajs/logger": "<rootDir>/packages/logger/index.ts",
       "@caviajs/storage": "<rootDir>/packages/storage/index.ts",
-      "@caviajs/testing": "<rootDir>/packages/testing/index.ts",
       "@caviajs/view": "<rootDir>/packages/view/index.ts"
     }
   }

@@ -1,6 +1,8 @@
-import { Application, Injectable, Package } from '@caviajs/core';
 import { LOGGER_LEVEL, LoggerLevel, LoggerPackage } from '@caviajs/logger';
 import { ApplicationTest } from './application-test';
+import { Application } from './decorators/application';
+import { Injectable } from './decorators/injectable';
+import { Package } from './types/package';
 
 @Injectable()
 class FooService {
