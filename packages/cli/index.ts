@@ -2,10 +2,16 @@
 import 'reflect-metadata';
 
 import yargs from 'yargs';
-import { MetaCommand } from './lib/commands/meta';
 
 yargs
   .version(require('./package.json').version)
   .scriptName('cavia')
-  .command(MetaCommand)
+  .command({
+    command: [
+      'oasgc',
+    ],
+    handler: async yargs => {
+      console.log('oasgc');
+    },
+  })
   .parse();
