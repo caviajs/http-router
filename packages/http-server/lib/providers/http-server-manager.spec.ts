@@ -38,7 +38,7 @@ describe('HttpServerManager', () => {
 
   describe('onApplicationListen', () => {
     it('should listen http server', () => {
-      const httpServerListenSpy: jest.SpyInstance = jest.spyOn(httpServer, 'listen');
+      const httpServerListenSpy: jest.SpyInstance = jest.spyOn(httpServer, 'listen').mockImplementation(jest.fn());
 
       httpServerManager.onApplicationListen();
 

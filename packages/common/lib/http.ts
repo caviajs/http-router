@@ -150,7 +150,7 @@ export interface HttpOptionsBase {
   body?: any;
   headers?: { [key: string]: string | number };
   params?: { [key: string]: string };
-  method?: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT';
+  method?: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT';
   responseType?: 'buffer' | 'json' | 'stream' | 'text';
   timeout?: number;
   url: string;
