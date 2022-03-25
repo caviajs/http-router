@@ -44,8 +44,6 @@ export * from './lib/types/pipe';
 export * from './lib/types/request';
 export * from './lib/types/response';
 
-export * from './lib/utils/get-content-disposition';
-export * from './lib/utils/get-content-disposition-parameter';
 export * from './lib/utils/get-content-type-mime';
 export * from './lib/utils/get-content-type-parameter';
 export * from './lib/utils/serialize-cookie';
