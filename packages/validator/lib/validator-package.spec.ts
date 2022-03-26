@@ -7,7 +7,7 @@ describe('ValidatorPackage', () => {
       .configure()
       .register();
 
-    expect(validatorPackage.providers.length).toBe(2);
+    expect(validatorPackage.providers.length).toBe(1);
     expect(validatorPackage.providers).toEqual([Validator]);
   });
 });
