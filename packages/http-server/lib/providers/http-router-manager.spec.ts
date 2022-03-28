@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@caviajs/core';
+import { getProviderName, Injectable, Injector } from '@caviajs/core';
 import { Logger, LoggerLevel } from '@caviajs/logger';
 import { Controller } from '../decorators/controller';
 import { Get } from '../decorators/route-mapping-get';
@@ -11,77 +11,65 @@ import { Interceptor } from '../types/interceptor';
 import { Pipe } from '../types/pipe';
 import { HttpRouter, Route } from './http-router';
 import { HttpRouterManager } from './http-router-manager';
-import { Request } from '@caviajs/http-server';
-
-@Injectable()
-class AuthInterceptor implements Interceptor {
-  intercept(context, next) {
-    return next.handle();
-  }
-}
-
-@Injectable()
-class ValidatePipe implements Pipe {
-  transform(value, metadata) {
-    return value;
-  }
-}
-
-@Controller('foo')
-class FooController {
-  @UseInterceptor(AuthInterceptor, ['admin:foo:get'])
-  @Get()
-  public getFoo(@UsePipe(ValidatePipe, ['foo']) @Body() body) {
-  }
-
-  @UseInterceptor(AuthInterceptor, ['admin:foo:create'])
-  @Post('create')
-  public postFoo(@UsePipe(ValidatePipe) request: Request) {
-  }
-}
-
-@UseInterceptor(AuthInterceptor, ['admin:bar'])
-@Controller('bar')
-class BarController {
-  @Get(':id')
-  public getBar(@UsePipe(ValidatePipe) @Params('id') id: String) {
-  }
-}
+import { Request } from '../types/request';
 
 describe('HttpRouterManager', () => {
-  let httpRouterManager: HttpRouterManager;
-
-  let httpRouterAddSpy: jest.SpyInstance;
-
-  let authInterceptor: AuthInterceptor;
-  let validatePipe: ValidatePipe;
-  let fooController: FooController;
-  let barController: BarController;
-
-  beforeEach(async () => {
-    const injector = await Injector.create([AuthInterceptor, ValidatePipe, FooController, BarController]);
-    const httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
-
-    httpRouterManager = new HttpRouterManager(httpRouter, injector);
-    httpRouterAddSpy = jest.spyOn(httpRouter, 'add').mockImplementation(jest.fn());
-
-    authInterceptor = await injector.find(AuthInterceptor);
-    validatePipe = await injector.find(ValidatePipe);
-    fooController = await injector.find(FooController);
-    barController = await injector.find(BarController);
-  });
-
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   describe('onApplicationBoot', () => {
-    it('should collect the relevant metadata', async () => {
+    it('should add the appropriate routs according to the metadata', async () => {
+      @Injectable()
+      class AuthInterceptor implements Interceptor {
+        intercept(context, next) {
+          return next.handle();
+        }
+      }
+
+      @Injectable()
+      class ValidatePipe implements Pipe {
+        transform(value, metadata) {
+          return value;
+        }
+      }
+
+      @Controller('foo')
+      class FooController {
+        @UseInterceptor(AuthInterceptor, ['admin:foo:get'])
+        @Get()
+        public getFoo(@UsePipe(ValidatePipe, ['foo']) @Body() body) {
+        }
+
+        @UseInterceptor(AuthInterceptor, ['admin:foo:create'])
+        @Post('create')
+        public postFoo(@UsePipe(ValidatePipe) request: Request) {
+        }
+      }
+
+      @UseInterceptor(AuthInterceptor, ['admin:bar'])
+      @Controller(['bar', 'baz'])
+      class BarController {
+        @Get(':id')
+        public getBar(@UsePipe(ValidatePipe) @Params('id') id: String) {
+        }
+      }
+
+      const injector = await Injector.create([AuthInterceptor, ValidatePipe, FooController, BarController]);
+      const httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
+      const httpRouterManager = new HttpRouterManager(httpRouter, injector);
+      const httpRouterAddSpy = jest.spyOn(httpRouter, 'add').mockImplementation(jest.fn());
+
+      const authInterceptor = await injector.find(AuthInterceptor);
+      const validatePipe = await injector.find(ValidatePipe);
+      const fooController = await injector.find(FooController);
+      const barController = await injector.find(BarController);
+
       expect(httpRouterAddSpy).toHaveBeenCalledTimes(0);
 
       await httpRouterManager.onApplicationBoot();
 
-      expect(httpRouterAddSpy).toHaveBeenCalledTimes(3);
+      expect(httpRouterAddSpy).toHaveBeenCalledTimes(4);
       expect(httpRouterAddSpy).toHaveBeenCalledWith({
         controllerConstructor: FooController,
         controllerInstance: fooController,
@@ -131,6 +119,72 @@ describe('HttpRouterManager', () => {
           { args: [], metaType: String, pipe: validatePipe, index: 0 },
         ],
       } as Route);
+      expect(httpRouterAddSpy).toHaveBeenCalledWith({
+        controllerConstructor: BarController,
+        controllerInstance: barController,
+        controllerInterceptors: [
+          { args: ['admin:bar'], interceptor: authInterceptor },
+        ],
+        method: 'GET',
+        path: '/baz/:id',
+        routeHandler: barController.getBar,
+        routeHandlerInterceptors: [],
+        routeHandlerParams: [
+          { data: 'id', factory: paramsRouteParamDecoratorFactory, index: 0 },
+        ],
+        routeHandlerPipes: [
+          { args: [], metaType: String, pipe: validatePipe, index: 0 },
+        ],
+      } as Route);
+    });
+
+    it('should throw an exception if the interceptor cannot resolve', async () => {
+      @Injectable()
+      class AuthInterceptor implements Interceptor {
+        intercept(context, next) {
+          return next.handle();
+        }
+      }
+
+      @Controller()
+      class NonexistentInterceptorController {
+        @UseInterceptor(AuthInterceptor)
+        @Get()
+        public popcorn() {
+        }
+      }
+
+      const injector = await Injector.create([NonexistentInterceptorController]);
+      const httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
+      const httpRouterManager = new HttpRouterManager(httpRouter, injector);
+
+      await expect(httpRouterManager.onApplicationBoot())
+        .rejects
+        .toThrow(`Cavia can't resolve interceptor '${ getProviderName(AuthInterceptor) }'`);
+    });
+
+    it('should throw an exception if the pipe cannot resolve', async () => {
+      @Injectable()
+      class ValidatePipe implements Pipe {
+        transform(value, metadata) {
+          return value;
+        }
+      }
+
+      @Controller()
+      class NonexistentPipeController {
+        @Get()
+        public popcorn(@UsePipe(ValidatePipe) @Body() body) {
+        }
+      }
+
+      const injector = await Injector.create([NonexistentPipeController]);
+      const httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
+      const httpRouterManager = new HttpRouterManager(httpRouter, injector);
+
+      await expect(httpRouterManager.onApplicationBoot())
+        .rejects
+        .toThrow(`Cavia can't resolve pipe '${ getProviderName(ValidatePipe) }'`);
     });
   });
 });
