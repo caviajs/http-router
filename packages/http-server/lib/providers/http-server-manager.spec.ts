@@ -1,8 +1,10 @@
+import { Injector } from '@caviajs/core';
 import { Logger, LoggerLevel } from '@caviajs/logger';
 import http from 'http';
-import { HttpServerManager } from './http-server-manager';
 import { HttpRouter } from './http-router';
 import { HttpServer } from './http-server';
+import { HttpServerHandler } from './http-server-handler';
+import { HttpServerManager } from './http-server-manager';
 import { HttpServerPort } from './http-server-port';
 
 jest.mock('@caviajs/logger');
@@ -10,16 +12,18 @@ jest.mock('@caviajs/logger');
 describe('HttpServerManager', () => {
   let logger: Logger;
   let httpRouter: HttpRouter;
+  let httpServerHandler: HttpServerHandler;
   let httpServer: HttpServer;
   let httpServerPort: HttpServerPort;
   let httpServerManager: HttpServerManager;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     logger = new Logger(LoggerLevel.ALL, () => '');
-    httpRouter = new HttpRouter(logger);
+    httpRouter = new HttpRouter(await Injector.create([]), logger);
+    httpServerHandler = new HttpServerHandler(httpRouter);
     httpServer = http.createServer();
     httpServerPort = 3000;
-    httpServerManager = new HttpServerManager(logger, httpRouter, httpServer, httpServerPort);
+    httpServerManager = new HttpServerManager(logger, httpServer, httpServerHandler, httpServerPort);
   });
 
   afterEach(() => {
@@ -32,7 +36,7 @@ describe('HttpServerManager', () => {
 
       httpServerManager.onApplicationBoot();
 
-      expect(httpServerOnSpy).toHaveBeenNthCalledWith(1, 'request', httpRouter.handle);
+      expect(httpServerOnSpy).toHaveBeenNthCalledWith(1, 'request', httpServerHandler.handle);
     });
   });
 

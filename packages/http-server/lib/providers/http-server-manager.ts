@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnApplicationBoot, OnApplicationListen, OnApplicationShutdown } from '@caviajs/core';
 import { Logger } from '@caviajs/logger';
+import { HttpServerHandler } from './http-server-handler';
 import { HTTP_SERVER, HttpServer } from './http-server';
-import { HttpRouter } from './http-router';
 import { HTTP_SERVER_PORT, HttpServerPort } from './http-server-port';
 import { LOGGER_CONTEXT } from '../http-constants';
 
@@ -9,14 +9,14 @@ import { LOGGER_CONTEXT } from '../http-constants';
 export class HttpServerManager implements OnApplicationBoot, OnApplicationListen, OnApplicationShutdown {
   constructor(
     private readonly logger: Logger,
-    private readonly httpRouter: HttpRouter,
     @Inject(HTTP_SERVER) private readonly httpServer: HttpServer,
+    private readonly httpServerHandler: HttpServerHandler,
     @Inject(HTTP_SERVER_PORT) private readonly httpServerPort: HttpServerPort,
   ) {
   }
 
   public onApplicationBoot(): void {
-    this.httpServer.on('request', this.httpRouter.handle);
+    this.httpServer.on('request', this.httpServerHandler.handle);
   }
 
   public onApplicationListen(): void {
