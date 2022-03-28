@@ -1,19 +1,14 @@
 import { getProviderName, Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
 import { CONTROLLER_PATH_METADATA, ControllerPathMetadata } from '../decorators/controller';
 import { ROUTE_MAPPING_METHOD_METADATA, ROUTE_MAPPING_PATH_METADATA, RouteMappingMethodMetadata, RouteMappingPathMetadata } from '../decorators/route-mapping';
+import { RouteParamMetadata, ROUTE_PARAM_METADATA } from '../decorators/route-param';
+import { UseInterceptorMetadata, USE_INTERCEPTOR_METADATA } from '../decorators/use-interceptor';
+import { UsePipeMetadata, USE_PIPE_METADATA } from '../decorators/use-pipe';
 import { Interceptor } from '../types/interceptor';
 import { Method } from '../types/method';
 import { Path } from '../types/path';
 import { Pipe } from '../types/pipe';
 import { HttpRouter } from './http-router';
-import {
-  ROUTE_PARAM_METADATA,
-  RouteParamMetadata,
-  USE_INTERCEPTOR_METADATA,
-  USE_PIPE_METADATA,
-  UseInterceptorMetadata,
-  UsePipeMetadata
-} from '@caviajs/http-server';
 
 @Injectable()
 export class HttpRouterManager implements OnApplicationBoot {
@@ -33,7 +28,7 @@ export class HttpRouterManager implements OnApplicationBoot {
       const controllerPrototype: any = Object.getPrototypeOf(controllerInstance);
       const controllerMethodNames: string[] = Object
         .getOwnPropertyNames(controllerPrototype)
-        .filter(name => {
+        .filter((name: string) => {
           return (
             name !== 'constructor'
             &&
@@ -95,22 +90,22 @@ export class HttpRouterManager implements OnApplicationBoot {
   }
 
   protected async resolveInterceptor(interceptor: Type<Interceptor>): Promise<Interceptor> {
-    const interceptorInstance = await this.injector.find(interceptor);
+    const instance = await this.injector.find(interceptor);
 
-    if (!interceptorInstance) {
+    if (!instance) {
       throw new Error(`Cavia can't resolve interceptor '${ getProviderName(interceptor) }'`);
     }
 
-    return interceptorInstance;
+    return instance;
   }
 
   protected async resolvePipe(pipe: Type<Pipe>): Promise<Pipe> {
-    const pipeInstance = await this.injector.find(pipe);
+    const instance = await this.injector.find(pipe);
 
-    if (!pipeInstance) {
+    if (!instance) {
       throw new Error(`Cavia can't resolve pipe '${ getProviderName(pipe) }'`);
     }
 
-    return pipeInstance;
+    return instance;
   }
 }
