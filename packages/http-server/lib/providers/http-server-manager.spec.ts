@@ -1,4 +1,3 @@
-import { Injector } from '@caviajs/core';
 import { Logger, LoggerLevel } from '@caviajs/logger';
 import http from 'http';
 import { HttpRouter } from './http-router';
@@ -19,7 +18,7 @@ describe('HttpServerManager', () => {
 
   beforeEach(async () => {
     logger = new Logger(LoggerLevel.ALL, () => '');
-    httpRouter = new HttpRouter(await Injector.create([]), logger);
+    httpRouter = new HttpRouter(logger);
     httpServerHandler = new HttpServerHandler(httpRouter);
     httpServer = http.createServer();
     httpServerPort = 3000;

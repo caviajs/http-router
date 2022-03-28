@@ -1,9 +1,10 @@
 import { Package, Provider } from '@caviajs/core';
 import { BodyParserInterceptor } from './providers/body-parser-interceptor';
 import { HttpGlobalPrefixProvider } from './providers/http-global-prefix';
-import { HttpMetadataScanner } from './providers/http-metadata-scanner';
 import { HttpRouter } from './providers/http-router';
+import { HttpRouterManager } from './providers/http-router-manager';
 import { HttpServerProvider } from './providers/http-server';
+import { HttpServerHandler } from './providers/http-server-handler';
 import { HttpServerManager } from './providers/http-server-manager';
 import { HttpServerPortProvider } from './providers/http-server-port';
 import { MimeTypeParser } from './providers/mime-type-parser';
@@ -16,9 +17,10 @@ export class HttpServerPackage {
   private readonly providers: Provider[] = [
     BodyParserInterceptor,
     HttpGlobalPrefixProvider,
-    HttpMetadataScanner,
     HttpRouter,
+    HttpRouterManager,
     HttpServerProvider,
+    HttpServerHandler,
     HttpServerManager,
     HttpServerPortProvider,
     MimeTypeParser,

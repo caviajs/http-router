@@ -1,76 +1,27 @@
 import { Logger, LoggerLevel } from '@caviajs/logger';
 import { HttpRouter, Route } from './http-router';
-import { Injectable, Injector } from '@caviajs/core';
-import { Interceptor } from '../types/interceptor';
-import { Pipe } from '../types/pipe';
-import { UseInterceptor } from '../decorators/use-interceptor';
-import { Get } from '../decorators/route-mapping-get';
-import { Controller } from '../decorators/controller';
-import { Body } from '../decorators/route-param-body';
-import { Post } from '../decorators/route-mapping-post';
 
 jest.mock('@caviajs/logger');
-
-@Injectable()
-class AuthInterceptor implements Interceptor {
-  intercept(context, next) {
-    return next.handle();
-  }
-}
-
-@Injectable()
-class ValidatePipe implements Pipe {
-  transform(value, metadata) {
-    return value;
-  }
-}
-
-@Controller('foo')
-class FooController {
-  @UseInterceptor(AuthInterceptor, ['admin:foo:get'])
-  @Get()
-  public getFoo(@Body() body) {
-  }
-
-  @UseInterceptor(AuthInterceptor, ['admin:foo:create'])
-  @Post('create')
-  public postFoo() {
-  }
-}
-
-@UseInterceptor(AuthInterceptor, ['admin:bar'])
-@Controller('bar')
-class BarController {
-  @Get()
-  public getBar() {
-  }
-}
 
 class HttpRouterTest extends HttpRouter {
   public readonly routes: Route[] = [];
 }
 
 describe('HttpRouter', () => {
-  let injector: Injector;
   let httpRouter: HttpRouterTest;
 
   beforeEach(async () => {
     const logger = new Logger(LoggerLevel.ALL, () => '');
 
-    injector = await Injector.create([AuthInterceptor, ValidatePipe, FooController, BarController]);
-    httpRouter = new HttpRouterTest(injector, logger);
+    httpRouter = new HttpRouterTest(logger);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('onApplicationBoot', () => {
-    it('should collect the relevant metadata', async () => {
-      await httpRouter.onApplicationBoot();
-
-
-    });
+  it('should', () => {
+    expect(1).toBe(1);
   });
 
   // describe('match', () => {
