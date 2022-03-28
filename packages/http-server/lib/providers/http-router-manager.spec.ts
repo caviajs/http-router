@@ -11,6 +11,7 @@ import { Interceptor } from '../types/interceptor';
 import { Pipe } from '../types/pipe';
 import { HttpRouter, Route } from './http-router';
 import { HttpRouterManager } from './http-router-manager';
+import { Request } from '@caviajs/http-server';
 
 @Injectable()
 class AuthInterceptor implements Interceptor {
@@ -35,7 +36,7 @@ class FooController {
 
   @UseInterceptor(AuthInterceptor, ['admin:foo:create'])
   @Post('create')
-  public postFoo(@UsePipe(ValidatePipe) request) {
+  public postFoo(@UsePipe(ValidatePipe) request: Request) {
   }
 }
 
@@ -43,7 +44,7 @@ class FooController {
 @Controller('bar')
 class BarController {
   @Get(':id')
-  public getBar(@Params(':id') id) {
+  public getBar(@UsePipe(ValidatePipe) @Params('id') id: String) {
   }
 }
 
@@ -95,7 +96,7 @@ describe('HttpRouterManager', () => {
           { data: undefined, factory: bodyRouteParamDecoratorFactory, index: 0 },
         ],
         routeHandlerPipes: [
-          { args: ['foo'], pipe: validatePipe, index: 0 }
+          { args: ['foo'], metaType: Object, pipe: validatePipe, index: 0 }
         ],
       } as Route);
       expect(httpRouterAddSpy).toHaveBeenCalledWith({
@@ -108,11 +109,9 @@ describe('HttpRouterManager', () => {
         routeHandlerInterceptors: [
           { args: ['admin:foo:create'], interceptor: authInterceptor },
         ],
-        routeHandlerParams: [
-          { data: undefined, factory: bodyRouteParamDecoratorFactory, index: 0 },
-        ],
+        routeHandlerParams: [],
         routeHandlerPipes: [
-          { args: ['foo'], pipe: validatePipe, index: 0 }
+          { args: [], metaType: Object, pipe: validatePipe, index: 0 }
         ],
       } as Route);
       expect(httpRouterAddSpy).toHaveBeenCalledWith({
@@ -126,9 +125,11 @@ describe('HttpRouterManager', () => {
         routeHandler: barController.getBar,
         routeHandlerInterceptors: [],
         routeHandlerParams: [
-          { data: 'username', factory: paramsRouteParamDecoratorFactory, index: 0 },
+          { data: 'id', factory: paramsRouteParamDecoratorFactory, index: 0 },
         ],
-        routeHandlerPipes: [],
+        routeHandlerPipes: [
+          { args: [], metaType: String, pipe: validatePipe, index: 0 },
+        ],
       } as Route);
     });
   });

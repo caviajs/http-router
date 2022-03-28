@@ -58,5 +58,5 @@ export interface Route {
   routeHandler: Function;
   routeHandlerInterceptors: { args: any[]; interceptor: Interceptor; }[];
   routeHandlerParams: { data: unknown; factory: (data: unknown, context: ExecutionContext) => any; index: number; }[];
-  routeHandlerPipes: { args: any[]; pipe: Pipe; index: number; }[];
+  routeHandlerPipes: { args: any[]; metaType: any; pipe: Pipe; index: number; }[];
 }
