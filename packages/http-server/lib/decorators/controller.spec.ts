@@ -19,7 +19,7 @@ describe('@Controller', () => {
 
     expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
     expect(defineMetadataSpy).toHaveBeenCalledWith(INJECTABLE_METADATA, true, Foo);
-    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, ['/'], Foo);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, '/', Foo);
   });
 
   it('should add the appropriate metadata while using decorator with path', () => {
@@ -29,16 +29,6 @@ describe('@Controller', () => {
 
     expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
     expect(defineMetadataSpy).toHaveBeenCalledWith(INJECTABLE_METADATA, true, Foo);
-    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, ['foo'], Foo);
-  });
-
-  it('should add the appropriate metadata while using decorator with multiple paths', () => {
-    @Controller(['foo', 'bar'])
-    class Foo {
-    }
-
-    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
-    expect(defineMetadataSpy).toHaveBeenCalledWith(INJECTABLE_METADATA, true, Foo);
-    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, ['foo', 'bar'], Foo);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(CONTROLLER_PATH_METADATA, 'foo', Foo);
   });
 });

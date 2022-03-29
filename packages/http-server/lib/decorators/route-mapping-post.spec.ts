@@ -21,7 +21,7 @@ describe('@Post', () => {
 
     expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
     expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_METHOD_METADATA, 'POST', Popcorn, 'getPigs');
-    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_PATH_METADATA, ['/'], Popcorn, 'getPigs');
+    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_PATH_METADATA, '/', Popcorn, 'getPigs');
   });
 
   it('should add the appropriate metadata while using decorator with path', () => {
@@ -33,18 +33,6 @@ describe('@Post', () => {
 
     expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
     expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_METHOD_METADATA, 'POST', Popcorn, 'getPigs');
-    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_PATH_METADATA, ['/pigs'], Popcorn, 'getPigs');
-  });
-
-  it('should add the appropriate metadata while using decorator with multiple paths', () => {
-    class Foo {
-      @Post(['/pigs', 'guinea-pigs'])
-      getPigs() {
-      }
-    }
-
-    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
-    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_METHOD_METADATA, 'POST', Foo, 'getPigs');
-    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_PATH_METADATA, ['/pigs', 'guinea-pigs'], Foo, 'getPigs');
+    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_PATH_METADATA, '/pigs', Popcorn, 'getPigs');
   });
 });
