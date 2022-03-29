@@ -4,6 +4,8 @@ import { HttpServerHandler } from './http-server-handler';
 import { HTTP_SERVER, HttpServer } from './http-server';
 import { HTTP_SERVER_PORT, HttpServerPort } from './http-server-port';
 import { LOGGER_CONTEXT } from '../http-constants';
+import { Request } from '../types/request';
+import { Response } from '../types/response';
 
 @Injectable()
 export class HttpServerManager implements OnApplicationBoot, OnApplicationListen, OnApplicationShutdown {
@@ -16,7 +18,9 @@ export class HttpServerManager implements OnApplicationBoot, OnApplicationListen
   }
 
   public onApplicationBoot(): void {
-    this.httpServer.on('request', this.httpServerHandler.handle);
+    this.httpServer.on('request', (request: Request, response: Response) => {
+      this.httpServerHandler.handle(request, response);
+    });
   }
 
   public onApplicationListen(): void {

@@ -35,7 +35,7 @@ describe('HttpServerManager', () => {
 
       httpServerManager.onApplicationBoot();
 
-      expect(httpServerOnSpy).toHaveBeenNthCalledWith(1, 'request', httpServerHandler.handle);
+      expect(httpServerOnSpy).toHaveBeenNthCalledWith(1, 'request', expect.any(Function));
     });
   });
 
