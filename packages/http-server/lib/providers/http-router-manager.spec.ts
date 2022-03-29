@@ -13,50 +13,51 @@ import { HttpRouter, Route } from './http-router';
 import { HttpRouterManager } from './http-router-manager';
 import { Request } from '../types/request';
 
+@Injectable()
+class AuthInterceptor implements Interceptor {
+  intercept(context, next) {
+    return next.handle();
+  }
+}
+
+@Injectable()
+class ValidatePipe implements Pipe {
+  transform(value, metadata) {
+    return value;
+  }
+}
+
+@Controller('foo')
+class FooController {
+  @UseInterceptor(AuthInterceptor, ['admin:foo:get'])
+  @Get()
+  public getFoo(@UsePipe(ValidatePipe, ['foo']) @Body() body) {
+  }
+
+  @UseInterceptor(AuthInterceptor, ['admin:foo:create'])
+  @Post('create')
+  public postFoo(@UsePipe(ValidatePipe) request: Request) {
+  }
+}
+
+@UseInterceptor(AuthInterceptor, ['admin:bar'])
+@Controller('bar')
+class BarController {
+  @Get(':id')
+  public getBar(@UsePipe(ValidatePipe) @Params('id') id: String) {
+  }
+}
+
 describe('HttpRouterManager', () => {
+  const httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
+
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   describe('onApplicationBoot', () => {
     it('should add the appropriate routs according to the metadata', async () => {
-      @Injectable()
-      class AuthInterceptor implements Interceptor {
-        intercept(context, next) {
-          return next.handle();
-        }
-      }
-
-      @Injectable()
-      class ValidatePipe implements Pipe {
-        transform(value, metadata) {
-          return value;
-        }
-      }
-
-      @Controller('foo')
-      class FooController {
-        @UseInterceptor(AuthInterceptor, ['admin:foo:get'])
-        @Get()
-        public getFoo(@UsePipe(ValidatePipe, ['foo']) @Body() body) {
-        }
-
-        @UseInterceptor(AuthInterceptor, ['admin:foo:create'])
-        @Post('create')
-        public postFoo(@UsePipe(ValidatePipe) request: Request) {
-        }
-      }
-
-      @UseInterceptor(AuthInterceptor, ['admin:bar'])
-      @Controller('bar')
-      class BarController {
-        @Get(':id')
-        public getBar(@UsePipe(ValidatePipe) @Params('id') id: String) {
-        }
-      }
-
       const injector = await Injector.create([AuthInterceptor, ValidatePipe, FooController, BarController]);
-      const httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
       const httpRouterManager = new HttpRouterManager(httpRouter, injector);
       const httpRouterAddSpy = jest.spyOn(httpRouter, 'add').mockImplementation(jest.fn());
 
@@ -122,23 +123,7 @@ describe('HttpRouterManager', () => {
     });
 
     it('should throw an exception if the interceptor cannot resolve', async () => {
-      @Injectable()
-      class AuthInterceptor implements Interceptor {
-        intercept(context, next) {
-          return next.handle();
-        }
-      }
-
-      @Controller()
-      class NonexistentInterceptorController {
-        @UseInterceptor(AuthInterceptor)
-        @Get()
-        public popcorn() {
-        }
-      }
-
-      const injector = await Injector.create([NonexistentInterceptorController]);
-      const httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
+      const injector = await Injector.create([ValidatePipe, FooController, BarController]);
       const httpRouterManager = new HttpRouterManager(httpRouter, injector);
 
       await expect(httpRouterManager.onApplicationBoot())
@@ -147,22 +132,7 @@ describe('HttpRouterManager', () => {
     });
 
     it('should throw an exception if the pipe cannot resolve', async () => {
-      @Injectable()
-      class ValidatePipe implements Pipe {
-        transform(value, metadata) {
-          return value;
-        }
-      }
-
-      @Controller()
-      class NonexistentPipeController {
-        @Get()
-        public popcorn(@UsePipe(ValidatePipe) @Body() body) {
-        }
-      }
-
-      const injector = await Injector.create([NonexistentPipeController]);
-      const httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
+      const injector = await Injector.create([AuthInterceptor, FooController, BarController]);
       const httpRouterManager = new HttpRouterManager(httpRouter, injector);
 
       await expect(httpRouterManager.onApplicationBoot())
