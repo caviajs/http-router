@@ -45,6 +45,7 @@ export class HttpRouterManager implements OnApplicationBoot {
               controllerInterceptors: await Promise.all(
                 (Reflect.getMetadata(USE_INTERCEPTOR_METADATA, controllerConstructor) || [])
                   .map(async it => ({ args: it.args, interceptor: await this.resolveInterceptor(it.interceptor) }))
+                  .reverse(),
               ),
               method: routeMappingMethodMetadata,
               path: `/${ controllerPathMetadata }/${ routeMappingPathMetadata }`.replace(/\/+/g, '/').replace(/\/$/g, ''),
@@ -52,6 +53,7 @@ export class HttpRouterManager implements OnApplicationBoot {
               routeHandlerInterceptors: await Promise.all(
                 (Reflect.getMetadata(USE_INTERCEPTOR_METADATA, controllerConstructor, routeHandlerName) || [])
                   .map(async it => ({ args: it.args, interceptor: await this.resolveInterceptor(it.interceptor) }))
+                  .reverse(),
               ),
               routeHandlerParams: (Reflect.getMetadata(ROUTE_PARAM_METADATA, controllerConstructor, routeHandlerName) || [])
                 .map(it => ({ data: it.data, factory: it.factory, index: it.index, })),
