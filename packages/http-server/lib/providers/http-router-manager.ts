@@ -39,7 +39,7 @@ export class HttpRouterManager implements OnApplicationBoot {
             const routeMappingMethodMetadata: RouteMappingMethodMetadata = Reflect.getMetadata(ROUTE_MAPPING_METHOD_METADATA, controllerConstructor, routeHandlerName);
             const routeMappingPathMetadata: RouteMappingPathMetadata = Reflect.getMetadata(ROUTE_MAPPING_PATH_METADATA, controllerConstructor, routeHandlerName);
 
-            this.httpRouter.add({
+            this.httpRouter.push({
               controllerConstructor: controllerConstructor,
               controllerInstance: controllerInstance,
               controllerInterceptors: await Promise.all(

@@ -64,14 +64,14 @@ describe('HttpRouterManager', () => {
       const barController: BarController = await injector.find(BarController);
 
       const httpRouterManager: HttpRouterManager = new HttpRouterManager(httpRouter, injector);
-      const httpRouterAddSpy: jest.SpyInstance = jest.spyOn(httpRouter, 'add').mockImplementation(jest.fn());
+      const httpRouterPushSpy: jest.SpyInstance = jest.spyOn(httpRouter, 'push').mockImplementation(jest.fn());
 
-      expect(httpRouterAddSpy).toHaveBeenCalledTimes(0);
+      expect(httpRouterPushSpy).toHaveBeenCalledTimes(0);
 
       await httpRouterManager.onApplicationBoot();
 
-      expect(httpRouterAddSpy).toHaveBeenCalledTimes(3);
-      expect(httpRouterAddSpy).toHaveBeenCalledWith({
+      expect(httpRouterPushSpy).toHaveBeenCalledTimes(3);
+      expect(httpRouterPushSpy).toHaveBeenCalledWith({
         controllerConstructor: FooController,
         controllerInstance: fooController,
         controllerInterceptors: [],
@@ -88,7 +88,7 @@ describe('HttpRouterManager', () => {
           { args: ['foo'], metaType: Object, pipe: validatePipe, index: 0 }
         ],
       } as Route);
-      expect(httpRouterAddSpy).toHaveBeenCalledWith({
+      expect(httpRouterPushSpy).toHaveBeenCalledWith({
         controllerConstructor: FooController,
         controllerInstance: fooController,
         controllerInterceptors: [],
@@ -103,7 +103,7 @@ describe('HttpRouterManager', () => {
           { args: [], metaType: Object, pipe: validatePipe, index: 0 }
         ],
       } as Route);
-      expect(httpRouterAddSpy).toHaveBeenCalledWith({
+      expect(httpRouterPushSpy).toHaveBeenCalledWith({
         controllerConstructor: BarController,
         controllerInstance: barController,
         controllerInterceptors: [

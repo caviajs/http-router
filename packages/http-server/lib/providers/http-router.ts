@@ -18,22 +18,7 @@ export class HttpRouter {
   ) {
   }
 
-  public add(route: Route): void {
-    if (!route.path.startsWith('/')) {
-      route.path = `/${ route.path }`;
-    }
-
-    const matcher = match(route.path);
-
-    if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
-      throw new Error(`Duplicated {${ route.path }, ${ route.method }} HTTP route`);
-    }
-
-    this.routes.push(route);
-    this.logger.trace(`Mapped {${ route.path }, ${ route.method }} HTTP route`, LOGGER_CONTEXT);
-  }
-
-  public match(method: Method, url: string): Route | undefined {
+  public find(method: Method, url: string): Route | undefined {
     let route: Route | undefined;
 
     const pathname: string = parse(url).pathname;
@@ -46,6 +31,21 @@ export class HttpRouter {
     }
 
     return route;
+  }
+
+  public push(route: Route): void {
+    if (!route.path.startsWith('/')) {
+      route.path = `/${ route.path }`;
+    }
+
+    const matcher = match(route.path);
+
+    if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
+      throw new Error(`Duplicated {${ route.path }, ${ route.method }} HTTP route`);
+    }
+
+    this.routes.push(route);
+    this.logger.trace(`Mapped {${ route.path }, ${ route.method }} HTTP route`, LOGGER_CONTEXT);
   }
 }
 

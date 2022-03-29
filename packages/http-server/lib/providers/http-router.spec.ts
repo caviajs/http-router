@@ -9,67 +9,88 @@ class HttpRouterTest extends HttpRouter {
 }
 
 class FooController {
-  foo() {
+  getUsers() {
+  }
+
+  createUser() {
   }
 }
 
 describe('HttpRouter', () => {
-  let fooController: FooController;
+  const fooController: FooController = new FooController();
+  const route1: Route = {
+    controllerConstructor: FooController,
+    controllerInstance: fooController,
+    controllerInterceptors: [],
+    method: 'GET',
+    path: 'users',
+    routeHandler: fooController.getUsers,
+    routeHandlerInterceptors: [],
+    routeHandlerParams: [],
+    routeHandlerPipes: [],
+  };
+  const route2: Route = {
+    controllerConstructor: FooController,
+    controllerInstance: fooController,
+    controllerInterceptors: [],
+    method: 'POST',
+    path: 'users',
+    routeHandler: fooController.createUser,
+    routeHandlerInterceptors: [],
+    routeHandlerParams: [],
+    routeHandlerPipes: [],
+  };
+
   let httpRouter: HttpRouterTest;
+  let loggerTraceSpy: jest.SpyInstance;
 
-  let route: Route;
+  beforeEach(() => {
+    const logger: Logger = new Logger(LoggerLevel.ALL, () => '');
 
-  beforeEach(async () => {
-    const logger = new Logger(LoggerLevel.ALL, () => '');
-
-    fooController = new FooController();
     httpRouter = new HttpRouterTest(logger);
-
-    route = {
-      controllerConstructor: FooController,
-      controllerInstance: fooController,
-      controllerInterceptors: [],
-      method: 'GET',
-      path: 'users',
-      routeHandler: fooController.foo,
-      routeHandlerInterceptors: [],
-      routeHandlerParams: [],
-      routeHandlerPipes: [],
-    };
+    loggerTraceSpy = jest.spyOn(logger, 'trace').mockImplementation(jest.fn());
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('add', () => {
-    it('zarejestrowac', () => {
-      httpRouter.add(route);
+  describe('find', () => {
+    it('should return matched route if it exists in router', () => {
+      httpRouter.push(route1);
 
-      expect(httpRouter.routes).toEqual([route]);
+      expect(httpRouter.find(route1.method, route1.path)).toEqual(route1);
     });
 
-    it('logować', () => {
-      httpRouter.add(route);
-
-      expect(Logger.prototype.trace).toHaveBeenNthCalledWith(1, `Mapped {${ route.path }, ${ route.method }} HTTP route`, LOGGER_CONTEXT);
-    });
-
-    it('duplikat', () => {
-      try {
-        httpRouter.add(route);
-        httpRouter.add(route);
-      } catch (e) {
-        expect(e.message).toEqual(`Duplicated {${ route.path }, ${ route.method }} HTTP route`);
-      }
+    it('should return matched undefined if it does not exist in the registry', () => {
+      expect(httpRouter.find(route1.method, route1.path)).toBeUndefined();
     });
   });
 
-  // describe('match', () => {
-  //   it('znalezc', () => {
-  //   });
-  //
-  //   it('nie znalezc', () => {
-  //   });
-  // });
+  describe('push', () => {
+    it('should correctly register new routes', () => {
+      httpRouter.push(route1);
+      httpRouter.push(route2);
+
+      expect(httpRouter.routes).toEqual([route1, route2]);
+    });
+
+    it('should correctly log after adding a new route', () => {
+      httpRouter.push(route1);
+      httpRouter.push(route2);
+
+      expect(loggerTraceSpy).toHaveBeenCalledTimes(2);
+      expect(loggerTraceSpy).toHaveBeenCalledWith(`Mapped {${ route1.path }, ${ route1.method }} HTTP route`, LOGGER_CONTEXT);
+      expect(loggerTraceSpy).toHaveBeenCalledWith(`Mapped {${ route2.path }, ${ route2.method }} HTTP route`, LOGGER_CONTEXT);
+    });
+
+    it('should throw an exception if a duplicate occurs', () => {
+      try {
+        httpRouter.push(route1);
+        httpRouter.push(route1);
+      } catch (e) {
+        expect(e.message).toEqual(`Duplicated {${ route1.path }, ${ route1.method }} HTTP route`);
+      }
+    });
+  });
 });
