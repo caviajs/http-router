@@ -113,10 +113,7 @@ export class HttpServerHandler {
       );
   }
 
-  protected async composeInterceptors(
-    interceptors: ComposeInterceptor[],
-    handler: () => Promise<any>,
-  ): Promise<any> {
+  protected async composeInterceptors(interceptors: ComposeInterceptor[], handler: () => Promise<any>): Promise<any> {
     if (interceptors.length <= 0) {
       return handler();
     }
