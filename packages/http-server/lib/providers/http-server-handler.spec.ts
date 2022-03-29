@@ -55,12 +55,17 @@ describe('HttpServerHandler', () => {
   });
 
   describe('handle', () => {
-    // 1. not existing route
-    // 2. existing route
-    // 3. Serializing, Content-Type and Content-Length inference for response body
-    // 4. exception handler
+    // not existing route - exception handling
+    // not existing route - interceptors (global req -> {throw ...} -> global res)
 
-    it('a', () => {
+    // existing route - handling
+    // existing route - serializing, Content-Type and Content-Length inference for response body
+    // existing route - exception handling
+    // existing route - interceptors (global req -> controller req -> route req -> handler -> route res -> controller res -> global res)
+    // existing route - route params
+    // existing route - route pipes
+
+    it('should', () => {
       expect(1).toBe(1);
     });
   });
