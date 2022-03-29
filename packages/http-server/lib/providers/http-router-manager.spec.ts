@@ -49,7 +49,7 @@ class BarController {
 }
 
 describe('HttpRouterManager', () => {
-  const httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
+  const httpRouter: HttpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -57,14 +57,14 @@ describe('HttpRouterManager', () => {
 
   describe('onApplicationBoot', () => {
     it('should add the appropriate routs according to the metadata', async () => {
-      const injector = await Injector.create([AuthInterceptor, ValidatePipe, FooController, BarController]);
-      const httpRouterManager = new HttpRouterManager(httpRouter, injector);
-      const httpRouterAddSpy = jest.spyOn(httpRouter, 'add').mockImplementation(jest.fn());
+      const injector: Injector = await Injector.create([AuthInterceptor, ValidatePipe, FooController, BarController]);
+      const authInterceptor: AuthInterceptor = await injector.find(AuthInterceptor);
+      const validatePipe: ValidatePipe = await injector.find(ValidatePipe);
+      const fooController: FooController = await injector.find(FooController);
+      const barController: BarController = await injector.find(BarController);
 
-      const authInterceptor = await injector.find(AuthInterceptor);
-      const validatePipe = await injector.find(ValidatePipe);
-      const fooController = await injector.find(FooController);
-      const barController = await injector.find(BarController);
+      const httpRouterManager: HttpRouterManager = new HttpRouterManager(httpRouter, injector);
+      const httpRouterAddSpy: jest.SpyInstance = jest.spyOn(httpRouter, 'add').mockImplementation(jest.fn());
 
       expect(httpRouterAddSpy).toHaveBeenCalledTimes(0);
 
@@ -123,8 +123,8 @@ describe('HttpRouterManager', () => {
     });
 
     it('should throw an exception if the interceptor cannot resolve', async () => {
-      const injector = await Injector.create([ValidatePipe, FooController, BarController]);
-      const httpRouterManager = new HttpRouterManager(httpRouter, injector);
+      const injector: Injector = await Injector.create([ValidatePipe, FooController, BarController]);
+      const httpRouterManager: HttpRouterManager = new HttpRouterManager(httpRouter, injector);
 
       await expect(httpRouterManager.onApplicationBoot())
         .rejects
@@ -132,8 +132,8 @@ describe('HttpRouterManager', () => {
     });
 
     it('should throw an exception if the pipe cannot resolve', async () => {
-      const injector = await Injector.create([AuthInterceptor, FooController, BarController]);
-      const httpRouterManager = new HttpRouterManager(httpRouter, injector);
+      const injector: Injector = await Injector.create([AuthInterceptor, FooController, BarController]);
+      const httpRouterManager: HttpRouterManager = new HttpRouterManager(httpRouter, injector);
 
       await expect(httpRouterManager.onApplicationBoot())
         .rejects
