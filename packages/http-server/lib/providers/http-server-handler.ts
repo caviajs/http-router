@@ -41,7 +41,7 @@ export class HttpServerHandler {
             return this
               .composeInterceptors(
                 [...route.controllerInterceptors, ...route.routeHandlerInterceptors].map(it => ({
-                  context: {
+                  executionContext: {
                     getArgs: () => it.args,
                     getClass: () => route.controllerConstructor,
                     getHandler: () => route.routeHandler,
@@ -61,56 +61,54 @@ export class HttpServerHandler {
     route$
       .pipe(mergeAll())
       .subscribe(
-        (result: any) => {
+        (data: any) => {
           if (response.writableEnded === false) {
-            if (result === undefined) {
+            if (data === undefined) {
               response
                 .writeHead(response.statusCode || 204)
                 .end();
-            } else if (Buffer.isBuffer(result)) {
+            } else if (Buffer.isBuffer(data)) {
               response
                 .writeHead(response.statusCode, {
-                  'Content-Length': response.getHeader('Content-Length') || this.inferenceContentLength(result),
-                  'Content-Type': response.getHeader('Content-Type') || this.inferenceContentType(result),
+                  'Content-Length': response.getHeader('Content-Length') || this.inferenceContentLength(data),
+                  'Content-Type': response.getHeader('Content-Type') || this.inferenceContentType(data),
                 })
-                .end(result);
-            } else if (result instanceof Stream || readable(result)) {
+                .end(data);
+            } else if (data instanceof Stream || readable(data)) {
               response
                 .writeHead(response.statusCode, {
-                  'Content-Type': response.getHeader('Content-Type') || this.inferenceContentType(result),
+                  'Content-Type': response.getHeader('Content-Type') || this.inferenceContentType(data),
                 });
 
-              result.pipe(response);
-            } else if (typeof result === 'string') {
+              data.pipe(response);
+            } else if (typeof data === 'string') {
               response
                 .writeHead(response.statusCode, {
-                  'Content-Length': response.getHeader('Content-Length') || this.inferenceContentLength(result),
-                  'Content-Type': response.getHeader('Content-Type') || this.inferenceContentType(result),
+                  'Content-Length': response.getHeader('Content-Length') || this.inferenceContentLength(data),
+                  'Content-Type': response.getHeader('Content-Type') || this.inferenceContentType(data),
                 })
-                .end(result);
-            } else if (typeof result === 'boolean' || typeof result === 'number' || typeof result === 'object') {
+                .end(data);
+            } else if (typeof data === 'boolean' || typeof data === 'number' || typeof data === 'object') {
               // JSON (true, false, number, null, array, object) but without string
-              const rawResult = JSON.stringify(result);
-
               response
                 .writeHead(response.statusCode, {
-                  'Content-Length': response.getHeader('Content-Length') || this.inferenceContentLength(result),
-                  'Content-Type': response.getHeader('Content-Type') || this.inferenceContentType(result),
+                  'Content-Length': response.getHeader('Content-Length') || this.inferenceContentLength(data),
+                  'Content-Type': response.getHeader('Content-Type') || this.inferenceContentType(data),
                 })
-                .end(rawResult);
+                .end(JSON.stringify(data));
             }
           }
         },
         (error: any) => {
           const exception: HttpException = error instanceof HttpException ? error : new HttpException(500);
-          const rawResult: any = JSON.stringify(exception.getResponse());
+          const data: any = exception.getResponse();
 
           response
             .writeHead(exception.getStatus(), {
-              'Content-Length': this.inferenceContentLength(rawResult),
-              'Content-Type': this.inferenceContentType(rawResult),
+              'Content-Length': this.inferenceContentLength(data),
+              'Content-Type': this.inferenceContentType(data),
             })
-            .end(rawResult);
+            .end(JSON.stringify(data));
         },
       );
   }
@@ -136,7 +134,7 @@ export class HttpServerHandler {
         ));
       }
 
-      return interceptors[index].interceptor.intercept(interceptors[index].context, {
+      return interceptors[index].interceptor.intercept(interceptors[index].executionContext, {
         handle: () => from(nextFn(index + 1)).pipe(mergeAll()),
       });
     };
@@ -148,38 +146,42 @@ export class HttpServerHandler {
   //   return pipes.reduce(async (prev, curr: ApplyPipe) => curr.pipe.transform(await prev, { args: curr.args, metaType: curr.metaType }), Promise.resolve(value));
   // }
 
-  protected inferenceContentLength(result: any): number | undefined {
-    if (result === undefined) {
+  protected inferenceContentLength(data: any): number | undefined {
+    if (data === undefined) {
       return undefined;
-    } else if (Buffer.isBuffer(result)) {
-      return result.length;
-    } else if (result instanceof Stream || readable(result)) {
+    } else if (Buffer.isBuffer(data)) {
+      return data.length;
+    } else if (data instanceof Stream || readable(data)) {
       return undefined;
-    } else if (typeof result === 'string') {
-      return Buffer.byteLength(result);
-    } else if (typeof result === 'boolean' || typeof result === 'number' || typeof result === 'object') {
+    } else if (typeof data === 'string') {
+      return Buffer.byteLength(data);
+    } else if (typeof data === 'boolean' || typeof data === 'number' || typeof data === 'object') {
       // JSON (true, false, number, null, array, object) but without string
-      return Buffer.byteLength(JSON.stringify(result));
+      return Buffer.byteLength(JSON.stringify(data));
+    } else {
+      return undefined;
     }
   }
 
-  protected inferenceContentType(result: any): string | undefined {
-    if (result === undefined) {
+  protected inferenceContentType(data: any): string | undefined {
+    if (data === undefined) {
       return undefined;
-    } else if (Buffer.isBuffer(result)) {
+    } else if (Buffer.isBuffer(data)) {
       return 'application/octet-stream';
-    } else if (result instanceof Stream || readable(result)) {
+    } else if (data instanceof Stream || readable(data)) {
       return 'application/octet-stream';
-    } else if (typeof result === 'string') {
+    } else if (typeof data === 'string') {
       return 'text/plain';
-    } else if (typeof result === 'boolean' || typeof result === 'number' || typeof result === 'object') {
+    } else if (typeof data === 'boolean' || typeof data === 'number' || typeof data === 'object') {
       // JSON (true, false, number, null, array, object) but without string
       return 'application/json; charset=utf-8';
+    } else {
+      return undefined;
     }
   }
 }
 
 export interface ComposeInterceptor {
-  context: ExecutionContext;
+  executionContext: ExecutionContext;
   interceptor: Interceptor;
 }
