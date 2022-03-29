@@ -17,6 +17,9 @@ export class HttpServerHandler {
   ) {
   }
 
+  public handle(request: Request, response: Response): void {
+  }
+
   // this.globalInterceptors = await Promise.all(this.httpGlobalInterceptors.map(async ({ args, interceptor }) => {
   //   const interceptorInstance = await this.injector.find(interceptor);
   //
@@ -26,9 +29,6 @@ export class HttpServerHandler {
   //
   //   return { args: args, interceptor: interceptorInstance };
   // }));
-
-  public handle(request: Request, response: Response): void {
-  }
 
   //   const route$ = new Observable(subscriber => {
   //     subscriber.next(1);

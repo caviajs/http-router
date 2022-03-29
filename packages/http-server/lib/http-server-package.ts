@@ -1,6 +1,5 @@
 import { Package, Provider } from '@caviajs/core';
 import { BodyParserInterceptor } from './providers/body-parser-interceptor';
-import { HttpGlobalPrefixProvider } from './providers/http-global-prefix';
 import { HttpRouter } from './providers/http-router';
 import { HttpRouterManager } from './providers/http-router-manager';
 import { HttpServerProvider } from './providers/http-server';
@@ -16,7 +15,6 @@ export class HttpServerPackage {
 
   private readonly providers: Provider[] = [
     BodyParserInterceptor,
-    HttpGlobalPrefixProvider,
     HttpRouter,
     HttpRouterManager,
     HttpServerProvider,
