@@ -1,16 +1,15 @@
 import { Observable } from 'rxjs';
 import { USE_INTERCEPTOR_METADATA, UseInterceptor, UseInterceptorMetadata } from './use-interceptor';
-import { ExecutionContext } from '../types/execution-context';
-import { Interceptor, Next } from '../types/interceptor';
+import { Interceptor, InterceptorContext, Next } from '../types/interceptor';
 
 class FooInterceptor implements Interceptor {
-  intercept(context: ExecutionContext, next: Next): Observable<any> {
+  intercept(context: InterceptorContext, next: Next): Observable<any> {
     return next.handle();
   }
 }
 
 class BarInterceptor implements Interceptor {
-  intercept(context: ExecutionContext, next: Next): Observable<any> {
+  intercept(context: InterceptorContext, next: Next): Observable<any> {
     return next.handle();
   }
 }

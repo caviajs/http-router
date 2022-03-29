@@ -1,29 +1,20 @@
-import { ExecutionContext } from '../types/execution-context';
+import { Request } from '../types/request';
+import { Response } from '../types/response';
 
 export const ROUTE_PARAM_METADATA: Symbol = Symbol('ROUTE_PARAM_METADATA');
 
-export function createRouteParamDecorator(factory: RouteParamDecoratorFactory): RouteParamDecorator {
-  return (data: unknown): ParameterDecorator => {
-    return (target: Function, propertyKey: string, parameterIndex: number) => {
-      const routeParamMetadata: RouteParamMetadata = (Reflect.getMetadata(ROUTE_PARAM_METADATA, target.constructor, propertyKey) || []);
+export function RouteParam(factory: RouteParamFactory): ParameterDecorator {
+  return (target: Function, propertyKey: string, parameterIndex: number) => {
+    const routeParamMetadata: RouteParamMetadata = Reflect.getMetadata(ROUTE_PARAM_METADATA, target.constructor, propertyKey) || new Map();
 
-      routeParamMetadata.push({
-        data: data,
-        factory: factory,
-        index: parameterIndex,
-      });
+    routeParamMetadata.set(parameterIndex, factory);
 
-      Reflect.defineMetadata(ROUTE_PARAM_METADATA, routeParamMetadata, target.constructor, propertyKey);
-    };
+    Reflect.defineMetadata(ROUTE_PARAM_METADATA, routeParamMetadata, target.constructor, propertyKey);
   };
 }
 
-export interface RouteParamDecorator {
-  (data?: unknown): ParameterDecorator;
+export interface RouteParamFactory {
+  (request: Request, response: Response): any;
 }
 
-export interface RouteParamDecoratorFactory {
-  (data: unknown, context: ExecutionContext): any;
-}
-
-export type RouteParamMetadata = { data: unknown; factory: RouteParamDecoratorFactory; index: number; }[];
+export type RouteParamMetadata = Map<number, RouteParamFactory>;

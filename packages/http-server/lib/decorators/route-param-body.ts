@@ -1,8 +1,7 @@
-import { createRouteParamDecorator, RouteParamDecoratorFactory } from './route-param';
+import { RouteParam } from './route-param';
 
-export const bodyRouteParamDecoratorFactory: RouteParamDecoratorFactory = (data: string | undefined, context) => {
-  const request = context.getRequest();
-  return data ? request.body[data] : request.body;
-};
-
-export const Body = createRouteParamDecorator(bodyRouteParamDecoratorFactory);
+export function Body(name?: string): ParameterDecorator {
+  return RouteParam(request => {
+    return name ? request.body[name] : request.body;
+  });
+}

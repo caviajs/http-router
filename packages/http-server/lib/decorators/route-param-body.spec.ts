@@ -1,20 +1,11 @@
 import { ROUTE_PARAM_METADATA, RouteParamMetadata } from './route-param';
-import { bodyRouteParamDecoratorFactory, Body } from './route-param-body';
-import { ExecutionContext } from '../types/execution-context';
+import { Body } from './route-param-body';
+import { Request } from '../types/request';
+import { Response } from '../types/response';
 
-describe('bodyRouteParamDecoratorFactory', () => {
-  it('should return the appropriate data', () => {
-    const body = { name: 'foo' };
-
-    const executionContext: Partial<ExecutionContext> = {
-      getRequest: () => ({ body } as any),
-    };
-
-    expect(bodyRouteParamDecoratorFactory(undefined, executionContext as any)).toEqual(body);
-    expect(bodyRouteParamDecoratorFactory('name', executionContext as any)).toEqual(body.name);
-    expect(bodyRouteParamDecoratorFactory('age', executionContext as any)).toBeUndefined();
-  });
-});
+const body = { name: 'foo' };
+const request: Partial<Request> = { body } as any;
+const response: Partial<Response> = {} as any;
 
 describe('@Body', () => {
   let defineMetadataSpy: jest.SpyInstance;
@@ -29,42 +20,31 @@ describe('@Body', () => {
 
   it('should add the appropriate metadata while using decorator without arguments', () => {
     class Popcorn {
-      getPigs(@Body() payload: any) {
+      getPigs(
+        @Body() payload: any,
+      ) {
       }
     }
 
-    const routeParamMetadata: RouteParamMetadata = [
-      {
-        data: undefined,
-        factory: bodyRouteParamDecoratorFactory,
-        index: 0,
-      },
-    ];
+    const routeParamMetadata: RouteParamMetadata = Reflect.getMetadata(ROUTE_PARAM_METADATA, Popcorn, 'getPigs');
 
-    expect(defineMetadataSpy).toHaveBeenCalledTimes(1);
-    expect(defineMetadataSpy).toHaveBeenLastCalledWith(ROUTE_PARAM_METADATA, routeParamMetadata, Popcorn, 'getPigs');
+    expect(routeParamMetadata.size).toEqual(1);
+    expect(routeParamMetadata.get(0)(request as any, response as any)).toEqual(body);
   });
 
   it('should add the appropriate metadata while using decorator with arguments', () => {
     class Popcorn {
-      getPigs(@Body('name') name: string, @Body('age') age: string) {
+      getPigs(
+        @Body('age') age: number,
+        @Body('name') name: string,
+      ) {
       }
     }
 
-    const routeParamMetadata: RouteParamMetadata = [
-      {
-        data: 'age',
-        factory: bodyRouteParamDecoratorFactory,
-        index: 1,
-      },
-      {
-        data: 'name',
-        factory: bodyRouteParamDecoratorFactory,
-        index: 0,
-      },
-    ];
+    const routeParamMetadata: RouteParamMetadata = Reflect.getMetadata(ROUTE_PARAM_METADATA, Popcorn, 'getPigs');
 
-    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
-    expect(defineMetadataSpy).toHaveBeenLastCalledWith(ROUTE_PARAM_METADATA, routeParamMetadata, Popcorn, 'getPigs');
+    expect(routeParamMetadata.size).toEqual(2);
+    expect(routeParamMetadata.get(0)(request as any, response as any)).toBeUndefined();
+    expect(routeParamMetadata.get(1)(request as any, response as any)).toEqual(body.name);
   });
 });

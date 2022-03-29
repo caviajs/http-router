@@ -35,7 +35,6 @@ export * from './lib/providers/http-server-manager';
 export * from './lib/providers/http-server-port';
 export * from './lib/providers/mime-type-parser';
 
-export * from './lib/types/execution-context';
 export * from './lib/types/interceptor';
 export * from './lib/types/method';
 export * from './lib/types/path';

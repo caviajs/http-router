@@ -6,10 +6,9 @@ import { HttpRouter, Route } from './http-router';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
 import { Path } from '../types/path';
-import { Interceptor } from '../types/interceptor';
+import { Interceptor, InterceptorContext } from '../types/interceptor';
 import { HttpException } from '../http-exception';
 import { Method } from '../types/method';
-import { ExecutionContext } from '../types/execution-context';
 
 declare module 'http' {
   export interface IncomingMessage {
@@ -41,17 +40,22 @@ export class HttpServerHandler {
             return this
               .composeInterceptors(
                 [...route.controllerInterceptors, ...route.routeHandlerInterceptors].map(it => ({
-                  executionContext: {
+                  interceptor: it.interceptor,
+                  interceptorContext: {
                     getArgs: () => it.args,
                     getClass: () => route.controllerConstructor,
                     getHandler: () => route.routeHandler,
                     getRequest: () => request,
                     getResponse: () => response,
                   },
-                  interceptor: it.interceptor,
                 })),
                 (): Promise<unknown> => {
-                  return Promise.resolve(route.routeHandler.apply(route.controllerInstance, [request, response]));
+                  const args: any[] = route
+                    .routeHandlerParams
+                    .sort((a, b) => a.index = b.index)
+                    .map(it => it.factory(request, response));
+
+                  return Promise.resolve(route.routeHandler.apply(route.controllerInstance, args));
                 },
               );
           },
@@ -131,7 +135,7 @@ export class HttpServerHandler {
         ));
       }
 
-      return interceptors[index].interceptor.intercept(interceptors[index].executionContext, {
+      return interceptors[index].interceptor.intercept(interceptors[index].interceptorContext, {
         handle: () => from(nextFn(index + 1)).pipe(mergeAll()),
       });
     };
@@ -179,6 +183,6 @@ export class HttpServerHandler {
 }
 
 export interface ComposeInterceptor {
-  executionContext: ExecutionContext;
   interceptor: Interceptor;
+  interceptorContext: InterceptorContext;
 }

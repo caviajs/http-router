@@ -55,8 +55,8 @@ export class HttpRouterManager implements OnApplicationBoot {
                   .map(async it => ({ args: it.args, interceptor: await this.resolveInterceptor(it.interceptor) }))
                   .reverse(),
               ),
-              routeHandlerParams: (Reflect.getMetadata(ROUTE_PARAM_METADATA, controllerConstructor, routeHandlerName) || [])
-                .map(it => ({ data: it.data, factory: it.factory, index: it.index, })),
+              routeHandlerParams: [...(Reflect.getMetadata(ROUTE_PARAM_METADATA, controllerConstructor, routeHandlerName) || new Map()).entries()]
+                .map(([index, factory]) => ({ factory: factory, index: index, })),
               routeHandlerPipes: await Promise.all(
                 (Reflect.getMetadata(USE_PIPE_METADATA, controllerConstructor, routeHandlerName) || [])
                   .map(async it => ({ args: it.args, index: it.index, metaType: it.metaType, pipe: await this.resolvePipe(it.pipe) }))

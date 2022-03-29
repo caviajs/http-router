@@ -2,12 +2,13 @@ import { Injectable, Type } from '@caviajs/core';
 import { Logger } from '@caviajs/logger';
 import { match } from 'path-to-regexp';
 import { parse } from 'url';
-import { ExecutionContext } from '../types/execution-context';
 import { Interceptor } from '../types/interceptor';
 import { Method } from '../types/method';
 import { Path } from '../types/path';
 import { Pipe } from '../types/pipe';
 import { LOGGER_CONTEXT } from '../http-constants';
+import { Request } from '../types/request';
+import { Response } from '../types/response';
 
 @Injectable()
 export class HttpRouter {
@@ -57,6 +58,6 @@ export interface Route {
   path: Path;
   routeHandler: Function;
   routeHandlerInterceptors: { args: any[]; interceptor: Interceptor; }[];
-  routeHandlerParams: { data: unknown; factory: (data: unknown, context: ExecutionContext) => any; index: number; }[];
+  routeHandlerParams: { factory: (request: Request, response: Response) => any; index: number; }[];
   routeHandlerPipes: { args: any[]; metaType: any; pipe: Pipe; index: number; }[];
 }

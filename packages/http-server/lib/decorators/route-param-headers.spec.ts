@@ -1,20 +1,11 @@
 import { ROUTE_PARAM_METADATA, RouteParamMetadata } from './route-param';
-import { headersRouteParamDecoratorFactory, Headers } from './route-param-headers';
-import { ExecutionContext } from '../types/execution-context';
+import { Headers } from './route-param-headers';
+import { Request } from '../types/request';
+import { Response } from '../types/response';
 
-describe('headersRouteParamDecoratorFactory', () => {
-  it('should return the appropriate data', () => {
-    const headers = { name: 'foo' };
-
-    const executionContext: Partial<ExecutionContext> = {
-      getRequest: () => ({ headers } as any),
-    };
-
-    expect(headersRouteParamDecoratorFactory(undefined, executionContext as any)).toEqual(headers);
-    expect(headersRouteParamDecoratorFactory('name', executionContext as any)).toEqual(headers.name);
-    expect(headersRouteParamDecoratorFactory('age', executionContext as any)).toBeUndefined();
-  });
-});
+const headers = { name: 'foo' };
+const request: Partial<Request> = { headers } as any;
+const response: Partial<Response> = {} as any;
 
 describe('@Headers', () => {
   let defineMetadataSpy: jest.SpyInstance;
@@ -29,42 +20,31 @@ describe('@Headers', () => {
 
   it('should add the appropriate metadata while using decorator without arguments', () => {
     class Popcorn {
-      getPigs(@Headers() payload: any) {
+      getPigs(
+        @Headers() payload: any,
+      ) {
       }
     }
 
-    const routeParamMetadata: RouteParamMetadata = [
-      {
-        data: undefined,
-        factory: headersRouteParamDecoratorFactory,
-        index: 0,
-      },
-    ];
+    const routeParamMetadata: RouteParamMetadata = Reflect.getMetadata(ROUTE_PARAM_METADATA, Popcorn, 'getPigs');
 
-    expect(defineMetadataSpy).toHaveBeenCalledTimes(1);
-    expect(defineMetadataSpy).toHaveBeenLastCalledWith(ROUTE_PARAM_METADATA, routeParamMetadata, Popcorn, 'getPigs');
+    expect(routeParamMetadata.size).toEqual(1);
+    expect(routeParamMetadata.get(0)(request as any, response as any)).toEqual(headers);
   });
 
   it('should add the appropriate metadata while using decorator with arguments', () => {
     class Popcorn {
-      getPigs(@Headers('name') name: string, @Headers('age') age: string) {
+      getPigs(
+        @Headers('age') age: number,
+        @Headers('name') name: string,
+      ) {
       }
     }
 
-    const routeParamMetadata: RouteParamMetadata = [
-      {
-        data: 'age',
-        factory: headersRouteParamDecoratorFactory,
-        index: 1,
-      },
-      {
-        data: 'name',
-        factory: headersRouteParamDecoratorFactory,
-        index: 0,
-      },
-    ];
+    const routeParamMetadata: RouteParamMetadata = Reflect.getMetadata(ROUTE_PARAM_METADATA, Popcorn, 'getPigs');
 
-    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
-    expect(defineMetadataSpy).toHaveBeenLastCalledWith(ROUTE_PARAM_METADATA, routeParamMetadata, Popcorn, 'getPigs');
+    expect(routeParamMetadata.size).toEqual(2);
+    expect(routeParamMetadata.get(0)(request as any, response as any)).toBeUndefined();
+    expect(routeParamMetadata.get(1)(request as any, response as any)).toEqual(headers.name);
   });
 });

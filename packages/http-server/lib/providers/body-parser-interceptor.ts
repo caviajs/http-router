@@ -1,12 +1,11 @@
 import { Injectable } from '@caviajs/core';
 import zlib from 'zlib';
 import stream from 'stream';
-import { Next, Interceptor } from '../types/interceptor';
+import { Next, Interceptor, InterceptorContext } from '../types/interceptor';
 import { MimeTypeParser } from './mime-type-parser';
 import { getContentTypeMime } from '../utils/get-content-type-mime';
 import { HttpException } from '../http-exception';
 import { Request } from '../types/request';
-import { ExecutionContext } from '../types/execution-context';
 
 declare module 'http' {
   export interface IncomingMessage {
@@ -25,7 +24,7 @@ export class BodyParserInterceptor implements Interceptor {
   ) {
   }
 
-  public async intercept(ctx: ExecutionContext, next: Next) {
+  public async intercept(ctx: InterceptorContext, next: Next) {
     const request = ctx.getRequest();
 
     request.body = await this.parse(request);

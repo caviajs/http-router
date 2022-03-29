@@ -3,8 +3,8 @@ import { Logger, LoggerLevel } from '@caviajs/logger';
 import { Controller } from '../decorators/controller';
 import { Get } from '../decorators/route-mapping-get';
 import { Post } from '../decorators/route-mapping-post';
-import { Body, bodyRouteParamDecoratorFactory } from '../decorators/route-param-body';
-import { Params, paramsRouteParamDecoratorFactory } from '../decorators/route-param-params';
+import { Body } from '../decorators/route-param-body';
+import { Params } from '../decorators/route-param-params';
 import { UseInterceptor } from '../decorators/use-interceptor';
 import { UsePipe } from '../decorators/use-pipe';
 import { Interceptor } from '../types/interceptor';
@@ -29,8 +29,8 @@ class BarInterceptor implements Interceptor {
 
 @Injectable()
 class ValidatePipe implements Pipe {
-  transform(value, metadata) {
-    return value;
+  transform(context) {
+    return context.getValue();
   }
 }
 
@@ -92,7 +92,7 @@ describe('HttpRouterManager', () => {
           { args: ['admin:foo:get'], interceptor: fooInterceptor },
         ],
         routeHandlerParams: [
-          { data: undefined, factory: bodyRouteParamDecoratorFactory, index: 0 },
+          { factory: expect.any(Function), index: 0 },
         ],
         routeHandlerPipes: [
           { args: ['foo'], metaType: Object, pipe: validatePipe, index: 0 }
@@ -126,7 +126,7 @@ describe('HttpRouterManager', () => {
         routeHandler: barController.getBar,
         routeHandlerInterceptors: [],
         routeHandlerParams: [
-          { data: 'id', factory: paramsRouteParamDecoratorFactory, index: 0 },
+          { factory: expect.any(Function), index: 0 },
         ],
         routeHandlerPipes: [
           { args: [], metaType: String, pipe: validatePipe, index: 0 },

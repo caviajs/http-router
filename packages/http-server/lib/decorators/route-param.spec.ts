@@ -1,8 +1,7 @@
-import { ROUTE_PARAM_METADATA, createRouteParamDecorator, RouteParamMetadata, RouteParamDecoratorFactory } from './route-param';
-import { ExecutionContext } from '../types/execution-context';
+import { ROUTE_PARAM_METADATA, RouteParamMetadata, RouteParamFactory, RouteParam } from './route-param';
 
-const exampleFactory: RouteParamDecoratorFactory = (data: unknown, context: ExecutionContext) => {
-  return context.getRequest();
+const exampleFactory: RouteParamFactory = (request) => {
+  return request;
 };
 
 describe('createRouteParamDecorator', () => {
@@ -18,42 +17,13 @@ describe('createRouteParamDecorator', () => {
 
   it('should add the appropriate metadata while using decorator without arguments', () => {
     class Popcorn {
-      getPigs(@createRouteParamDecorator(exampleFactory)() payload: any) {
+      getPigs(@RouteParam(exampleFactory) payload: any) {
       }
     }
 
-    const routeParamMetadata: RouteParamMetadata = [
-      {
-        data: undefined,
-        factory: exampleFactory,
-        index: 0,
-      },
-    ];
+    const routeParamMetadata: RouteParamMetadata = new Map().set(0, exampleFactory);
 
     expect(defineMetadataSpy).toHaveBeenCalledTimes(1);
-    expect(defineMetadataSpy).toHaveBeenLastCalledWith(ROUTE_PARAM_METADATA, routeParamMetadata, Popcorn, 'getPigs');
-  });
-
-  it('should add the appropriate metadata while using decorator with arguments', () => {
-    class Popcorn {
-      getPigs(@createRouteParamDecorator(exampleFactory)('name') name: string, @createRouteParamDecorator(exampleFactory)('age') age: string) {
-      }
-    }
-
-    const routeParamMetadata: RouteParamMetadata = [
-      {
-        data: 'age',
-        factory: exampleFactory,
-        index: 1,
-      },
-      {
-        data: 'name',
-        factory: exampleFactory,
-        index: 0,
-      },
-    ];
-
-    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
     expect(defineMetadataSpy).toHaveBeenLastCalledWith(ROUTE_PARAM_METADATA, routeParamMetadata, Popcorn, 'getPigs');
   });
 });

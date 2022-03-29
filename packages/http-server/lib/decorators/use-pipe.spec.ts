@@ -1,13 +1,13 @@
 import { USE_PIPE_METADATA, UsePipe, UsePipeMetadata } from './use-pipe';
-import { Pipe, PipeMetadata } from '../types/pipe';
+import { Pipe, PipeContext } from '../types/pipe';
 
 class FooPipe implements Pipe {
-  transform(value: any, metadata: PipeMetadata): any {
+  transform(context: PipeContext): any {
   }
 }
 
 class BarPipe implements Pipe {
-  transform(value: any, metadata: PipeMetadata): any {
+  transform(context: PipeContext): any {
   }
 }
 

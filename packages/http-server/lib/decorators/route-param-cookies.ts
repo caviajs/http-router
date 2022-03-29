@@ -1,8 +1,7 @@
-import { createRouteParamDecorator, RouteParamDecoratorFactory } from './route-param';
+import { RouteParam } from './route-param';
 
-export const cookiesRouteParamDecoratorFactory: RouteParamDecoratorFactory = (data: string | undefined, context) => {
-  const request = context.getRequest();
-  return data ? request.cookies[data] : request.cookies;
-};
-
-export const Cookies = createRouteParamDecorator(cookiesRouteParamDecoratorFactory);
+export function Cookies(name?: string): ParameterDecorator {
+  return RouteParam(request => {
+    return name ? request.cookies[name] : request.cookies;
+  });
+}
