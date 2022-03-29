@@ -48,7 +48,7 @@ describe('HttpRouterManager', () => {
       }
 
       @UseInterceptor(AuthInterceptor, ['admin:bar'])
-      @Controller(['bar', 'baz'])
+      @Controller('bar')
       class BarController {
         @Get(':id')
         public getBar(@UsePipe(ValidatePipe) @Params('id') id: String) {
@@ -69,7 +69,7 @@ describe('HttpRouterManager', () => {
 
       await httpRouterManager.onApplicationBoot();
 
-      expect(httpRouterAddSpy).toHaveBeenCalledTimes(4);
+      expect(httpRouterAddSpy).toHaveBeenCalledTimes(3);
       expect(httpRouterAddSpy).toHaveBeenCalledWith({
         controllerConstructor: FooController,
         controllerInstance: fooController,
@@ -110,23 +110,6 @@ describe('HttpRouterManager', () => {
         ],
         method: 'GET',
         path: '/bar/:id',
-        routeHandler: barController.getBar,
-        routeHandlerInterceptors: [],
-        routeHandlerParams: [
-          { data: 'id', factory: paramsRouteParamDecoratorFactory, index: 0 },
-        ],
-        routeHandlerPipes: [
-          { args: [], metaType: String, pipe: validatePipe, index: 0 },
-        ],
-      } as Route);
-      expect(httpRouterAddSpy).toHaveBeenCalledWith({
-        controllerConstructor: BarController,
-        controllerInstance: barController,
-        controllerInterceptors: [
-          { args: ['admin:bar'], interceptor: authInterceptor },
-        ],
-        method: 'GET',
-        path: '/baz/:id',
         routeHandler: barController.getBar,
         routeHandlerInterceptors: [],
         routeHandlerParams: [
