@@ -2,7 +2,7 @@ import { Injectable, Injector, isTypeProvider, OnApplicationBoot, OnApplicationL
 import { Logger } from '@caviajs/logger';
 import { Schedule } from './schedule';
 import { SCHEDULE_CONTEXT } from '../schedule-constants';
-import { SCHEDULED_METADATA, ScheduledMetadata } from '../decorators/scheduled';
+import { SCHEDULED_EXPRESSION_METADATA, ScheduledExpressionMetadata } from '../decorators/scheduled';
 
 @Injectable()
 export class ScheduleManager implements OnApplicationBoot, OnApplicationListen, OnApplicationShutdown {
@@ -26,12 +26,12 @@ export class ScheduleManager implements OnApplicationBoot, OnApplicationListen, 
         Object
           .getOwnPropertyNames(prototype)
           .filter((name: string) => {
-            return Reflect.hasMetadata(SCHEDULED_METADATA, constructor, name);
+            return Reflect.hasMetadata(SCHEDULED_EXPRESSION_METADATA, constructor, name);
           })
           .forEach((name: string) => {
-            const scheduledMetadata: ScheduledMetadata = Reflect.getMetadata(SCHEDULED_METADATA, constructor, name);
+            const scheduledExpressionMetadata: ScheduledExpressionMetadata = Reflect.getMetadata(SCHEDULED_EXPRESSION_METADATA, constructor, name);
 
-            this.schedule.register(scheduledMetadata.expression, Object.getOwnPropertyDescriptor(prototype, name).value);
+            this.schedule.register(scheduledExpressionMetadata, Object.getOwnPropertyDescriptor(prototype, name).value);
           });
       });
   }

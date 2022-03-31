@@ -1,4 +1,4 @@
-import { SCHEDULED_METADATA, Scheduled, ScheduledMetadata } from './scheduled';
+import { SCHEDULED_EXPRESSION_METADATA, Scheduled, ScheduledExpressionMetadata } from './scheduled';
 
 describe('@Scheduled', () => {
   let defineMetadataSpy: jest.SpyInstance;
@@ -18,11 +18,9 @@ describe('@Scheduled', () => {
       }
     }
 
-    const scheduledMetadata: ScheduledMetadata = {
-      expression: '* * * * *',
-    };
+    const scheduledExpressionMetadata: ScheduledExpressionMetadata = '* * * * *';
 
     expect(defineMetadataSpy).toHaveBeenCalledTimes(1);
-    expect(defineMetadataSpy).toHaveBeenCalledWith(SCHEDULED_METADATA, scheduledMetadata, Popcorn, 'getPigs');
+    expect(defineMetadataSpy).toHaveBeenCalledWith(SCHEDULED_EXPRESSION_METADATA, scheduledExpressionMetadata, Popcorn, 'getPigs');
   });
 });

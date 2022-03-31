@@ -1,15 +1,11 @@
-export const SCHEDULED_METADATA: Symbol = Symbol('SCHEDULED_METADATA');
+export const SCHEDULED_EXPRESSION_METADATA: Symbol = Symbol('SCHEDULED_EXPRESSION_METADATA');
 
 export function Scheduled(expression: string): MethodDecorator {
   return (target: Function, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) => {
-    const scheduledMetadata: ScheduledMetadata = {
-      expression: expression,
-    };
+    const scheduledExpressionMetadata: ScheduledExpressionMetadata = expression;
 
-    Reflect.defineMetadata(SCHEDULED_METADATA, scheduledMetadata, target.constructor, propertyKey);
+    Reflect.defineMetadata(SCHEDULED_EXPRESSION_METADATA, scheduledExpressionMetadata, target.constructor, propertyKey);
   };
 }
 
-export interface ScheduledMetadata {
-  expression: string;
-}
+export type ScheduledExpressionMetadata = string;
