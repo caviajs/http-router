@@ -40,20 +40,22 @@ describe('HttpServerManager', () => {
   });
 
   describe('onApplicationListen', () => {
-    it('should listen http server', () => {
-      const httpServerListenSpy: jest.SpyInstance = jest.spyOn(httpServer, 'listen').mockImplementation(jest.fn());
+    it('should listen http server', async () => {
+      const httpServerListenSpy: jest.SpyInstance = jest
+        .spyOn(httpServer, 'listen')
+        .mockImplementation((port, cb) => cb() as any);
 
-      httpServerManager.onApplicationListen();
+      await httpServerManager.onApplicationListen();
 
       expect(httpServerListenSpy).toHaveBeenNthCalledWith(1, httpServerPort, expect.any(Function));
     });
   });
 
   describe('onApplicationShutdown', () => {
-    it('should close http server', () => {
+    it('should close http server', async () => {
       const httpServerCloseSpy = jest.spyOn(httpServer, 'close');
 
-      httpServerManager.onApplicationShutdown();
+      await httpServerManager.onApplicationShutdown();
 
       expect(httpServerCloseSpy).toHaveBeenNthCalledWith(1, expect.any(Function));
     });

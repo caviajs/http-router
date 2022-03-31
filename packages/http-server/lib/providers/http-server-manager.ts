@@ -23,15 +23,19 @@ export class HttpServerManager implements OnApplicationBoot, OnApplicationListen
     });
   }
 
-  public onApplicationListen(): void {
-    this.httpServer.listen(this.httpServerPort, () => {
-      this.logger.trace(`Http server listening at port ${ this.httpServerPort }`, LOGGER_CONTEXT);
+  public async onApplicationListen(): Promise<void> {
+    await new Promise<void>(resolve => {
+      this.httpServer.listen(this.httpServerPort, () => resolve());
     });
+
+    this.logger.trace(`Http server listening at port ${ this.httpServerPort }`, LOGGER_CONTEXT);
   }
 
-  public onApplicationShutdown(): void {
-    this.httpServer.close(() => {
-      this.logger.trace('Http server has been stopped', LOGGER_CONTEXT);
+  public async onApplicationShutdown(): Promise<void> {
+    await new Promise<void>(resolve => {
+      this.httpServer.close(() => resolve());
     });
+
+    this.logger.trace('Http server has been stopped', LOGGER_CONTEXT);
   }
 }
