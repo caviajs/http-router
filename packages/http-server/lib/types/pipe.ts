@@ -11,7 +11,7 @@ export interface PipeContext {
 
   getHandler(): Function;
 
-  getMetaType(): Function;
+  getMetaType(): any;
 
   getRequest(): Request;
 
