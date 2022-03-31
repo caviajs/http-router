@@ -1,9 +1,13 @@
-import { schedule, ScheduledTask } from 'node-cron';
+import { schedule, ScheduledTask, validate } from 'node-cron';
 
 export class Worker {
   protected readonly scheduledTask: ScheduledTask;
 
   constructor(expression: WorkerExpression, callback: WorkerCallback) {
+    if (!validate(expression)) {
+      throw new Error(`Invalid {${ expression }} cron expression`);
+    }
+
     this.scheduledTask = schedule(expression, callback, { scheduled: false });
   }
 
