@@ -37,14 +37,18 @@ export class ScheduleManager implements OnApplicationBoot, OnApplicationListen, 
   }
 
   public async onApplicationListen(): Promise<void> {
-    this.schedule.start(() => {
-      this.logger.trace('Schedule has been started', SCHEDULE_CONTEXT);
+    await new Promise<void>(resolve => {
+      this.schedule.start(() => resolve());
     });
+
+    this.logger.trace('Schedule has been started', SCHEDULE_CONTEXT);
   }
 
   public async onApplicationShutdown(): Promise<void> {
-    this.schedule.stop(() => {
-      this.logger.trace('Schedule has been stopped', SCHEDULE_CONTEXT);
+    await new Promise<void>(resolve => {
+      this.schedule.stop(() => resolve());
     });
+
+    this.logger.trace('Schedule has been stopped', SCHEDULE_CONTEXT);
   }
 }
