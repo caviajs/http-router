@@ -31,7 +31,7 @@ export class ScheduleManager implements OnApplicationBoot, OnApplicationListen, 
           .forEach((name: string) => {
             const scheduledExpressionMetadata: ScheduledExpressionMetadata = Reflect.getMetadata(SCHEDULED_EXPRESSION_METADATA, constructor, name);
 
-            this.schedule.register(scheduledExpressionMetadata, Object.getOwnPropertyDescriptor(prototype, name).value);
+            this.schedule.register(scheduledExpressionMetadata, Object.getOwnPropertyDescriptor(prototype, name).value.bind(instance));
           });
       });
   }
