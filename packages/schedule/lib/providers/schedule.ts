@@ -14,7 +14,7 @@ export class Schedule {
 
   public register(expression: string, callback: () => void | Promise<void>): void {
     this.workers.push(new Worker(expression, callback));
-    this.logger.trace(`Mapped {${ expression }} schedule job`, SCHEDULE_CONTEXT);
+    this.logger.trace(`Mapped {${ expression }} schedule worker`, SCHEDULE_CONTEXT);
   }
 
   public start(callback: () => void): void {
