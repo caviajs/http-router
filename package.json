@@ -73,6 +73,7 @@
       "@caviajs/http-client": "<rootDir>/packages/http-client/index.ts",
       "@caviajs/http-server": "<rootDir>/packages/http-server/index.ts",
       "@caviajs/logger": "<rootDir>/packages/logger/index.ts",
+      "@caviajs/schedule": "<rootDir>/packages/schedule/index.ts",
       "@caviajs/storage": "<rootDir>/packages/storage/index.ts",
       "@caviajs/view": "<rootDir>/packages/view/index.ts"
     }

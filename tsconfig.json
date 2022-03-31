@@ -40,6 +40,9 @@
       "@caviajs/logger": [
         "packages/logger/index.ts"
       ],
+      "@caviajs/schedule": [
+        "packages/schedule/index.ts"
+      ],
       "@caviajs/storage": [
         "packages/storage/index.ts"
       ],
