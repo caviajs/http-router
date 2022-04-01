@@ -55,29 +55,31 @@ describe('ScheduleManager', () => {
 
   describe('onApplicationListen', () => {
     it('should start a schedule', async () => {
-      const scheduleStartSpy = jest.spyOn(schedule, 'start');
       const loggerTraceSpy = jest.spyOn(logger, 'trace');
+      const scheduleStartSpy = jest.spyOn(schedule, 'start');
 
+      expect(loggerTraceSpy).toHaveBeenCalledTimes(0);
       expect(scheduleStartSpy).toHaveBeenCalledTimes(0);
 
       await scheduleManager.onApplicationListen();
 
-      expect(scheduleStartSpy).toHaveBeenCalledTimes(1);
       expect(loggerTraceSpy).toHaveBeenNthCalledWith(1, 'Schedule has been started', SCHEDULE_CONTEXT);
+      expect(scheduleStartSpy).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('onApplicationShutdown', () => {
     it('should stop a schedule', async () => {
-      const scheduleStopSpy = jest.spyOn(schedule, 'stop');
       const loggerTraceSpy = jest.spyOn(logger, 'trace');
+      const scheduleStopSpy = jest.spyOn(schedule, 'stop');
 
+      expect(loggerTraceSpy).toHaveBeenCalledTimes(0);
       expect(scheduleStopSpy).toHaveBeenCalledTimes(0);
 
       await scheduleManager.onApplicationShutdown();
 
-      expect(scheduleStopSpy).toHaveBeenCalledTimes(1);
       expect(loggerTraceSpy).toHaveBeenNthCalledWith(1, 'Schedule has been stopped', SCHEDULE_CONTEXT);
+      expect(scheduleStopSpy).toHaveBeenCalledTimes(1);
     });
   });
 });
