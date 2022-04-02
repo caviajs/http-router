@@ -1,8 +1,11 @@
+import { Logger, LoggerPackage } from '@caviajs/logger';
 import { Application } from './decorators/application';
 import { Inject } from './decorators/inject';
 import { Injectable } from './decorators/injectable';
 import { Provider } from './types/provider';
+import { CaviaApplication } from './cavia-application';
 import { CaviaApplicationBuilder } from './cavia-application-builder';
+import { LOGGER_CONTEXT } from './constants';
 
 describe('CaviaApplicationBuilder', () => {
   afterEach(() => {
@@ -61,6 +64,48 @@ describe('CaviaApplicationBuilder', () => {
       .compile();
 
     expect(await application.injector.find('foo')).toEqual(3);
+  });
+
+  describe('compile', () => {
+    it('should use Logger', async () => {
+      const loggerTraceSpy = jest.spyOn(Logger.prototype, 'trace');
+
+      @Application({
+        packages: [LoggerPackage.configure().register()],
+      })
+      class MyApp {
+      }
+
+      expect(loggerTraceSpy).toHaveBeenCalledTimes(0);
+
+      await new CaviaApplicationBuilder(MyApp).compile();
+
+      expect(loggerTraceSpy).toHaveBeenNthCalledWith(1, 'Starting application...', LOGGER_CONTEXT);
+    });
+
+    it('should call a boot method on the CaviaApplication instance', async () => {
+      const caviaApplicationBootSpy = jest.spyOn(CaviaApplication.prototype, 'boot');
+
+      @Application()
+      class MyApp {
+      }
+
+      expect(caviaApplicationBootSpy).toHaveBeenCalledTimes(0);
+
+      await new CaviaApplicationBuilder(MyApp).compile();
+
+      expect(caviaApplicationBootSpy).toHaveBeenNthCalledWith(1);
+    });
+
+    it('should return CaviaApplication instance', async () => {
+      @Application()
+      class MyApp {
+      }
+
+      const application = await new CaviaApplicationBuilder(MyApp).compile();
+
+      expect(application).toBeInstanceOf(CaviaApplication);
+    });
   });
 
   describe('overrideProvider', () => {
