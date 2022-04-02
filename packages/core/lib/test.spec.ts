@@ -1,7 +1,6 @@
 import { LOGGER_LEVEL, LoggerLevel } from '@caviajs/logger';
 import { Application } from './decorators/application';
 import { CaviaApplicationBuilder } from './cavia-application-builder';
-import { CaviaApplication } from './cavia-application';
 import { Test } from './test';
 
 jest.mock('./cavia-builder');
@@ -16,7 +15,7 @@ describe('Test', () => {
   });
 
   describe('createTestingApplication', () => {
-    it('should use ApplicationBuilder as builder', () => {
+    it('should use CaviaApplicationBuilder as builder', () => {
       Test.createTestingApplication(MyApp);
 
       expect(CaviaApplicationBuilder).toHaveBeenNthCalledWith(1, MyApp);
