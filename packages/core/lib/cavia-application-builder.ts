@@ -8,7 +8,7 @@ import { CaviaApplication } from './cavia-application';
 import { LOGGER_CONTEXT } from './constants';
 import { Injector } from './injector';
 
-export class CaviaBuilder {
+export class CaviaApplicationBuilder {
   protected readonly providers: Map<Token, Provider> = new Map();
 
   constructor(application: Type) {
@@ -42,7 +42,7 @@ export class CaviaBuilder {
     return caviaApplication;
   }
 
-  public overrideProvider(token: Token): OverrideBy<CaviaBuilder> {
+  public overrideProvider(token: Token): OverrideBy<CaviaApplicationBuilder> {
     return {
       useClass: (type: Type) => {
         return this.override(token, { provide: token, useClass: type });
@@ -56,7 +56,7 @@ export class CaviaBuilder {
     };
   }
 
-  protected override(token: Token, provider: Provider): CaviaBuilder {
+  protected override(token: Token, provider: Provider): CaviaApplicationBuilder {
     this.providers.set(token, provider);
 
     return this;

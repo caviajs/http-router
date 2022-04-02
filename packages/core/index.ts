@@ -23,7 +23,7 @@ export * from './lib/utils/is-type-provider';
 export * from './lib/utils/is-value-provider';
 
 export * from './lib/cavia-application';
-export * from './lib/cavia-builder';
+export * from './lib/cavia-application-builder';
 export * from './lib/cavia-factory';
 export * from './lib/constants';
 export * from './lib/injector';
