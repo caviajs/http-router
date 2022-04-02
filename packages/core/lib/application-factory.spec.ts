@@ -8,6 +8,10 @@ class MyApp {
 }
 
 describe('ApplicationFactory', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('configureApplication', () => {
     it('should use ApplicationBuilder as builder', async () => {
       const applicationBuilderCompileSpy = jest.spyOn(ApplicationBuilder.prototype, 'compile');
