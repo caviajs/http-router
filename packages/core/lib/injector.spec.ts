@@ -1,4 +1,11 @@
-import { getTokenName, forwardRef, Optional, Inject, Injectable, Injector } from '../index';
+import { Inject } from './decorators/inject';
+import { Injectable } from './decorators/injectable';
+import { Optional } from './decorators/optional';
+import { Injector } from './injector';
+import { Token } from './types/token';
+import { forwardRef } from './utils/forward-ref';
+import { getProviderToken } from './utils/get-provider-token';
+import { getTokenName } from './utils/get-token-name';
 
 class CarWithoutInjectableAnnotation {
 }
@@ -65,8 +72,27 @@ describe('Injector', () => {
     expect(await injector.find('foo')).toEqual(1);
   });
 
-  describe('filter method', () => {
-    it('should return properly filtered providers', async () => {
+  describe('filter', () => {
+    it('should return properly filtered providers using predicate', async () => {
+      const injector = await Injector.create([
+        { provide: 'foo', useValue: 1 },
+        { provide: 'bar', useValue: 2 },
+        { provide: 'baz', useValue: 3 },
+      ]);
+
+      const result: any[] = await injector.filter(provider => {
+        const tokens: Token[] = ['foo', 'bar'];
+
+        return tokens.includes(getProviderToken(provider));
+      });
+
+      expect(result.length).toEqual(2);
+      expect(result).toContain(1);
+      expect(result).toContain(2);
+      expect(result).not.toContain(3);
+    });
+
+    it('should return properly filtered providers using tokens', async () => {
       const injector = await Injector.create([
         { provide: 'foo', useValue: 1 },
         { provide: 'bar', useValue: 2 },
@@ -82,17 +108,33 @@ describe('Injector', () => {
     });
   });
 
-  describe('find method', () => {
-    it('should return the found provider', async () => {
-      const injector = await Injector.create([]);
+  describe('find', () => {
+    it('should return the found provider using token', async () => {
+      const injector = await Injector.create([
+        { provide: 'foo', useValue: 1 },
+      ]);
 
-      expect(await injector.find(Injector)).toBe(injector);
+      expect(await injector.find('foo')).toBe(1);
     });
 
-    it('should return undefined if the provider is not found', async () => {
+    it('should return undefined if the provider is not found using token', async () => {
       const injector = await Injector.create([]);
 
-      expect(await injector.find('car')).toBeUndefined();
+      expect(await injector.find('foo')).toBeUndefined();
+    });
+
+    it('should return the found provider using predicate', async () => {
+      const injector = await Injector.create([
+        { provide: 'foo', useValue: 1 },
+      ]);
+
+      expect(await injector.find(provider => getProviderToken(provider) === 'foo')).toBe(1);
+    });
+
+    it('should return undefined if the provider is not found using predicate', async () => {
+      const injector = await Injector.create([]);
+
+      expect(await injector.find(provider => getProviderToken(provider) === 'foo')).toBeUndefined();
     });
   });
 
