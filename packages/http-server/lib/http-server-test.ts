@@ -1,5 +1,5 @@
 import { Http, HttpOptionsBase, HttpResponseBase } from '@caviajs/common';
-import { ApplicationRef } from '@caviajs/core';
+import { CaviaApplication } from '@caviajs/core';
 import http from 'http';
 import https from 'https';
 import net from 'net';
@@ -16,12 +16,12 @@ function composeUrl(server: http.Server | https.Server, url: string): string {
 }
 
 export class HttpServerTest {
-  public static async request(applicationRef: ApplicationRef, method: Method, path: Path, options?: HttpOptions & { responseType?: 'buffer' }): Promise<HttpResponse<Buffer>>;
-  public static async request<T = any>(applicationRef: ApplicationRef, method: Method, path: Path, options?: HttpOptions & { responseType?: 'json' }): Promise<HttpResponse<T>>;
-  public static async request(applicationRef: ApplicationRef, method: Method, path: Path, options?: HttpOptions & { responseType?: 'stream' }): Promise<HttpResponse<Readable>>;
-  public static async request(applicationRef: ApplicationRef, method: Method, path: Path, options?: HttpOptions & { responseType?: 'text' }): Promise<HttpResponse<string>>;
-  public static async request(applicationRef: ApplicationRef, method: Method, path: Path, options?: HttpOptions & { responseType?: any }): Promise<HttpResponse<any>> {
-    const server: HttpServer = await applicationRef.injector.find(HTTP_SERVER);
+  public static async request(caviaApplication: CaviaApplication, method: Method, path: Path, options?: HttpOptions & { responseType?: 'buffer' }): Promise<HttpResponse<Buffer>>;
+  public static async request<T = any>(caviaApplication: CaviaApplication, method: Method, path: Path, options?: HttpOptions & { responseType?: 'json' }): Promise<HttpResponse<T>>;
+  public static async request(caviaApplication: CaviaApplication, method: Method, path: Path, options?: HttpOptions & { responseType?: 'stream' }): Promise<HttpResponse<Readable>>;
+  public static async request(caviaApplication: CaviaApplication, method: Method, path: Path, options?: HttpOptions & { responseType?: 'text' }): Promise<HttpResponse<string>>;
+  public static async request(caviaApplication: CaviaApplication, method: Method, path: Path, options?: HttpOptions & { responseType?: any }): Promise<HttpResponse<any>> {
+    const server: HttpServer = await caviaApplication.injector.find(HTTP_SERVER);
 
     if (server.address() === null) {
       server.listen();

@@ -1,5 +1,5 @@
 import { Http } from '@caviajs/common';
-import { Application, ApplicationRef, ApplicationTest } from '@caviajs/core';
+import { Application, CaviaApplication, Test } from '@caviajs/core';
 import { LoggerPackage } from '@caviajs/logger';
 import http from 'http';
 import net from 'net';
@@ -37,11 +37,11 @@ const httpServerProtocol: string = 'http';
 const httpServerUrl: string = `${ httpServerProtocol }://127.0.0.1:${ httpServerPort }`;
 
 describe('HttpServerTest', () => {
-  let applicationRef: ApplicationRef;
+  let caviaApplication: CaviaApplication;
   let httpRequestSpy: jest.SpyInstance;
 
   beforeEach(async () => {
-    applicationRef = await ApplicationTest.configureTestingApplication(App).compile();
+    caviaApplication = await Test.createTestingApplication(App).compile();
     httpRequestSpy = jest.spyOn(Http, 'request').mockReturnValue(Promise.resolve(httpResponse));
   });
 
@@ -53,7 +53,7 @@ describe('HttpServerTest', () => {
     it('should execute http.Server.close after request', async () => {
       const httpServerCloseSpy: jest.SpyInstance = jest.spyOn(http.Server.prototype, 'close').mockImplementation(jest.fn());
 
-      await HttpServerTest.request(applicationRef, method, path, httpOptions);
+      await HttpServerTest.request(caviaApplication, method, path, httpOptions);
 
       expect(httpServerCloseSpy).toHaveBeenCalledTimes(1);
     });
@@ -63,7 +63,7 @@ describe('HttpServerTest', () => {
 
       const httpServerListenSpy: jest.SpyInstance = jest.spyOn(http.Server.prototype, 'listen').mockImplementation(jest.fn());
 
-      await HttpServerTest.request(applicationRef, method, path, httpOptions);
+      await HttpServerTest.request(caviaApplication, method, path, httpOptions);
 
       expect(httpServerListenSpy).toHaveBeenCalledTimes(1);
     });
@@ -73,14 +73,14 @@ describe('HttpServerTest', () => {
 
       const httpServerListenSpy: jest.SpyInstance = jest.spyOn(http.Server.prototype, 'listen').mockImplementation(jest.fn());
 
-      await HttpServerTest.request(applicationRef, method, path, httpOptions);
+      await HttpServerTest.request(caviaApplication, method, path, httpOptions);
 
       expect(httpServerListenSpy).toHaveBeenCalledTimes(0);
     });
 
     describe('without response type', () => {
       it('should execute Http.request with the correct options and return appropriate data', async () => {
-        const response = await HttpServerTest.request(applicationRef, method, path, httpOptions);
+        const response = await HttpServerTest.request(caviaApplication, method, path, httpOptions);
 
         expect(response).toEqual(httpResponse);
         expect(httpRequestSpy).toHaveBeenNthCalledWith(1, {
@@ -93,7 +93,7 @@ describe('HttpServerTest', () => {
 
     describe('buffer response type', () => {
       it('should execute Http.request with the correct options and return appropriate data', async () => {
-        const response = await HttpServerTest.request(applicationRef, method, path, { ...httpOptions, responseType: 'buffer' });
+        const response = await HttpServerTest.request(caviaApplication, method, path, { ...httpOptions, responseType: 'buffer' });
 
         expect(response).toEqual(httpResponse);
         expect(httpRequestSpy).toHaveBeenNthCalledWith(1, {
@@ -107,7 +107,7 @@ describe('HttpServerTest', () => {
 
     describe('json response type', () => {
       it('should execute Http.request with the correct options and return appropriate data', async () => {
-        const response = await HttpServerTest.request(applicationRef, method, path, { ...httpOptions, responseType: 'json' });
+        const response = await HttpServerTest.request(caviaApplication, method, path, { ...httpOptions, responseType: 'json' });
 
         expect(response).toEqual(httpResponse);
         expect(httpRequestSpy).toHaveBeenNthCalledWith(1, {
@@ -121,7 +121,7 @@ describe('HttpServerTest', () => {
 
     describe('stream response type', () => {
       it('should execute Http.request with the correct options and return appropriate data', async () => {
-        const response = await HttpServerTest.request(applicationRef, method, path, { ...httpOptions, responseType: 'stream' });
+        const response = await HttpServerTest.request(caviaApplication, method, path, { ...httpOptions, responseType: 'stream' });
 
         expect(response).toEqual(httpResponse);
         expect(httpRequestSpy).toHaveBeenNthCalledWith(1, {
@@ -135,7 +135,7 @@ describe('HttpServerTest', () => {
 
     describe('text response type', () => {
       it('should execute Http.request with the correct options and return appropriate data', async () => {
-        const response = await HttpServerTest.request(applicationRef, method, path, { ...httpOptions, responseType: 'text' });
+        const response = await HttpServerTest.request(caviaApplication, method, path, { ...httpOptions, responseType: 'text' });
 
         expect(response).toEqual(httpResponse);
         expect(httpRequestSpy).toHaveBeenNthCalledWith(1, {
