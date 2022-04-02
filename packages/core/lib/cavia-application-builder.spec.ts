@@ -1,13 +1,14 @@
 import { Application } from './decorators/application';
-import { CaviaApplicationBuilder } from './cavia-application-builder';
-import { getProviderToken } from './utils/get-provider-token';
-import { Injectable } from './decorators/injectable';
 import { Inject } from './decorators/inject';
+import { Injectable } from './decorators/injectable';
 import { Provider } from './types/provider';
-import { Token } from './types/token';
+import { getProviderToken } from './utils/get-provider-token';
+import { CaviaApplicationBuilder } from './cavia-application-builder';
 
-class CaviaBuilderTest extends CaviaApplicationBuilder {
-  public readonly providers: Map<Token, Provider> = new Map();
+class CaviaApplicationBuilderTest extends CaviaApplicationBuilder {
+  public getProviders(): Provider[] {
+    return [...this.providers.values()];
+  }
 }
 
 describe('CaviaBuilder', () => {
@@ -15,7 +16,18 @@ describe('CaviaBuilder', () => {
     jest.clearAllMocks();
   });
 
-  it('should collect providers from metadata...', async () => {
+  it('should throw an exception if the class is not marked with the @Application decorator', () => {
+    class MyApp {
+    }
+
+    try {
+      new CaviaApplicationBuilder(MyApp);
+    } catch (e) {
+      expect(e.message).toBe(`The '${ MyApp.name }' should be annotated as an application`);
+    }
+  });
+
+  it('should collect application providers', async () => {
     @Application({
       packages: [
         { providers: [{ provide: 'foo-1', useValue: 10 }] },
@@ -29,44 +41,36 @@ describe('CaviaBuilder', () => {
     class MyApp {
     }
 
-    const caviaBuilder = new CaviaBuilderTest(MyApp);
+    const caviaBuilder = new CaviaApplicationBuilderTest(MyApp);
 
-    expect(caviaBuilder.providers.values()).toEqual([
+    expect(caviaBuilder.getProviders()).toEqual([
       { provide: 'foo-1', useValue: 10 },
       { provide: 'foo-2', useValue: 20 },
       { provide: 'bar-1', useValue: 30 },
       { provide: 'bar-2', useValue: 40 },
+      MyApp,
     ]);
   });
 
-  it('should overwrite package tokens if present in application providers', async () => {
+  it('should determine the appropriate weighting of providers', async () => {
     @Application({
       packages: [
         { providers: [{ provide: 'foo', useValue: 1 }] },
       ],
       providers: [
         { provide: 'foo', useValue: 2 },
+        { provide: 'foo', useValue: 3 },
       ],
     })
     class MyApp {
     }
 
-    const caviaBuilder = new CaviaBuilderTest(MyApp);
+    const caviaBuilder = new CaviaApplicationBuilderTest(MyApp);
 
-    expect(caviaBuilder.providers.values()).toEqual([
-      { provide: 'foo', useValue: 2 },
+    expect(caviaBuilder.getProviders()).toEqual([
+      { provide: 'foo', useValue: 3 },
+      MyApp,
     ]);
-  });
-
-  it('should throw an exception if the class is not marked with the @Application decorator', () => {
-    class MyApp {
-    }
-
-    try {
-      new CaviaApplicationBuilder(MyApp);
-    } catch (e) {
-      expect(e.message).toBe(`The '${ MyApp.name }' should be annotated as an application`);
-    }
   });
 
   describe('overrideProvider', () => {
