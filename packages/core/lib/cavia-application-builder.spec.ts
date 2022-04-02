@@ -2,16 +2,9 @@ import { Application } from './decorators/application';
 import { Inject } from './decorators/inject';
 import { Injectable } from './decorators/injectable';
 import { Provider } from './types/provider';
-import { getProviderToken } from './utils/get-provider-token';
 import { CaviaApplicationBuilder } from './cavia-application-builder';
 
-class CaviaApplicationBuilderTest extends CaviaApplicationBuilder {
-  public getProviders(): Provider[] {
-    return [...this.providers.values()];
-  }
-}
-
-describe('CaviaBuilder', () => {
+describe('CaviaApplicationBuilder', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -41,15 +34,14 @@ describe('CaviaBuilder', () => {
     class MyApp {
     }
 
-    const caviaBuilder = new CaviaApplicationBuilderTest(MyApp);
+    const application = await new CaviaApplicationBuilder(MyApp)
+      .compile();
 
-    expect(caviaBuilder.getProviders()).toEqual([
-      { provide: 'foo-1', useValue: 10 },
-      { provide: 'foo-2', useValue: 20 },
-      { provide: 'bar-1', useValue: 30 },
-      { provide: 'bar-2', useValue: 40 },
-      MyApp,
-    ]);
+    expect(await application.injector.find('foo-1')).toEqual(10);
+    expect(await application.injector.find('foo-2')).toEqual(20);
+    expect(await application.injector.find('bar-1')).toEqual(30);
+    expect(await application.injector.find('bar-2')).toEqual(40);
+    expect(await application.injector.find(MyApp)).toBeInstanceOf(MyApp);
   });
 
   it('should determine the appropriate weighting of providers', async () => {
@@ -65,12 +57,10 @@ describe('CaviaBuilder', () => {
     class MyApp {
     }
 
-    const caviaBuilder = new CaviaApplicationBuilderTest(MyApp);
+    const application = await new CaviaApplicationBuilder(MyApp)
+      .compile();
 
-    expect(caviaBuilder.getProviders()).toEqual([
-      { provide: 'foo', useValue: 3 },
-      MyApp,
-    ]);
+    expect(await application.injector.find('foo')).toEqual(3);
   });
 
   describe('overrideProvider', () => {
@@ -109,8 +99,8 @@ describe('CaviaBuilder', () => {
             .overrideProvider('engine').useClass(TestingEngine)
             .compile();
 
-          expect(await application.injector.find(provider => getProviderToken(provider) === Car)).toBeInstanceOf(TestingCar);
-          expect(await application.injector.find(provider => getProviderToken(provider) === 'engine')).toBeInstanceOf(TestingEngine);
+          expect(await application.injector.find(Car)).toBeInstanceOf(TestingCar);
+          expect(await application.injector.find('engine')).toBeInstanceOf(TestingEngine);
         }
 
         {
@@ -127,8 +117,8 @@ describe('CaviaBuilder', () => {
             .overrideProvider('engine').useClass(TestingEngine)
             .compile();
 
-          expect(await application.injector.find(provider => getProviderToken(provider) === Car)).toBeInstanceOf(TestingCar);
-          expect(await application.injector.find(provider => getProviderToken(provider) === 'engine')).toBeInstanceOf(TestingEngine);
+          expect(await application.injector.find(Car)).toBeInstanceOf(TestingCar);
+          expect(await application.injector.find('engine')).toBeInstanceOf(TestingEngine);
         }
 
         {
@@ -146,8 +136,8 @@ describe('CaviaBuilder', () => {
             .overrideProvider('engine').useClass(TestingEngine)
             .compile();
 
-          expect(await application.injector.find(provider => getProviderToken(provider) === Car)).toBeInstanceOf(TestingCar);
-          expect(await application.injector.find(provider => getProviderToken(provider) === 'engine')).toBeInstanceOf(TestingEngine);
+          expect(await application.injector.find(Car)).toBeInstanceOf(TestingCar);
+          expect(await application.injector.find('engine')).toBeInstanceOf(TestingEngine);
         }
       });
     });
@@ -166,8 +156,8 @@ describe('CaviaBuilder', () => {
             .overrideProvider('engine').useFactory({ factory: () => 'v8' })
             .compile();
 
-          expect(await application.injector.find(provider => getProviderToken(provider) === Car)).toEqual({ engine: 'v8' });
-          expect(await application.injector.find(provider => getProviderToken(provider) === 'engine')).toEqual('v8');
+          expect(await application.injector.find(Car)).toEqual({ engine: 'v8' });
+          expect(await application.injector.find('engine')).toEqual('v8');
         }
 
         {
@@ -184,8 +174,8 @@ describe('CaviaBuilder', () => {
             .overrideProvider('engine').useFactory({ factory: () => 'v8' })
             .compile();
 
-          expect(await application.injector.find(provider => getProviderToken(provider) === Car)).toEqual({ engine: 'v8' });
-          expect(await application.injector.find(provider => getProviderToken(provider) === 'engine')).toEqual('v8');
+          expect(await application.injector.find(Car)).toEqual({ engine: 'v8' });
+          expect(await application.injector.find('engine')).toEqual('v8');
         }
 
         {
@@ -203,8 +193,8 @@ describe('CaviaBuilder', () => {
             .overrideProvider('engine').useFactory({ factory: () => 'v8' })
             .compile();
 
-          expect(await application.injector.find(provider => getProviderToken(provider) === Car)).toEqual({ engine: 'v8' });
-          expect(await application.injector.find(provider => getProviderToken(provider) === 'engine')).toEqual('v8');
+          expect(await application.injector.find(Car)).toEqual({ engine: 'v8' });
+          expect(await application.injector.find('engine')).toEqual('v8');
         }
       });
     });
@@ -223,8 +213,8 @@ describe('CaviaBuilder', () => {
             .overrideProvider('engine').useValue('v8')
             .compile();
 
-          expect(await application.injector.find(provider => getProviderToken(provider) === Car)).toEqual('BMW');
-          expect(await application.injector.find(provider => getProviderToken(provider) === 'engine')).toEqual('v8');
+          expect(await application.injector.find(Car)).toEqual('BMW');
+          expect(await application.injector.find('engine')).toEqual('v8');
         }
 
         {
@@ -241,8 +231,8 @@ describe('CaviaBuilder', () => {
             .overrideProvider('engine').useValue('v8')
             .compile();
 
-          expect(await application.injector.find(provider => getProviderToken(provider) === Car)).toEqual('BMW');
-          expect(await application.injector.find(provider => getProviderToken(provider) === 'engine')).toEqual('v8');
+          expect(await application.injector.find(Car)).toEqual('BMW');
+          expect(await application.injector.find('engine')).toEqual('v8');
         }
 
         {
@@ -260,8 +250,8 @@ describe('CaviaBuilder', () => {
             .overrideProvider('engine').useValue('v8')
             .compile();
 
-          expect(await application.injector.find(provider => getProviderToken(provider) === Car)).toEqual('BMW');
-          expect(await application.injector.find(provider => getProviderToken(provider) === 'engine')).toEqual('v8');
+          expect(await application.injector.find(Car)).toEqual('BMW');
+          expect(await application.injector.find('engine')).toEqual('v8');
         }
       });
     });
