@@ -13,10 +13,10 @@ describe('CaviaFactory', () => {
   });
 
   describe('create', () => {
-    it('should use CaviaBuilder as builder', async () => {
+    it('should use CaviaApplicationBuilder as builder', async () => {
       await CaviaFactory.create(MyApp);
 
-      // expect(CaviaBuilder).toHaveBeenNthCalledWith(1, MyApp);
+      // expect(CaviaApplicationBuilder).toHaveBeenNthCalledWith(1, MyApp);
       expect(CaviaApplicationBuilder.prototype.compile).toHaveBeenCalledTimes(1);
     });
 
