@@ -49,4 +49,3 @@ export * from './utils/serialize-cookie';
 export * from './http-constants';
 export * from './http-exception';
 export * from './http-server-package';
-export * from './http-server-test';
