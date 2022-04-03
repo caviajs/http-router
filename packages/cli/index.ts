@@ -10,7 +10,7 @@ yargs
     command: [
       'oasgc',
     ],
-    handler: async yargs => {
+    handler: async args => {
       console.log('oasgc');
     },
   })
