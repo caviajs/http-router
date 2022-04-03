@@ -1,6 +1,6 @@
 {
-  "name": "@caviajs/http-server",
-  "description": "http server package for cavia framework",
+  "name": "@caviajs/http",
+  "description": "http package for cavia framework",
   "version": "0.0.1",
   "author": "Paweł Partyka",
   "license": "MIT",

@@ -31,11 +31,11 @@
       "@caviajs/env": [
         "packages/env/index.ts"
       ],
-      "@caviajs/http-client": [
-        "packages/http-client/index.ts"
+      "@caviajs/http/client": [
+        "packages/http/client/index.ts"
       ],
-      "@caviajs/http-server": [
-        "packages/http-server/index.ts"
+      "@caviajs/http/server": [
+        "packages/http/server/index.ts"
       ],
       "@caviajs/logger": [
         "packages/logger/index.ts"

@@ -1,5 +1,5 @@
-import { HttpClientPackage } from './http-client-package';
 import { HttpClient } from './providers/http-client';
+import { HttpClientPackage } from './http-client-package';
 
 describe('HttpClientPackage', () => {
   it('should contain built-in providers', () => {

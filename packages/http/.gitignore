@@ -3,7 +3,8 @@
 !*/
 
 # include whitelist
-!/lib/**
+!/client/**
+!/server/**
 !/.gitignore
 !/index.ts
 !/package.json
