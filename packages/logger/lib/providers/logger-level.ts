@@ -1,5 +1,6 @@
 import { Token, ValueProvider } from '@caviajs/core';
 
+// eslint-disable-next-line no-shadow
 export enum LoggerLevel {
   OFF = 0,
   FATAL = 1,
