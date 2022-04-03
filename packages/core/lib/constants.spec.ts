@@ -1,4 +1,4 @@
-import { LOGGER_CONTEXT } from '../index';
+import { LOGGER_CONTEXT } from './constants';
 
 describe('LOGGER_CONTEXT', () => {
   it('should contain the appropriate value', () => {
