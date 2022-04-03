@@ -22,17 +22,17 @@ declare module 'http' {
 http.ServerResponse.prototype.setCookie = setCookie;
 
 function setCookie(this: Response, name: string, value: string, options?: http.SetCookieOptions): void {
-  let setCookie = this.getHeader('Set-Cookie') || [];
+  let setCookieHeader = this.getHeader('Set-Cookie') || [];
 
-  if (typeof setCookie === 'number') {
-    setCookie = [setCookie.toString()];
+  if (typeof setCookieHeader === 'number') {
+    setCookieHeader = [setCookieHeader.toString()];
   }
 
-  if (typeof setCookie === 'string') {
-    setCookie = [setCookie];
+  if (typeof setCookieHeader === 'string') {
+    setCookieHeader = [setCookieHeader];
   }
 
-  setCookie.push(serializeCookie(name, value, options));
+  setCookieHeader.push(serializeCookie(name, value, options));
 
-  this.setHeader('Set-Cookie', setCookie);
+  this.setHeader('Set-Cookie', setCookieHeader);
 }

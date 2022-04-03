@@ -59,7 +59,7 @@ export class BodyParserInterceptor implements Interceptor {
         return reject(new HttpException(413, `Payload Too Large`));
       }
 
-      let stream: stream.Stream = request as stream.Stream;
+      let requestStream: stream.Stream = request as stream.Stream;
 
       // content-encoding
       const encoding = request.headers['content-encoding']?.toLowerCase();
@@ -67,10 +67,10 @@ export class BodyParserInterceptor implements Interceptor {
       if (encoding) {
         switch (encoding) {
           case 'deflate':
-            stream = stream.pipe(zlib.createInflate());
+            requestStream = requestStream.pipe(zlib.createInflate());
             break;
           case 'gzip':
-            stream = stream.pipe(zlib.createGunzip());
+            requestStream = requestStream.pipe(zlib.createGunzip());
             break;
           default:
             return reject(new HttpException(415, `Unsupported content-encoding: ${ encoding }`));
@@ -80,7 +80,7 @@ export class BodyParserInterceptor implements Interceptor {
       // data
       let data: Buffer = Buffer.alloc(0);
 
-      stream.on('data', (chunk: Buffer) => {
+      requestStream.on('data', (chunk: Buffer) => {
         data = Buffer.concat([data, chunk]);
 
         // buffer length limit check
@@ -89,7 +89,7 @@ export class BodyParserInterceptor implements Interceptor {
         }
       });
 
-      stream.on('end', () => {
+      requestStream.on('end', () => {
         // content-length header check with buffer length
         if (contentLength && contentLength !== data.length) {
           return reject(new HttpException(400, 'Request size did not match Content-Length'));
@@ -98,7 +98,7 @@ export class BodyParserInterceptor implements Interceptor {
         return resolve(this.mimeTypeParser.get(mimeType)(data, request.headers));
       });
 
-      stream.on('error', error => {
+      requestStream.on('error', error => {
         return reject(error);
       });
     });
