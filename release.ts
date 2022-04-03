@@ -28,9 +28,9 @@ const packages: string[] = fs.readdirSync(pathToPackages).filter(name => fs.stat
 if (unpublish) {
   // unpublish each package from the registry
   packages.forEach(pkg => {
-    const { name, version } = require(path.join(pathToPackages, pkg, 'package.json'));
+    const packageJson = require(path.join(pathToPackages, pkg, 'package.json'));
 
-    cp.spawnSync('npm', ['unpublish', `${ name }@${ version }`, '--force', '--registry', registry], {
+    cp.spawnSync('npm', ['unpublish', `${ packageJson.name }@${ packageJson.version }`, '--force', '--registry', registry], {
       cwd: path.join(pathToPackages, pkg),
       stdio: 'inherit',
     });
