@@ -22,9 +22,6 @@
       "@caviajs/cli": [
         "packages/cli/index.ts"
       ],
-      "@caviajs/common": [
-        "packages/common/index.ts"
-      ],
       "@caviajs/core": [
         "packages/core/index.ts"
       ],

@@ -69,7 +69,6 @@
     ],
     "moduleNameMapper": {
       "@caviajs/cli": "<rootDir>/packages/cli/index.ts",
-      "@caviajs/common": "<rootDir>/packages/common/index.ts",
       "@caviajs/core": "<rootDir>/packages/core/index.ts",
       "@caviajs/env": "<rootDir>/packages/env/index.ts",
       "@caviajs/http/client": "<rootDir>/packages/http/client/index.ts",
