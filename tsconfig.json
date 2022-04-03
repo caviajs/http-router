@@ -49,6 +49,7 @@
     }
   },
   "include": [
-    "packages/**/*"
+    "packages/**/*",
+    "release.ts"
   ]
 }
