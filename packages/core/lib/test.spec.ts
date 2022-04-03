@@ -3,7 +3,7 @@ import { Application } from './decorators/application';
 import { CaviaApplicationBuilder } from './cavia-application-builder';
 import { Test } from './test';
 
-jest.mock('./cavia-builder');
+jest.mock('./cavia-application-builder');
 
 @Application()
 class MyApp {
@@ -35,7 +35,7 @@ describe('Test', () => {
       expect(applicationBuilderOverrideProviderUseValueSpy).toHaveBeenNthCalledWith(1, LoggerLevel.OFF);
     });
 
-    it('should return ApplicationBuilder instance', () => {
+    it('should return CaviaApplicationBuilder instance', () => {
       expect(Test.createTestingApplication(MyApp)).toBeInstanceOf(CaviaApplicationBuilder);
     });
   });
