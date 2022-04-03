@@ -27,4 +27,3 @@ export * from './lib/cavia-application-builder';
 export * from './lib/cavia-factory';
 export * from './lib/constants';
 export * from './lib/injector';
-export * from './lib/test';
