@@ -1,9 +1,8 @@
-import { Http } from '@caviajs/common';
 import { HttpClient, HttpOptions, HttpResponse } from './http-client';
 
 const url: string = 'https://caviajs.com/api';
 const body: any = { foo: 'bar' };
-const httpOptions: HttpOptions = {
+const httpOptions: Partial<HttpOptions> = {
   headers: { 'X-Foo': 'Foo' },
   params: { foo: 'bar' },
   timeout: 15000,
@@ -15,13 +14,19 @@ const httpResponse: HttpResponse<undefined> = {
   statusMessage: 'OK',
 };
 
+class HttpClientTest extends HttpClient {
+  public request(options): any {
+    return super.request(options);
+  }
+}
+
 describe('HttpClient', () => {
   let httpClient: HttpClient;
   let httpRequestSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    httpClient = new HttpClient();
-    httpRequestSpy = jest.spyOn(Http, 'request').mockReturnValue(Promise.resolve(httpResponse));
+    httpClient = new HttpClientTest();
+    httpRequestSpy = jest.spyOn(HttpClientTest.prototype, 'request').mockReturnValue(Promise.resolve(httpResponse));
   });
 
   afterEach(() => {
@@ -261,5 +266,9 @@ describe('HttpClient', () => {
         expect(httpRequestSpy).toHaveBeenNthCalledWith(1, { ...httpOptions, body: body, responseType: 'text', method: 'PUT', url: url });
       });
     });
+  });
+
+  describe('request', () => {
+    // todo
   });
 });
