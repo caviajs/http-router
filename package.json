@@ -68,14 +68,7 @@
       "<rootDir>/node_modules/reflect-metadata/Reflect.js"
     ],
     "moduleNameMapper": {
-      "@caviajs/cli": "<rootDir>/packages/cli/index.ts",
-      "@caviajs/core": "<rootDir>/packages/core/index.ts",
-      "@caviajs/env": "<rootDir>/packages/env/index.ts",
-      "@caviajs/http/client": "<rootDir>/packages/http/client/index.ts",
-      "@caviajs/http/server": "<rootDir>/packages/http/server/index.ts",
-      "@caviajs/schedule": "<rootDir>/packages/schedule/index.ts",
-      "@caviajs/storage": "<rootDir>/packages/storage/index.ts",
-      "@caviajs/view": "<rootDir>/packages/view/index.ts"
+      "@caviajs/core": "<rootDir>/packages/core/index.ts"
     }
   }
 }

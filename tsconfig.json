@@ -19,29 +19,8 @@
       "node"
     ],
     "paths": {
-      "@caviajs/cli": [
-        "packages/cli/index.ts"
-      ],
       "@caviajs/core": [
         "packages/core/index.ts"
-      ],
-      "@caviajs/env": [
-        "packages/env/index.ts"
-      ],
-      "@caviajs/http/client": [
-        "packages/http/client/index.ts"
-      ],
-      "@caviajs/http/server": [
-        "packages/http/server/index.ts"
-      ],
-      "@caviajs/schedule": [
-        "packages/schedule/index.ts"
-      ],
-      "@caviajs/storage": [
-        "packages/storage/index.ts"
-      ],
-      "@caviajs/view": [
-        "packages/view/index.ts"
       ]
     }
   },
