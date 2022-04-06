@@ -1,5 +1,4 @@
 import { Edge } from 'edge.js';
-
 import { View } from './view';
 
 describe('View', () => {
