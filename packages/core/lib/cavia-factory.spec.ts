@@ -1,8 +1,12 @@
 import { Application } from './decorators/application';
+import { APPLICATION_REF } from './providers/application-ref';
 import { Logger } from './providers/logger';
+import { LOGGER_LEVEL, LoggerLevel } from './providers/logger-level';
+import { LOGGER_MESSAGE_FACTORY } from './providers/logger-message-factory';
 import { CaviaApplication } from './cavia-application';
 import { CaviaFactory } from './cavia-factory';
 import { LOGGER_CONTEXT } from './constants';
+import { Injector } from './injector';
 
 describe('CaviaFactory', () => {
   afterEach(() => {
@@ -25,6 +29,20 @@ describe('CaviaFactory', () => {
       }
     });
 
+    it('should contain built-in providers', async () => {
+      @Application()
+      class MyApp {
+      }
+
+      const application = await CaviaFactory.create(MyApp);
+
+      expect(await application.injector.find(APPLICATION_REF)).toBeInstanceOf(MyApp);
+      expect(await application.injector.find(Logger)).toBeInstanceOf(Logger);
+      expect(await application.injector.find(LOGGER_LEVEL)).toEqual(LoggerLevel.ALL);
+      expect(await application.injector.find(LOGGER_MESSAGE_FACTORY)).toEqual(expect.any(Function));
+      expect(await application.injector.find(Injector)).toBeInstanceOf(Injector);
+    });
+
     it('should collect application providers', async () => {
       @Application({
         packages: [
@@ -45,7 +63,6 @@ describe('CaviaFactory', () => {
       expect(await application.injector.find('foo-2')).toEqual(20);
       expect(await application.injector.find('bar-1')).toEqual(30);
       expect(await application.injector.find('bar-2')).toEqual(40);
-      expect(await application.injector.find(MyApp)).toBeInstanceOf(MyApp);
     });
 
     it('should determine the appropriate weighting of providers', async () => {

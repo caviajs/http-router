@@ -1,4 +1,5 @@
 import { APPLICATION_METADATA, ApplicationMetadata } from './decorators/application';
+import { createApplicationRefProvider } from './providers/application-ref';
 import { Logger } from './providers/logger';
 import { LoggerLevelProvider } from './providers/logger-level';
 import { LoggerMessageFactoryProvider } from './providers/logger-message-factory';
@@ -43,8 +44,7 @@ export class CaviaFactory {
       }
     }
 
-    // todo { provide: APPLICATION_REF, useExisting: application } ?
-    for (const provider of [...BUILT_IN_PROVIDERS, ...applicationMetadata?.providers || [], application]) {
+    for (const provider of [...BUILT_IN_PROVIDERS, ...applicationMetadata?.providers || [], createApplicationRefProvider(application)]) {
       providers.set(getProviderToken(provider), provider);
     }
 
