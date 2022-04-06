@@ -5,6 +5,7 @@ export * from './lib/decorators/inject';
 export * from './lib/decorators/injectable';
 export * from './lib/decorators/optional';
 
+export * from './lib/providers/application-ref';
 export * from './lib/providers/logger';
 export * from './lib/providers/logger-level';
 export * from './lib/providers/logger-message-factory';
