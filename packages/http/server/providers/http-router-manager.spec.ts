@@ -1,5 +1,4 @@
-import { getProviderName, Injectable, Injector } from '@caviajs/core';
-import { Logger, LoggerLevel } from '@caviajs/logger';
+import { getProviderName, Injectable, Injector, Logger, LoggerLevel } from '@caviajs/core';
 import { Controller } from '../decorators/controller';
 import { Get } from '../decorators/route-mapping-get';
 import { Post } from '../decorators/route-mapping-post';

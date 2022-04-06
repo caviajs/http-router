@@ -1,5 +1,6 @@
-import { FactoryProvider, Token } from '@caviajs/core';
 import clc from 'cli-color';
+import { FactoryProvider } from '../types/provider';
+import { Token } from '../types/token';
 import { LoggerLevel } from './logger-level';
 
 export const LOGGER_MESSAGE_FACTORY: Token<LoggerMessageFactory> = Symbol('LOGGER_MESSAGE_FACTORY');

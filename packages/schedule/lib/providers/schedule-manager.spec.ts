@@ -1,5 +1,4 @@
-import { Injectable, Injector } from '@caviajs/core';
-import { Logger, LoggerLevel } from '@caviajs/logger';
+import { Injectable, Injector, Logger, LoggerLevel } from '@caviajs/core';
 import { Scheduled } from '../decorators/scheduled';
 import { Schedule } from './schedule';
 import { ScheduleManager } from './schedule-manager';

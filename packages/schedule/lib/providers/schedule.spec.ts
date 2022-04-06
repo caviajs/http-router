@@ -1,4 +1,4 @@
-import { Logger, LoggerLevel } from '@caviajs/logger';
+import { Logger, LoggerLevel } from '@caviajs/core';
 import { Worker } from '../adapters/worker';
 import { Schedule } from './schedule';
 import { SCHEDULE_CONTEXT } from '../schedule-constants';

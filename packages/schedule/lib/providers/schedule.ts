@@ -1,5 +1,4 @@
-import { Injectable } from '@caviajs/core';
-import { Logger } from '@caviajs/logger';
+import { Injectable, Logger } from '@caviajs/core';
 import { Worker } from '../adapters/worker';
 import { SCHEDULE_CONTEXT } from '../schedule-constants';
 

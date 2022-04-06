@@ -1,4 +1,4 @@
-import { Logger, LoggerLevel } from '@caviajs/logger';
+import { Logger, LoggerLevel } from '@caviajs/core';
 import { Readable, Stream } from 'stream';
 import { HttpRouter } from './http-router';
 import { HttpServerHandler } from './http-server-handler';

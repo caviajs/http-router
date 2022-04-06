@@ -1,5 +1,4 @@
-import { Injectable, Injector, isTypeProvider, OnApplicationBoot, OnApplicationListen, OnApplicationShutdown, Type } from '@caviajs/core';
-import { Logger } from '@caviajs/logger';
+import { Injectable, Injector, isTypeProvider, Logger, OnApplicationBoot, OnApplicationListen, OnApplicationShutdown, Type } from '@caviajs/core';
 import { Schedule } from './schedule';
 import { SCHEDULE_CONTEXT } from '../schedule-constants';
 import { SCHEDULED_EXPRESSION_METADATA, ScheduledExpressionMetadata } from '../decorators/scheduled';

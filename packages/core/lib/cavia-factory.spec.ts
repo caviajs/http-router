@@ -1,5 +1,5 @@
-import { Logger, LoggerPackage } from '@caviajs/logger';
 import { Application } from './decorators/application';
+import { Logger } from './providers/logger';
 import { CaviaApplication } from './cavia-application';
 import { CaviaFactory } from './cavia-factory';
 import { LOGGER_CONTEXT } from './constants';
@@ -69,9 +69,7 @@ describe('CaviaFactory', () => {
     it('should use Logger', async () => {
       const loggerTraceSpy = jest.spyOn(Logger.prototype, 'trace');
 
-      @Application({
-        packages: [LoggerPackage.configure().register()],
-      })
+      @Application()
       class MyApp {
       }
 

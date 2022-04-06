@@ -1,8 +1,6 @@
-import { Logger, LoggerLevel } from '@caviajs/logger';
+import { Logger, LoggerLevel } from '@caviajs/core';
 import { HttpRouter, Route } from './http-router';
 import { LOGGER_CONTEXT } from '../http-constants';
-
-jest.mock('@caviajs/logger');
 
 class HttpRouterTest extends HttpRouter {
   public readonly routes: Route[] = [];
@@ -41,14 +39,12 @@ describe('HttpRouter', () => {
     routeHandlerPipes: [],
   };
 
+  const loggerTraceSpy: jest.SpyInstance = jest.spyOn(Logger.prototype, 'trace').mockImplementation(jest.fn());
+
   let httpRouter: HttpRouterTest;
-  let loggerTraceSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    const logger: Logger = new Logger(LoggerLevel.ALL, () => '');
-
-    httpRouter = new HttpRouterTest(logger);
-    loggerTraceSpy = jest.spyOn(logger, 'trace').mockImplementation(jest.fn());
+    httpRouter = new HttpRouterTest(new Logger(LoggerLevel.ALL, () => ''));
   });
 
   afterEach(() => {

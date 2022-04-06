@@ -34,9 +34,6 @@
       "@caviajs/http/server": [
         "packages/http/server/index.ts"
       ],
-      "@caviajs/logger": [
-        "packages/logger/index.ts"
-      ],
       "@caviajs/schedule": [
         "packages/schedule/index.ts"
       ],

@@ -1,5 +1,4 @@
-import { Inject, Injectable, OnApplicationBoot, OnApplicationListen, OnApplicationShutdown } from '@caviajs/core';
-import { Logger } from '@caviajs/logger';
+import { Inject, Injectable, Logger, OnApplicationBoot, OnApplicationListen, OnApplicationShutdown } from '@caviajs/core';
 import { HttpServerHandler } from './http-server-handler';
 import { HTTP_SERVER, HttpServer } from './http-server';
 import { HTTP_SERVER_PORT, HttpServerPort } from './http-server-port';

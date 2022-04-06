@@ -1,12 +1,10 @@
-import { Logger, LoggerLevel } from '@caviajs/logger';
+import { Logger, LoggerLevel } from '@caviajs/core';
 import http from 'http';
 import { HttpRouter } from './http-router';
 import { HttpServer } from './http-server';
 import { HttpServerHandler } from './http-server-handler';
 import { HttpServerManager } from './http-server-manager';
 import { HttpServerPort } from './http-server-port';
-
-jest.mock('@caviajs/logger');
 
 describe('HttpServerManager', () => {
   let logger: Logger;
@@ -17,6 +15,8 @@ describe('HttpServerManager', () => {
   let httpServerManager: HttpServerManager;
 
   beforeEach(async () => {
+    jest.spyOn(Logger.prototype, 'trace').mockImplementation(jest.fn());
+
     logger = new Logger(LoggerLevel.ALL, () => '');
     httpRouter = new HttpRouter(logger);
     httpServerHandler = new HttpServerHandler(httpRouter);

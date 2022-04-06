@@ -1,5 +1,4 @@
-import { Injectable, Type } from '@caviajs/core';
-import { Logger } from '@caviajs/logger';
+import { Injectable, Logger, Type } from '@caviajs/core';
 import { match } from 'path-to-regexp';
 import { parse } from 'url';
 import { Interceptor } from '../types/interceptor';
