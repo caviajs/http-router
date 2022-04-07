@@ -1,4 +1,5 @@
 import { MimeTypeParser, Parser } from './mime-type-parser';
+import { HttpException } from '../http-exception';
 
 describe('MimeTypeParser', () => {
   let mimeTypeParser: MimeTypeParser;
@@ -39,13 +40,36 @@ describe('MimeTypeParser', () => {
     });
 
     describe('text/plain', () => {
+      const data: string = 'Hello World';
+      const buffer: Buffer = Buffer.from(data);
+
       it('should be built-in', () => {
         expect(mimeTypeParser.has('text/plain')).toBe(true);
       });
 
-      // return correct data without charset
-      // return correct data with charset
-      // throw error if charset is not supported
+      it('should return valid data for a payload without a charset', () => {
+        const parser: Parser = mimeTypeParser.get('text/plain');
+
+        expect(parser(buffer, { 'content-type': 'text/plain' })).toBe(data);
+      });
+
+      it('should return valid data for a payload with a charset', () => {
+        const parser: Parser = mimeTypeParser.get('text/plain');
+
+        expect(parser(buffer, { 'content-type': 'text/plain; charset=UTF-8' })).toBe(data);
+      });
+
+      it('should thrown an HttpException if charset is not supported', () => {
+        const charset: string = 'popcorn';
+        const parser: Parser = mimeTypeParser.get('text/plain');
+
+        try {
+          parser(buffer, { 'content-type': `text/plain; charset=${ charset }` });
+        } catch (error) {
+          expect((error as HttpException).status).toBe(415);
+          expect((error as HttpException).reason).toBe(`Unsupported charset: ${ charset }`);
+        }
+      });
     });
   });
 
