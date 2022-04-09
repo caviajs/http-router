@@ -43,13 +43,36 @@ describe('MimeTypeParser', () => {
     });
 
     describe('application/x-www-form-urlencoded', () => {
+      const data: object = { foo: 'bar', foz: 'baz' };
+      const buffer: Buffer = Buffer.from('foo=bar&foz=baz');
+
       it('should be built-in', () => {
         expect(mimeTypeParser.has('application/x-www-form-urlencoded')).toBe(true);
       });
 
-      // return correct data without charset
-      // return correct data with charset
-      // throw error if charset is not supported
+      it('should return valid data for a payload without a charset', () => {
+        const parser: Parser = mimeTypeParser.get('application/x-www-form-urlencoded');
+
+        expect(parser(buffer, { 'content-type': 'application/x-www-form-urlencoded' })).toEqual(data);
+      });
+
+      it('should return valid data for a payload with a charset', () => {
+        const parser: Parser = mimeTypeParser.get('application/x-www-form-urlencoded');
+
+        expect(parser(buffer, { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' })).toEqual(data);
+      });
+
+      it('should thrown an HttpException if charset is not supported', () => {
+        const charset: string = 'popcorn';
+        const parser: Parser = mimeTypeParser.get('application/x-www-form-urlencoded');
+
+        try {
+          parser(buffer, { 'content-type': `application/json; charset=${ charset }` });
+        } catch (error) {
+          expect((error as HttpException).status).toBe(415);
+          expect((error as HttpException).reason).toBe(`Unsupported charset: ${ charset }`);
+        }
+      });
     });
 
     describe('multipart/form-data', () => {
