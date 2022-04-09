@@ -2,7 +2,7 @@ import { Injectable } from '@caviajs/core';
 import http from 'http';
 import iconv from 'iconv-lite';
 import qs from 'qs';
-import multipart from 'parse-multipart-data';
+import * as multipart from 'parse-multipart-data';
 import { getContentTypeParameter } from '../utils/get-content-type-parameter';
 import { HttpException } from '../http-exception';
 
@@ -34,12 +34,14 @@ const BUILT_IN_MIME_TYPE_PARSERS: { [name: string]: Parser } = {
 
     return multipart
       .parse(buffer, boundary)
-      .filter(it => ({
-        fileName: it.filename,
-        name: it.name,
-        type: it.type,
-        buffer: it.data,
-      }));
+      .map(it => {
+        return {
+          data: it.data,
+          fileName: it.filename,
+          mimeType: it.type,
+          name: it.name,
+        } as File;
+      });
   },
   'text/plain': (buffer, headers) => {
     const charset: string | undefined = getContentTypeParameter(headers['content-type'], 'charset');
@@ -71,6 +73,13 @@ export class MimeTypeParser {
   public set(mimeType: string, mimeTypeParser: Parser): void {
     this.parsers.set(mimeType, mimeTypeParser);
   }
+}
+
+export interface File {
+  data: Buffer;
+  fileName?: string;
+  mimeType?: string;
+  name?: string;
 }
 
 export interface Parser {
