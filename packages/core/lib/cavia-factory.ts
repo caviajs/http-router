@@ -30,7 +30,7 @@ const BUILT_IN_PROVIDERS: Provider[] = [
 ];
 
 export class CaviaFactory {
-  public static async create(application: Type): Promise<CaviaApplication> {
+  public static async create(application: Type, options?: CaviaFactoryOptions): Promise<CaviaApplication> {
     if (Reflect.hasMetadata(APPLICATION_METADATA, application) === false) {
       throw new Error(`The '${ application?.name }' should be annotated as an application`);
     }
@@ -62,4 +62,8 @@ export class CaviaFactory {
 
     return providers;
   }
+}
+
+export interface CaviaFactoryOptions {
+  env: {};
 }
