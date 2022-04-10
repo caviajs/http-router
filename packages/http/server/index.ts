@@ -2,13 +2,6 @@ import 'reflect-metadata';
 
 export * from './decorators/controller';
 export * from './decorators/route-mapping';
-export * from './decorators/route-mapping-delete';
-export * from './decorators/route-mapping-get';
-export * from './decorators/route-mapping-head';
-export * from './decorators/route-mapping-options';
-export * from './decorators/route-mapping-patch';
-export * from './decorators/route-mapping-post';
-export * from './decorators/route-mapping-put';
 export * from './decorators/use-interceptor';
 
 export * from './polyfills/http-request-cookies';
