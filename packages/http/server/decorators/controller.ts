@@ -2,15 +2,21 @@ import { Injectable } from '@caviajs/core';
 
 const DEFAULT_PATH: string = '/';
 
-export const CONTROLLER_PATH_METADATA: Symbol = Symbol('CONTROLLER_PATH_METADATA');
+export const CONTROLLER_METADATA: Symbol = Symbol('CONTROLLER_METADATA');
 
 export function Controller(path?: string): ClassDecorator {
   return (target: Function) => {
-    const controllerPathMetadata: ControllerPathMetadata = path || DEFAULT_PATH;
+    const controllerMetadata: ControllerMetadata = {
+      path: path || DEFAULT_PATH,
+    };
 
     Reflect.decorate([Injectable()], target);
-    Reflect.defineMetadata(CONTROLLER_PATH_METADATA, controllerPathMetadata, target);
+    Reflect.defineMetadata(CONTROLLER_METADATA, controllerMetadata, target);
   };
 }
 
-export type ControllerPathMetadata = string;
+export interface ControllerOptions {
+  path?: string;
+}
+
+export type ControllerMetadata = ControllerOptions;

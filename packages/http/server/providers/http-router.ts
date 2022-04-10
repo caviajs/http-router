@@ -54,4 +54,11 @@ export interface Route {
   path: Path;
   routeHandler: Function;
   routeHandlerInterceptors: { args: any[]; interceptor: Interceptor; }[];
+  schema: {
+    body: any | undefined;
+    cookies: any | undefined;
+    headers: any | undefined;
+    params: any | undefined;
+    query: any | undefined;
+  };
 }
