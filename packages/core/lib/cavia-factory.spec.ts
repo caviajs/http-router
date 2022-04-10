@@ -8,6 +8,8 @@ import { LOGGER_LEVEL, LoggerLevel } from './providers/logger-level';
 import { LOGGER_MESSAGE_FACTORY } from './providers/logger-message-factory';
 import { Storage } from './providers/storage';
 import { Validator } from './providers/validator';
+import { View } from './providers/view';
+import { VIEW_DIRECTORY_PATH } from './providers/view-directory-path';
 import { CaviaApplication } from './cavia-application';
 import { CaviaFactory } from './cavia-factory';
 import { LOGGER_CONTEXT } from './constants';
@@ -50,6 +52,8 @@ describe('CaviaFactory', () => {
       expect(await application.injector.find(Injector)).toBeInstanceOf(Injector);
       expect(await application.injector.find(Storage)).toBeInstanceOf(Storage);
       expect(await application.injector.find(Validator)).toBeInstanceOf(Validator);
+      expect(await application.injector.find(View)).toBeInstanceOf(View);
+      expect(await application.injector.find(VIEW_DIRECTORY_PATH)).toEqual(path.join(process.cwd(), 'resources', 'views'));
     });
 
     it('should collect application providers', async () => {

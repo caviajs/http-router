@@ -1,5 +1,6 @@
-import { Inject, Injectable } from '@caviajs/core';
 import { Edge } from 'edge.js';
+import { Inject } from '../decorators/inject';
+import { Injectable } from '../decorators/injectable';
 import { VIEW_DIRECTORY_PATH, ViewDirectoryPath } from './view-directory-path';
 
 @Injectable()

@@ -7,6 +7,8 @@ import { LoggerLevelProvider } from './providers/logger-level';
 import { LoggerMessageFactoryProvider } from './providers/logger-message-factory';
 import { Storage } from './providers/storage';
 import { Validator } from './providers/validator';
+import { View } from './providers/view';
+import { ViewDirectoryPathProvider } from './providers/view-directory-path';
 import { Provider } from './types/provider';
 import { Token } from './types/token';
 import { Type } from './types/type';
@@ -23,6 +25,8 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   LoggerMessageFactoryProvider,
   Storage,
   Validator,
+  View,
+  ViewDirectoryPathProvider,
 ];
 
 export class CaviaFactory {

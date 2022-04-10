@@ -1,5 +1,6 @@
-import { Token, ValueProvider } from '@caviajs/core';
 import path from 'path';
+import { ValueProvider } from '../types/provider';
+import { Token } from '../types/token';
 
 export const VIEW_DIRECTORY_PATH: Token<ViewDirectoryPath> = Symbol('VIEW_DIRECTORY_PATH');
 

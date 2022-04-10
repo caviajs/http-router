@@ -13,6 +13,8 @@ export * from './lib/providers/logger-level';
 export * from './lib/providers/logger-message-factory';
 export * from './lib/providers/storage';
 export * from './lib/providers/validator';
+export * from './lib/providers/view';
+export * from './lib/providers/view-directory-path';
 
 export * from './lib/types/hooks';
 export * from './lib/types/package';
