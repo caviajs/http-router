@@ -24,8 +24,6 @@ describe('HttpRouter', () => {
     path: 'users',
     routeHandler: fooController.getUsers,
     routeHandlerInterceptors: [],
-    routeHandlerParams: [],
-    routeHandlerPipes: [],
   };
   const route2: Route = {
     controllerConstructor: FooController,
@@ -35,8 +33,6 @@ describe('HttpRouter', () => {
     path: 'users',
     routeHandler: fooController.createUser,
     routeHandlerInterceptors: [],
-    routeHandlerParams: [],
-    routeHandlerPipes: [],
   };
 
   const loggerTraceSpy: jest.SpyInstance = jest.spyOn(Logger.prototype, 'trace').mockImplementation(jest.fn());

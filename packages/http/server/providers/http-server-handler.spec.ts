@@ -62,8 +62,6 @@ describe('HttpServerHandler', () => {
     // existing route - serializing, Content-Type and Content-Length inference for response body
     // existing route - exception handling
     // existing route - interceptors (global req -> controller req -> route req -> handler -> route res -> controller res -> global res)
-    // existing route - route params
-    // existing route - route pipes
 
     it('should', () => {
       expect(1).toBe(1);

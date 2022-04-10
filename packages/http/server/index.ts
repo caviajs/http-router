@@ -9,16 +9,7 @@ export * from './decorators/route-mapping-options';
 export * from './decorators/route-mapping-patch';
 export * from './decorators/route-mapping-post';
 export * from './decorators/route-mapping-put';
-export * from './decorators/route-param';
-export * from './decorators/route-param-body';
-export * from './decorators/route-param-cookies';
-export * from './decorators/route-param-headers';
-export * from './decorators/route-param-params';
-export * from './decorators/route-param-query';
-export * from './decorators/route-param-req';
-export * from './decorators/route-param-res';
 export * from './decorators/use-interceptor';
-export * from './decorators/use-pipe';
 
 export * from './polyfills/http-request-cookies';
 export * from './polyfills/http-request-params';
@@ -38,7 +29,6 @@ export * from './providers/mime-type-parser';
 export * from './types/interceptor';
 export * from './types/method';
 export * from './types/path';
-export * from './types/pipe';
 export * from './types/request';
 export * from './types/response';
 

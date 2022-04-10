@@ -2,15 +2,10 @@ import { getProviderName, Injectable, Injector, Logger, LoggerLevel } from '@cav
 import { Controller } from '../decorators/controller';
 import { Get } from '../decorators/route-mapping-get';
 import { Post } from '../decorators/route-mapping-post';
-import { Body } from '../decorators/route-param-body';
-import { Params } from '../decorators/route-param-params';
 import { UseInterceptor } from '../decorators/use-interceptor';
-import { UsePipe } from '../decorators/use-pipe';
 import { Interceptor } from '../types/interceptor';
-import { Pipe } from '../types/pipe';
 import { HttpRouter, Route } from './http-router';
 import { HttpRouterManager } from './http-router-manager';
-import { Request } from '../types/request';
 
 @Injectable()
 class FooInterceptor implements Interceptor {
@@ -26,24 +21,17 @@ class BarInterceptor implements Interceptor {
   }
 }
 
-@Injectable()
-class ValidatePipe implements Pipe {
-  transform(context) {
-    return context.getValue();
-  }
-}
-
 @Controller('foo')
 class FooController {
   @UseInterceptor(FooInterceptor, ['admin:foo:get'])
   @Get()
-  public getFoo(@UsePipe(ValidatePipe, ['foo']) @Body() body) {
+  public getFoo() {
   }
 
   @UseInterceptor(FooInterceptor, ['admin:foo:create'])
   @UseInterceptor(BarInterceptor, ['admin:foo:create'])
   @Post('create')
-  public postFoo(@UsePipe(ValidatePipe) request: Request) {
+  public postFoo() {
   }
 }
 
@@ -52,7 +40,7 @@ class FooController {
 @Controller('bar')
 class BarController {
   @Get(':id')
-  public getBar(@UsePipe(ValidatePipe) @Params('id') id: String) {
+  public getBar() {
   }
 }
 
@@ -65,10 +53,9 @@ describe('HttpRouterManager', () => {
 
   describe('onApplicationBoot', () => {
     it('should add the appropriate routs according to the metadata', async () => {
-      const injector: Injector = await Injector.create([FooInterceptor, BarInterceptor, ValidatePipe, FooController, BarController]);
+      const injector: Injector = await Injector.create([FooInterceptor, BarInterceptor, FooController, BarController]);
       const fooInterceptor: FooInterceptor = await injector.find(FooInterceptor);
       const barInterceptor: BarInterceptor = await injector.find(BarInterceptor);
-      const validatePipe: ValidatePipe = await injector.find(ValidatePipe);
       const fooController: FooController = await injector.find(FooController);
       const barController: BarController = await injector.find(BarController);
 
@@ -90,12 +77,6 @@ describe('HttpRouterManager', () => {
         routeHandlerInterceptors: [
           { args: ['admin:foo:get'], interceptor: fooInterceptor },
         ],
-        routeHandlerParams: [
-          { factory: expect.any(Function), index: 0 },
-        ],
-        routeHandlerPipes: [
-          { args: ['foo'], metaType: Object, pipe: validatePipe, index: 0 }
-        ],
       } as Route);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
         controllerConstructor: FooController,
@@ -107,10 +88,6 @@ describe('HttpRouterManager', () => {
         routeHandlerInterceptors: [
           { args: ['admin:foo:create'], interceptor: fooInterceptor },
           { args: ['admin:foo:create'], interceptor: barInterceptor },
-        ],
-        routeHandlerParams: [],
-        routeHandlerPipes: [
-          { args: [], metaType: Object, pipe: validatePipe, index: 0 }
         ],
       } as Route);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
@@ -124,31 +101,16 @@ describe('HttpRouterManager', () => {
         path: '/bar/:id',
         routeHandler: barController.getBar,
         routeHandlerInterceptors: [],
-        routeHandlerParams: [
-          { factory: expect.any(Function), index: 0 },
-        ],
-        routeHandlerPipes: [
-          { args: [], metaType: String, pipe: validatePipe, index: 0 },
-        ],
       } as Route);
     });
 
     it('should throw an exception if the interceptor cannot resolve', async () => {
-      const injector: Injector = await Injector.create([BarInterceptor, ValidatePipe, FooController, BarController]);
+      const injector: Injector = await Injector.create([BarInterceptor, FooController, BarController]);
       const httpRouterManager: HttpRouterManager = new HttpRouterManager(httpRouter, injector);
 
       await expect(httpRouterManager.onApplicationBoot())
         .rejects
         .toThrow(`Cavia can't resolve interceptor '${ getProviderName(FooInterceptor) }'`);
-    });
-
-    it('should throw an exception if the pipe cannot resolve', async () => {
-      const injector: Injector = await Injector.create([BarInterceptor, FooInterceptor, FooController, BarController]);
-      const httpRouterManager: HttpRouterManager = new HttpRouterManager(httpRouter, injector);
-
-      await expect(httpRouterManager.onApplicationBoot())
-        .rejects
-        .toThrow(`Cavia can't resolve pipe '${ getProviderName(ValidatePipe) }'`);
     });
   });
 });
