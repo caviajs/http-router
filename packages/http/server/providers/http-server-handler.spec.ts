@@ -1,4 +1,4 @@
-import { Logger, LoggerLevel } from '@caviajs/core';
+import { Injector, Logger, LoggerLevel } from '@caviajs/core';
 import { Readable, Stream } from 'stream';
 import { HttpRouter } from './http-router';
 import { HttpServerHandler } from './http-server-handler';
@@ -45,13 +45,18 @@ describe('HttpServerHandler', () => {
   let httpRouter: HttpRouter;
   let httpServerHandler: HttpServerHandler;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
-    httpServerHandler = new HttpServerHandler(httpRouter);
+    httpServerHandler = new HttpServerHandler({} as any, httpRouter, await Injector.create([]));
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('onApplicationBoot', () => {
+    // global interceptors
+    // global interceptors - throws error if not existing in Injector
   });
 
   describe('handle', () => {

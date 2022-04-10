@@ -1,14 +1,15 @@
-import { Injectable } from '@caviajs/core';
+import { APPLICATION_REF, ApplicationRef, getProviderName, Inject, Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
 import { defer, from, mergeAll, Observable, switchMap } from 'rxjs';
 import { Stream } from 'stream';
 import { readable } from 'is-stream';
-import { HttpRouter, Route } from './http-router';
+import { USE_INTERCEPTOR_METADATA } from '../decorators/use-interceptor';
+import { Interceptor, InterceptorContext } from '../types/interceptor';
+import { Method } from '../types/method';
+import { Path } from '../types/path';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
-import { Path } from '../types/path';
-import { Interceptor, InterceptorContext } from '../types/interceptor';
+import { HttpRouter, Route } from './http-router';
 import { HttpException } from '../http-exception';
-import { Method } from '../types/method';
 
 declare module 'http' {
   export interface IncomingMessage {
@@ -17,10 +18,22 @@ declare module 'http' {
 }
 
 @Injectable()
-export class HttpServerHandler {
+export class HttpServerHandler implements OnApplicationBoot {
+  public globalInterceptors: { args: any[]; interceptor: Interceptor }[] = [];
+
   constructor(
+    @Inject(APPLICATION_REF) private readonly applicationRef: ApplicationRef,
     private readonly httpRouter: HttpRouter,
+    private readonly injector: Injector,
   ) {
+  }
+
+  public async onApplicationBoot(): Promise<void> {
+    this.globalInterceptors = await Promise.all(
+      (Reflect.getMetadata(USE_INTERCEPTOR_METADATA, this.applicationRef.constructor) || [])
+        .map(async it => ({ args: it.args, interceptor: await this.resolveInterceptor(it.interceptor) }))
+        .reverse()
+    );
   }
 
   public handle(request: Request, response: Response): void {
@@ -29,7 +42,16 @@ export class HttpServerHandler {
     const route$ = from(
       this
         .composeInterceptors(
-          [/* global interceptors - todo to think about how to inject global interceptors */],
+          this.globalInterceptors.map(it => ({
+            interceptor: it.interceptor,
+            interceptorContext: {
+              getArgs: () => it.args,
+              getClass: () => route.controllerConstructor,
+              getHandler: () => route.routeHandler,
+              getRequest: () => request,
+              getResponse: () => response,
+            },
+          })),
           (): Promise<unknown> => {
             if (!route) {
               throw new HttpException(404, 'Route not found');
@@ -50,12 +72,7 @@ export class HttpServerHandler {
                   },
                 })),
                 (): Promise<unknown> => {
-                  const args: any[] = route
-                    .routeHandlerParams
-                    .sort((a, b) => a.index = b.index)
-                    .map(it => it.factory(request, response));
-
-                  return Promise.resolve(route.routeHandler.apply(route.controllerInstance, args));
+                  return Promise.resolve(route.routeHandler.apply(route.controllerInstance, [request, response]));
                 },
               );
           },
@@ -179,6 +196,16 @@ export class HttpServerHandler {
     } else {
       return undefined;
     }
+  }
+
+  protected async resolveInterceptor(interceptor: Type<Interceptor>): Promise<Interceptor> {
+    const instance = await this.injector.find(interceptor);
+
+    if (!instance) {
+      throw new Error(`Cavia can't resolve interceptor '${ getProviderName(interceptor) }'`);
+    }
+
+    return instance;
   }
 }
 

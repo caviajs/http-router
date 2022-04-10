@@ -1,4 +1,4 @@
-import { Logger, LoggerLevel } from '@caviajs/core';
+import { ApplicationRef, Injector, Logger, LoggerLevel } from '@caviajs/core';
 import http from 'http';
 import { HttpRouter } from './http-router';
 import { HttpServer } from './http-server';
@@ -6,7 +6,11 @@ import { HttpServerHandler } from './http-server-handler';
 import { HttpServerManager } from './http-server-manager';
 import { HttpServerPort } from './http-server-port';
 
+class MyApp {
+}
+
 describe('HttpServerManager', () => {
+  let applicationRef: ApplicationRef;
   let logger: Logger;
   let httpRouter: HttpRouter;
   let httpServerHandler: HttpServerHandler;
@@ -17,9 +21,10 @@ describe('HttpServerManager', () => {
   beforeEach(async () => {
     jest.spyOn(Logger.prototype, 'trace').mockImplementation(jest.fn());
 
+    applicationRef = new MyApp();
     logger = new Logger(LoggerLevel.ALL, () => '');
     httpRouter = new HttpRouter(logger);
-    httpServerHandler = new HttpServerHandler(httpRouter);
+    httpServerHandler = new HttpServerHandler(applicationRef, httpRouter, await Injector.create([]));
     httpServer = http.createServer();
     httpServerPort = 3000;
     httpServerManager = new HttpServerManager(logger, httpServer, httpServerHandler, httpServerPort);

@@ -24,7 +24,7 @@ export class BodyParserInterceptor implements Interceptor {
   ) {
   }
 
-  public async intercept(ctx: InterceptorContext, next: Next) {
+  public async intercept(ctx: InterceptorContext, next: Next): Promise<any> {
     const request = ctx.getRequest();
 
     request.body = await this.parse(request);
