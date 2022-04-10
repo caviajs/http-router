@@ -1,7 +1,8 @@
-import { Inject, Injectable } from '@caviajs/core';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import get from 'lodash.get';
+import { Inject } from '../decorators/inject';
+import { Injectable } from '../decorators/injectable';
 import { ENV_PATH, EnvPath } from './env-path';
 
 @Injectable()

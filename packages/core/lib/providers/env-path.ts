@@ -1,5 +1,6 @@
-import { Token, ValueProvider } from '@caviajs/core';
 import path from 'path';
+import { ValueProvider } from '../types/provider';
+import { Token } from '../types/token';
 
 export const ENV_PATH: Token<EnvPath> = Symbol('ENV_PATH');
 

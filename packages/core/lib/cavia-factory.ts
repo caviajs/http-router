@@ -1,8 +1,11 @@
 import { APPLICATION_METADATA, ApplicationMetadata } from './decorators/application';
 import { createApplicationRefProvider } from './providers/application-ref';
+import { Env } from './providers/env';
+import { EnvPathProvider } from './providers/env-path';
 import { Logger } from './providers/logger';
 import { LoggerLevelProvider } from './providers/logger-level';
 import { LoggerMessageFactoryProvider } from './providers/logger-message-factory';
+import { Validator } from './providers/validator';
 import { Provider } from './types/provider';
 import { Token } from './types/token';
 import { Type } from './types/type';
@@ -12,9 +15,12 @@ import { LOGGER_CONTEXT } from './constants';
 import { Injector } from './injector';
 
 const BUILT_IN_PROVIDERS: Provider[] = [
+  Env,
+  EnvPathProvider,
   Logger,
   LoggerLevelProvider,
   LoggerMessageFactoryProvider,
+  Validator,
 ];
 
 export class CaviaFactory {

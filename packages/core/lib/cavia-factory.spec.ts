@@ -1,8 +1,12 @@
+import path from 'path';
 import { Application } from './decorators/application';
 import { APPLICATION_REF } from './providers/application-ref';
+import { Env } from './providers/env';
+import { ENV_PATH } from './providers/env-path';
 import { Logger } from './providers/logger';
 import { LOGGER_LEVEL, LoggerLevel } from './providers/logger-level';
 import { LOGGER_MESSAGE_FACTORY } from './providers/logger-message-factory';
+import { Validator } from './providers/validator';
 import { CaviaApplication } from './cavia-application';
 import { CaviaFactory } from './cavia-factory';
 import { LOGGER_CONTEXT } from './constants';
@@ -37,10 +41,13 @@ describe('CaviaFactory', () => {
       const application = await CaviaFactory.create(MyApp);
 
       expect(await application.injector.find(APPLICATION_REF)).toBeInstanceOf(MyApp);
+      expect(await application.injector.find(Env)).toBeInstanceOf(Env);
+      expect(await application.injector.find(ENV_PATH)).toEqual(path.join(process.cwd(), '.env'));
       expect(await application.injector.find(Logger)).toBeInstanceOf(Logger);
       expect(await application.injector.find(LOGGER_LEVEL)).toEqual(LoggerLevel.ALL);
       expect(await application.injector.find(LOGGER_MESSAGE_FACTORY)).toEqual(expect.any(Function));
       expect(await application.injector.find(Injector)).toBeInstanceOf(Injector);
+      expect(await application.injector.find(Validator)).toBeInstanceOf(Validator);
     });
 
     it('should collect application providers', async () => {

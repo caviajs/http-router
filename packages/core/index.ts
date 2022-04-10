@@ -6,9 +6,12 @@ export * from './lib/decorators/injectable';
 export * from './lib/decorators/optional';
 
 export * from './lib/providers/application-ref';
+export * from './lib/providers/env';
+export * from './lib/providers/env-path';
 export * from './lib/providers/logger';
 export * from './lib/providers/logger-level';
 export * from './lib/providers/logger-message-factory';
+export * from './lib/providers/validator';
 
 export * from './lib/types/hooks';
 export * from './lib/types/package';
