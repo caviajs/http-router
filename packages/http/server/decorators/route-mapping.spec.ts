@@ -1,4 +1,4 @@
-import { ROUTE_MAPPING_METHOD_METADATA, ROUTE_MAPPING_PATH_METADATA, RouteMapping } from './route-mapping';
+import { ROUTE_MAPPING_METADATA, RouteMapping, RouteMappingMetadata } from './route-mapping';
 
 describe('@RouteMapping', () => {
   let defineMetadataSpy: jest.SpyInstance;
@@ -18,8 +18,9 @@ describe('@RouteMapping', () => {
       }
     }
 
-    expect(defineMetadataSpy).toHaveBeenCalledTimes(2);
-    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_METHOD_METADATA, 'GET', Popcorn, 'getPigs');
-    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_PATH_METADATA, '/pigs', Popcorn, 'getPigs');
+    const routeMappingMetadata: RouteMappingMetadata = { method: 'GET', path: '/pigs' };
+
+    expect(defineMetadataSpy).toHaveBeenCalledTimes(1);
+    expect(defineMetadataSpy).toHaveBeenCalledWith(ROUTE_MAPPING_METADATA, routeMappingMetadata, Popcorn, 'getPigs');
   });
 });
