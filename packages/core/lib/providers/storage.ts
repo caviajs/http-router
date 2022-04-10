@@ -1,7 +1,7 @@
-import { Injectable } from '@caviajs/core';
 import { Readable } from 'stream';
 import * as fsExtra from 'fs-extra';
 import * as fs from 'fs';
+import { Injectable } from '../decorators/injectable';
 
 @Injectable()
 export class Storage {

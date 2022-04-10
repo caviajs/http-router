@@ -1,7 +1,7 @@
-import { Storage } from './storage';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import { Readable, Writable } from 'stream';
+import { Storage } from './storage';
 
 jest.mock('fs');
 jest.mock('fs-extra', () => ({

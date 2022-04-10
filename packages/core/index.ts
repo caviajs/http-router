@@ -11,6 +11,7 @@ export * from './lib/providers/env-path';
 export * from './lib/providers/logger';
 export * from './lib/providers/logger-level';
 export * from './lib/providers/logger-message-factory';
+export * from './lib/providers/storage';
 export * from './lib/providers/validator';
 
 export * from './lib/types/hooks';

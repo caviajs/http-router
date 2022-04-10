@@ -5,6 +5,7 @@ import { EnvPathProvider } from './providers/env-path';
 import { Logger } from './providers/logger';
 import { LoggerLevelProvider } from './providers/logger-level';
 import { LoggerMessageFactoryProvider } from './providers/logger-message-factory';
+import { Storage } from './providers/storage';
 import { Validator } from './providers/validator';
 import { Provider } from './types/provider';
 import { Token } from './types/token';
@@ -20,6 +21,7 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   Logger,
   LoggerLevelProvider,
   LoggerMessageFactoryProvider,
+  Storage,
   Validator,
 ];
 

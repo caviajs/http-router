@@ -6,6 +6,7 @@ import { ENV_PATH } from './providers/env-path';
 import { Logger } from './providers/logger';
 import { LOGGER_LEVEL, LoggerLevel } from './providers/logger-level';
 import { LOGGER_MESSAGE_FACTORY } from './providers/logger-message-factory';
+import { Storage } from './providers/storage';
 import { Validator } from './providers/validator';
 import { CaviaApplication } from './cavia-application';
 import { CaviaFactory } from './cavia-factory';
@@ -47,6 +48,7 @@ describe('CaviaFactory', () => {
       expect(await application.injector.find(LOGGER_LEVEL)).toEqual(LoggerLevel.ALL);
       expect(await application.injector.find(LOGGER_MESSAGE_FACTORY)).toEqual(expect.any(Function));
       expect(await application.injector.find(Injector)).toBeInstanceOf(Injector);
+      expect(await application.injector.find(Storage)).toBeInstanceOf(Storage);
       expect(await application.injector.find(Validator)).toBeInstanceOf(Validator);
     });
 
