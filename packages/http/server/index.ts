@@ -7,8 +7,6 @@ export * from './decorators/use-interceptor';
 export * from './polyfills/http-request-cookies';
 export * from './polyfills/http-request-params';
 export * from './polyfills/http-request-query';
-export * from './polyfills/http-response-remove-cookie';
-export * from './polyfills/http-response-set-cookie';
 
 export * from './providers/body-parser-interceptor';
 export * from './providers/http-router';
@@ -27,7 +25,6 @@ export * from './types/response';
 
 export * from './utils/get-content-type-mime';
 export * from './utils/get-content-type-parameter';
-export * from './utils/serialize-cookie';
 
 export * from './http-constants';
 export * from './http-exception';
