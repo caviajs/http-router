@@ -6,7 +6,7 @@ export class HttpClientPackage {
     return new HttpClientPackage();
   }
 
-  private readonly providers: Provider[] = [
+  protected readonly providers: Provider[] = [
     HttpClient,
   ];
 

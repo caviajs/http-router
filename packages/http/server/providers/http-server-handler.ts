@@ -1,4 +1,4 @@
-import { APPLICATION_REF, ApplicationRef, getProviderName, Inject, Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
+import { APPLICATION_REF, ApplicationRef, getProviderName, Inject, Injectable, Injector, OnApplicationBoot, Type, Validator } from '@caviajs/core';
 import { defer, from, mergeAll, Observable, switchMap } from 'rxjs';
 import { Stream } from 'stream';
 import { readable } from 'is-stream';
@@ -22,9 +22,10 @@ export class HttpServerHandler implements OnApplicationBoot {
   public globalInterceptors: { args: any[]; interceptor: Interceptor }[] = [];
 
   constructor(
-    @Inject(APPLICATION_REF) private readonly applicationRef: ApplicationRef,
-    private readonly httpRouter: HttpRouter,
-    private readonly injector: Injector,
+    @Inject(APPLICATION_REF) protected readonly applicationRef: ApplicationRef,
+    protected readonly httpRouter: HttpRouter,
+    protected readonly injector: Injector,
+    protected readonly validator: Validator,
   ) {
   }
 
@@ -46,8 +47,8 @@ export class HttpServerHandler implements OnApplicationBoot {
             interceptor: it.interceptor,
             interceptorContext: {
               getArgs: () => it.args,
-              getClass: () => route.controllerConstructor,
-              getHandler: () => route.routeHandler,
+              getClass: () => route.controller.prototype.constructor,
+              getHandler: () => route.handler,
               getRequest: () => request,
               getResponse: () => response,
             },
@@ -61,18 +62,18 @@ export class HttpServerHandler implements OnApplicationBoot {
 
             return this
               .composeInterceptors(
-                [...route.controllerInterceptors, ...route.routeHandlerInterceptors].map(it => ({
+                route.interceptors.map(it => ({
                   interceptor: it.interceptor,
                   interceptorContext: {
                     getArgs: () => it.args,
-                    getClass: () => route.controllerConstructor,
-                    getHandler: () => route.routeHandler,
+                    getClass: () => route.controller.prototype.constructor,
+                    getHandler: () => route.handler,
                     getRequest: () => request,
                     getResponse: () => response,
                   },
                 })),
                 (): Promise<unknown> => {
-                  return Promise.resolve(route.routeHandler.apply(route.controllerInstance, [request, response]));
+                  return Promise.resolve(route.handler.apply(route.controller, [request, response]));
                 },
               );
           },
@@ -159,10 +160,6 @@ export class HttpServerHandler implements OnApplicationBoot {
 
     return nextFn(0);
   }
-
-  // public async composePipes(value: any, pipes: ApplyPipe[]): Promise<any> {
-  //   return pipes.reduce(async (prev, curr: ApplyPipe) => curr.pipe.transform(await prev, { args: curr.args, metaType: curr.metaType }), Promise.resolve(value));
-  // }
 
   protected inferenceContentLength(data: any): number | undefined {
     if (data === undefined) {

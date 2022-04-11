@@ -1,4 +1,4 @@
-import { ApplicationRef, Injector, Logger, LoggerLevel } from '@caviajs/core';
+import { ApplicationRef, Injector, Logger, LoggerLevel, Validator } from '@caviajs/core';
 import http from 'http';
 import { HttpRouter } from './http-router';
 import { HttpServer } from './http-server';
@@ -12,6 +12,7 @@ class MyApp {
 describe('HttpServerManager', () => {
   let applicationRef: ApplicationRef;
   let logger: Logger;
+  let validator: Validator;
   let httpRouter: HttpRouter;
   let httpServerHandler: HttpServerHandler;
   let httpServer: HttpServer;
@@ -24,7 +25,8 @@ describe('HttpServerManager', () => {
     applicationRef = new MyApp();
     logger = new Logger(LoggerLevel.ALL, () => '');
     httpRouter = new HttpRouter(logger);
-    httpServerHandler = new HttpServerHandler(applicationRef, httpRouter, await Injector.create([]));
+    validator = new Validator();
+    httpServerHandler = new HttpServerHandler(applicationRef, httpRouter, await Injector.create([]), validator);
     httpServer = http.createServer();
     httpServerPort = 3000;
     httpServerManager = new HttpServerManager(logger, httpServer, httpServerHandler, httpServerPort);

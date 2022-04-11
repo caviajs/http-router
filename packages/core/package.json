@@ -9,6 +9,7 @@
     "dotenv": "^16.0.0",
     "edge.js": "^5.3.2",
     "fs-extra": "^10.0.0",
+    "jtd": "^0.1.1",
     "lodash.get": "^4.4.2"
   },
   "peerDependencies": {

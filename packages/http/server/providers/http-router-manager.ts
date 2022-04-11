@@ -8,8 +8,8 @@ import { HttpRouter } from './http-router';
 @Injectable()
 export class HttpRouterManager implements OnApplicationBoot {
   constructor(
-    private readonly httpRouter: HttpRouter,
-    private readonly injector: Injector,
+    protected readonly httpRouter: HttpRouter,
+    protected readonly injector: Injector,
   ) {
   }
 
@@ -32,27 +32,30 @@ export class HttpRouterManager implements OnApplicationBoot {
             const routeMappingMetadata: RouteMappingMetadata = Reflect.getMetadata(ROUTE_MAPPING_METADATA, controllerConstructor, routeHandlerName);
 
             this.httpRouter.push({
-              controllerConstructor: controllerConstructor,
-              controllerInstance: controllerInstance,
-              controllerInterceptors: await Promise.all(
-                (Reflect.getMetadata(USE_INTERCEPTOR_METADATA, controllerConstructor) || [])
-                  .map(async it => ({ args: it.args, interceptor: await this.resolveInterceptor(it.interceptor) }))
-                  .reverse(),
-              ),
+              controller: controllerInstance,
+              handler: Object.getOwnPropertyDescriptor(Object.getPrototypeOf(controllerInstance), routeHandlerName).value,
+              interceptors: [
+                ...await Promise.all(
+                  (Reflect.getMetadata(USE_INTERCEPTOR_METADATA, controllerConstructor) || [])
+                    .map(async it => ({ args: it.args, interceptor: await this.resolveInterceptor(it.interceptor) }))
+                    .reverse(),
+                ),
+                ...await Promise.all(
+                  (Reflect.getMetadata(USE_INTERCEPTOR_METADATA, controllerConstructor, routeHandlerName) || [])
+                    .map(async it => ({ args: it.args, interceptor: await this.resolveInterceptor(it.interceptor) }))
+                    .reverse(),
+                ),
+              ],
               method: routeMappingMetadata.method,
               path: `/${ controllerMetadata.path }/${ routeMappingMetadata.path }`.replace(/\/+/g, '/').replace(/\/$/g, ''),
-              routeHandler: Object.getOwnPropertyDescriptor(Object.getPrototypeOf(controllerInstance), routeHandlerName).value,
-              routeHandlerInterceptors: await Promise.all(
-                (Reflect.getMetadata(USE_INTERCEPTOR_METADATA, controllerConstructor, routeHandlerName) || [])
-                  .map(async it => ({ args: it.args, interceptor: await this.resolveInterceptor(it.interceptor) }))
-                  .reverse(),
-              ),
               schema: {
-                body: '',
-                cookies: '',
-                headers: '',
-                params: '',
-                query: '',
+                requestBody: routeMappingMetadata.schema?.requestBody,
+                requestCookies: routeMappingMetadata.schema?.requestCookies,
+                requestHeaders: routeMappingMetadata.schema?.requestHeaders,
+                requestParams: routeMappingMetadata.schema?.requestParams,
+                requestQuery: routeMappingMetadata.schema?.requestQuery,
+                responseBody: routeMappingMetadata.schema?.responseBody,
+                responseHeaders: routeMappingMetadata.schema?.responseHeaders,
               },
             });
           }),

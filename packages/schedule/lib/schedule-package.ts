@@ -7,7 +7,7 @@ export class SchedulePackage {
     return new SchedulePackage();
   }
 
-  private readonly providers: Provider[] = [
+  protected readonly providers: Provider[] = [
     Schedule,
     ScheduleManager,
   ];

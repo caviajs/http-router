@@ -1,4 +1,4 @@
-import { Injector, Logger, LoggerLevel } from '@caviajs/core';
+import { Injector, Logger, LoggerLevel, Validator } from '@caviajs/core';
 import { Readable, Stream } from 'stream';
 import { HttpRouter } from './http-router';
 import { HttpServerHandler } from './http-server-handler';
@@ -42,12 +42,14 @@ class FooController {
 }
 
 describe('HttpServerHandler', () => {
+  let validator: Validator;
   let httpRouter: HttpRouter;
   let httpServerHandler: HttpServerHandler;
 
   beforeEach(async () => {
+    validator = new Validator();
     httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
-    httpServerHandler = new HttpServerHandler({} as any, httpRouter, await Injector.create([]));
+    httpServerHandler = new HttpServerHandler({} as any, httpRouter, await Injector.create([]), validator);
   });
 
   afterEach(() => {

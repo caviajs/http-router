@@ -1,11 +1,10 @@
 import { getProviderName, Injectable, Injector, Logger, LoggerLevel } from '@caviajs/core';
 import { Controller } from '../decorators/controller';
-import { Get } from '../decorators/route-mapping-get';
-import { Post } from '../decorators/route-mapping-post';
 import { UseInterceptor } from '../decorators/use-interceptor';
 import { Interceptor } from '../types/interceptor';
 import { HttpRouter, Route } from './http-router';
 import { HttpRouterManager } from './http-router-manager';
+import { RouteMapping } from '../decorators/route-mapping';
 
 @Injectable()
 class FooInterceptor implements Interceptor {
@@ -24,13 +23,13 @@ class BarInterceptor implements Interceptor {
 @Controller('foo')
 class FooController {
   @UseInterceptor(FooInterceptor, ['admin:foo:get'])
-  @Get()
+  @RouteMapping('GET', '/')
   public getFoo() {
   }
 
   @UseInterceptor(FooInterceptor, ['admin:foo:create'])
   @UseInterceptor(BarInterceptor, ['admin:foo:create'])
-  @Post('create')
+  @RouteMapping('POST', 'create')
   public postFoo() {
   }
 }
@@ -39,7 +38,7 @@ class FooController {
 @UseInterceptor(BarInterceptor, ['admin:bar'])
 @Controller('bar')
 class BarController {
-  @Get(':id')
+  @RouteMapping('GET', ':id')
   public getBar() {
   }
 }
@@ -68,39 +67,60 @@ describe('HttpRouterManager', () => {
 
       expect(httpRouterPushSpy).toHaveBeenCalledTimes(3);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
-        controllerConstructor: FooController,
-        controllerInstance: fooController,
-        controllerInterceptors: [],
-        method: 'GET',
-        path: '/foo',
-        routeHandler: fooController.getFoo,
-        routeHandlerInterceptors: [
+        controller: fooController,
+        handler: fooController.getFoo,
+        interceptors: [
           { args: ['admin:foo:get'], interceptor: fooInterceptor },
         ],
+        method: 'GET',
+        path: '/foo',
+        schema: {
+          requestBody: undefined,
+          requestCookies: undefined,
+          requestHeaders: undefined,
+          requestParams: undefined,
+          requestQuery: undefined,
+          responseBody: undefined,
+          responseHeaders: undefined,
+        },
       } as Route);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
-        controllerConstructor: FooController,
-        controllerInstance: fooController,
-        controllerInterceptors: [],
-        method: 'POST',
-        path: '/foo/create',
-        routeHandler: fooController.postFoo,
-        routeHandlerInterceptors: [
+        controller: fooController,
+        handler: fooController.postFoo,
+        interceptors: [
           { args: ['admin:foo:create'], interceptor: fooInterceptor },
           { args: ['admin:foo:create'], interceptor: barInterceptor },
         ],
+        method: 'POST',
+        path: '/foo/create',
+        schema: {
+          requestBody: undefined,
+          requestCookies: undefined,
+          requestHeaders: undefined,
+          requestParams: undefined,
+          requestQuery: undefined,
+          responseBody: undefined,
+          responseHeaders: undefined,
+        },
       } as Route);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
-        controllerConstructor: BarController,
-        controllerInstance: barController,
-        controllerInterceptors: [
+        controller: barController,
+        handler: barController.getBar,
+        interceptors: [
           { args: ['admin:bar'], interceptor: fooInterceptor },
           { args: ['admin:bar'], interceptor: barInterceptor },
         ],
         method: 'GET',
         path: '/bar/:id',
-        routeHandler: barController.getBar,
-        routeHandlerInterceptors: [],
+        schema: {
+          requestBody: undefined,
+          requestCookies: undefined,
+          requestHeaders: undefined,
+          requestParams: undefined,
+          requestQuery: undefined,
+          responseBody: undefined,
+          responseHeaders: undefined,
+        },
       } as Route);
     });
 

@@ -9,10 +9,10 @@ import { Response } from '../types/response';
 @Injectable()
 export class HttpServerManager implements OnApplicationBoot, OnApplicationListen, OnApplicationShutdown {
   constructor(
-    private readonly logger: Logger,
-    @Inject(HTTP_SERVER) private readonly httpServer: HttpServer,
-    private readonly httpServerHandler: HttpServerHandler,
-    @Inject(HTTP_SERVER_PORT) private readonly httpServerPort: HttpServerPort,
+    protected readonly logger: Logger,
+    @Inject(HTTP_SERVER) protected readonly httpServer: HttpServer,
+    protected readonly httpServerHandler: HttpServerHandler,
+    @Inject(HTTP_SERVER_PORT) protected readonly httpServerPort: HttpServerPort,
   ) {
   }
 

@@ -17,22 +17,36 @@ class FooController {
 describe('HttpRouter', () => {
   const fooController: FooController = new FooController();
   const route1: Route = {
-    controllerConstructor: FooController,
-    controllerInstance: fooController,
-    controllerInterceptors: [],
+    controller: fooController,
+    handler: fooController.getUsers,
+    interceptors: [],
     method: 'GET',
     path: 'users',
-    routeHandler: fooController.getUsers,
-    routeHandlerInterceptors: [],
+    schema: {
+      requestBody: undefined,
+      requestCookies: undefined,
+      requestHeaders: undefined,
+      requestParams: undefined,
+      requestQuery: undefined,
+      responseBody: undefined,
+      responseHeaders: undefined,
+    },
   };
   const route2: Route = {
-    controllerConstructor: FooController,
-    controllerInstance: fooController,
-    controllerInterceptors: [],
+    controller: fooController,
+    handler: fooController.createUser,
+    interceptors: [],
     method: 'POST',
     path: 'users',
-    routeHandler: fooController.createUser,
-    routeHandlerInterceptors: [],
+    schema: {
+      requestBody: undefined,
+      requestCookies: undefined,
+      requestHeaders: undefined,
+      requestParams: undefined,
+      requestQuery: undefined,
+      responseBody: undefined,
+      responseHeaders: undefined,
+    },
   };
 
   const loggerTraceSpy: jest.SpyInstance = jest.spyOn(Logger.prototype, 'trace').mockImplementation(jest.fn());

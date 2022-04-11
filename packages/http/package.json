@@ -7,6 +7,7 @@
   "dependencies": {
     "iconv-lite": "^0.6.2",
     "is-stream": "^2.0.0",
+    "jtd": "^0.1.1",
     "parse-multipart-data": "^1.2.1",
     "path-to-regexp": "^6.2.0",
     "qs": "^6.10.1",

@@ -1,4 +1,5 @@
-import { Injectable, Logger, Type } from '@caviajs/core';
+import { Injectable, Logger } from '@caviajs/core';
+import { Schema } from 'jtd';
 import { match } from 'path-to-regexp';
 import { parse } from 'url';
 import { Interceptor } from '../types/interceptor';
@@ -11,7 +12,7 @@ export class HttpRouter {
   protected readonly routes: Route[] = [];
 
   constructor(
-    private readonly logger: Logger,
+    protected readonly logger: Logger,
   ) {
   }
 
@@ -47,18 +48,23 @@ export class HttpRouter {
 }
 
 export interface Route {
-  controllerConstructor: Type;
-  controllerInstance: any;
-  controllerInterceptors: { args: any[]; interceptor: Interceptor; }[];
+  controller: any;
+  handler: Function;
+  interceptors: RouteInterceptor[];
   method: Method;
   path: Path;
-  routeHandler: Function;
-  routeHandlerInterceptors: { args: any[]; interceptor: Interceptor; }[];
   schema: {
-    body: any | undefined;
-    cookies: any | undefined;
-    headers: any | undefined;
-    params: any | undefined;
-    query: any | undefined;
+    requestBody: Schema | undefined;
+    requestCookies: Schema | undefined;
+    requestHeaders: Schema | undefined;
+    requestParams: Schema | undefined;
+    requestQuery: Schema | undefined;
+    responseBody: Schema | undefined;
+    responseHeaders: Schema | undefined;
   };
+}
+
+export interface RouteInterceptor {
+  args: any[];
+  interceptor: Interceptor;
 }

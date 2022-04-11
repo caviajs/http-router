@@ -20,7 +20,7 @@ const DEFAULT_PARSE_OPTIONS: ParseOptions = {
 @Injectable()
 export class BodyParserInterceptor implements Interceptor {
   constructor(
-    private readonly mimeTypeParser: MimeTypeParser,
+    protected readonly mimeTypeParser: MimeTypeParser,
   ) {
   }
 

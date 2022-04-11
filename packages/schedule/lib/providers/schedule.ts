@@ -7,7 +7,7 @@ export class Schedule {
   protected readonly workers: Worker[] = [];
 
   constructor(
-    private readonly logger: Logger,
+    protected readonly logger: Logger,
   ) {
   }
 

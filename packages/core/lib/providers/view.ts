@@ -8,7 +8,7 @@ export class View {
   protected readonly edge: Edge = new Edge();
 
   constructor(
-    @Inject(VIEW_DIRECTORY_PATH) private readonly viewDirectoryPath: ViewDirectoryPath,
+    @Inject(VIEW_DIRECTORY_PATH) protected readonly viewDirectoryPath: ViewDirectoryPath,
   ) {
     this.edge.mount(viewDirectoryPath);
   }

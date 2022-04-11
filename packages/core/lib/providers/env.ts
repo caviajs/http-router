@@ -7,10 +7,10 @@ import { ENV_PATH, EnvPath } from './env-path';
 
 @Injectable()
 export class Env {
-  protected readonly variables: { [name: string]: string; } = process.env;
+  public readonly variables: { readonly [name: string]: string; } = process.env;
 
   constructor(
-    @Inject(ENV_PATH) private readonly envPath: EnvPath,
+    @Inject(ENV_PATH) protected readonly envPath: EnvPath,
   ) {
     if (fs.existsSync(envPath)) {
       this.variables = { ...this.variables, ...dotenv.parse(fs.readFileSync(envPath)) || {} };

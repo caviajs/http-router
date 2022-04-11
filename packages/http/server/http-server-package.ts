@@ -13,7 +13,7 @@ export class HttpServerPackage {
     return new HttpServerPackage();
   }
 
-  private readonly providers: Provider[] = [
+  protected readonly providers: Provider[] = [
     BodyParserInterceptor,
     HttpRouter,
     HttpRouterManager,

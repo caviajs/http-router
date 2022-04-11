@@ -22,7 +22,7 @@ export class Injector {
 
   protected readonly resolvedProviders: ResolvedProvider[] = [];
 
-  constructor(private readonly providers: Provider[]) {
+  constructor(protected readonly providers: Provider[]) {
     this.providers.unshift({ provide: Injector, useValue: this });
   }
 

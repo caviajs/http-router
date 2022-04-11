@@ -1,3 +1,4 @@
+import { Schema } from 'jtd';
 import { APPLICATION_METADATA, ApplicationMetadata } from './decorators/application';
 import { createApplicationRefProvider } from './providers/application-ref';
 import { Env } from './providers/env';
@@ -40,6 +41,16 @@ export class CaviaFactory {
 
     (await injector.find(Logger)).trace('Starting application...', LOGGER_CONTEXT);
 
+    if (options?.env) {
+      const env = await injector.find(Env);
+      const validator = await injector.find(Validator);
+      const validateResult = await validator.validate(options.env, env.variables);
+
+      if (validateResult.errors.length) {
+        throw new Error(JSON.stringify({ message: 'Invalid env variables', errors: validateResult.errors }));
+      }
+    }
+
     await caviaApplication.boot();
 
     return caviaApplication;
@@ -65,5 +76,5 @@ export class CaviaFactory {
 }
 
 export interface CaviaFactoryOptions {
-  env: {};
+  env?: Schema;
 }

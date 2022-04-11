@@ -6,9 +6,9 @@ import { SCHEDULED_EXPRESSION_METADATA, ScheduledExpressionMetadata } from '../d
 @Injectable()
 export class ScheduleManager implements OnApplicationBoot, OnApplicationListen, OnApplicationShutdown {
   constructor(
-    private readonly injector: Injector,
-    private readonly logger: Logger,
-    private readonly schedule: Schedule,
+    protected readonly injector: Injector,
+    protected readonly logger: Logger,
+    protected readonly schedule: Schedule,
   ) {
   }
 
