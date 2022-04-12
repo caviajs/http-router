@@ -1,4 +1,3 @@
-import { Schema } from 'jtd';
 import { APPLICATION_METADATA, ApplicationMetadata } from './decorators/application';
 import { createApplicationRefProvider } from './providers/application-ref';
 import { Env } from './providers/env';
@@ -7,7 +6,7 @@ import { Logger } from './providers/logger';
 import { LoggerLevelProvider } from './providers/logger-level';
 import { LoggerMessageFactoryProvider } from './providers/logger-message-factory';
 import { Storage } from './providers/storage';
-import { Validator } from './providers/validator';
+import { Schema, Validator } from './providers/validator';
 import { View } from './providers/view';
 import { ViewDirectoryPathProvider } from './providers/view-directory-path';
 import { Provider } from './types/provider';
