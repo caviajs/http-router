@@ -3,7 +3,7 @@ import { HttpException } from '../http-exception';
 
 class MimeTypeTest extends MimeType {
   public get getMimeTypeParsers() {
-    return super.mimeTypeParsers;
+    return this.mimeTypeParsers;
   }
 }
 

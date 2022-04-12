@@ -1,17 +1,16 @@
-import { APPLICATION_REF, ApplicationRef, getProviderName, Inject, Injectable, Injector, OnApplicationBoot, Type, Validator } from '@caviajs/core';
+import { APPLICATION_REF, ApplicationRef, getProviderName, Inject, Injectable, Injector, OnApplicationBoot, Type } from '@caviajs/core';
 import { defer, from, mergeAll, Observable, switchMap } from 'rxjs';
 import { Stream } from 'stream';
 import { readable } from 'is-stream';
+import { parse as urlParse } from 'url';
+import { match, MatchResult } from 'path-to-regexp';
 import { USE_INTERCEPTOR_METADATA } from '../decorators/use-interceptor';
 import { Interceptor, InterceptorContext } from '../types/interceptor';
 import { Method } from '../types/method';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
 import { HttpException } from '../http-exception';
-import { Body } from './body';
-import { Cookies } from './cookies';
 import { HttpRouter, Route } from './http-router';
-import { Url } from './url';
 
 @Injectable()
 export class HttpServerHandler implements OnApplicationBoot {
@@ -19,12 +18,8 @@ export class HttpServerHandler implements OnApplicationBoot {
 
   constructor(
     @Inject(APPLICATION_REF) protected readonly applicationRef: ApplicationRef,
-    protected readonly body: Body,
-    protected readonly cookies: Cookies,
     protected readonly httpRouter: HttpRouter,
     protected readonly injector: Injector,
-    protected readonly url: Url,
-    protected readonly validator: Validator,
   ) {
   }
 
@@ -39,42 +34,31 @@ export class HttpServerHandler implements OnApplicationBoot {
   public async handle(request: Request, response: Response): Promise<void> {
     const route: Route | undefined = this.httpRouter.find(request.method as Method, request.url);
 
+    request.meta = {
+      requestBodySchema: route?.requestBodySchema,
+      requestCookiesSchema: route?.requestCookiesSchema,
+      requestHeadersSchema: route?.requestHeadersSchema,
+      requestParamsSchema: route?.requestParamsSchema,
+      requestQuerySchema: route?.requestQuerySchema,
+      responseBodySchema: route?.responseBodySchema,
+      responseHeadersSchema: route?.responseHeadersSchema,
+    };
+    request.params = route?.path ? (match(route?.path)(urlParse(request.url).pathname) as MatchResult)?.params as any : {};
     request.path = route?.path;
 
     const route$ = from(
       this
         .composeInterceptors(
-          [
-            {
-              interceptor: {
-                intercept: async (ctx, next) => {
-                  ctx.request.body = await this.body.parseBody(ctx.request);
-                  ctx.request.cookies = this.cookies.parseCookies(ctx.request);
-                  ctx.request.params = this.url.parseParams(ctx.request.url, route?.path);
-                  ctx.request.query = this.url.parseQuery(ctx.request.url);
-
-                  return next.handle();
-                },
-              },
-              interceptorContext: {
-                args: [],
-                controller: route?.controller?.prototype?.constructor,
-                handler: route?.handler,
-                request: request,
-                response: response,
-              },
+          this.globalInterceptors.map(it => ({
+            interceptor: it.interceptor,
+            interceptorContext: {
+              args: it.args,
+              controller: route?.controller?.prototype?.constructor,
+              handler: route?.handler,
+              request: request,
+              response: response,
             },
-            ...this.globalInterceptors.map(it => ({
-              interceptor: it.interceptor,
-              interceptorContext: {
-                args: it.args,
-                controller: route?.controller?.prototype?.constructor,
-                handler: route?.handler,
-                request: request,
-                response: response,
-              },
-            }))
-          ],
+          })),
           (): Promise<unknown> => {
             if (!route) {
               throw new HttpException(404, 'Route not found');
@@ -93,18 +77,6 @@ export class HttpServerHandler implements OnApplicationBoot {
                   },
                 })),
                 async (): Promise<unknown> => {
-                  const validationErrors = [
-                    ...route.requestBodySchema ? this.validator.validate(route.requestBodySchema, request.body).errors : [],
-                    ...route.requestCookiesSchema ? this.validator.validate(route.requestCookiesSchema, request.cookies).errors : [],
-                    ...route.requestHeadersSchema ? this.validator.validate(route.requestHeadersSchema, request.headers).errors : [],
-                    ...route.requestParamsSchema ? this.validator.validate(route.requestParamsSchema, request.params).errors : [],
-                    ...route.requestQuerySchema ? this.validator.validate(route.requestQuerySchema, request.query).errors : [],
-                  ];
-
-                  if (validationErrors.length) {
-                    throw new HttpException(400, validationErrors);
-                  }
-
                   return Promise.resolve(route.handler.apply(route.controller, [request, response]));
                 },
               );

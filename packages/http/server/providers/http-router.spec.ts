@@ -22,15 +22,13 @@ describe('HttpRouter', () => {
     interceptors: [],
     method: 'GET',
     path: 'users',
-    schema: {
-      requestBody: undefined,
-      requestCookies: undefined,
-      requestHeaders: undefined,
-      requestParams: undefined,
-      requestQuery: undefined,
-      responseBody: undefined,
-      responseHeaders: undefined,
-    },
+    requestBodySchema: undefined,
+    requestCookiesSchema: undefined,
+    requestHeadersSchema: undefined,
+    requestParamsSchema: undefined,
+    requestQuerySchema: undefined,
+    responseBodySchema: undefined,
+    responseHeadersSchema: undefined,
   };
   const route2: Route = {
     controller: fooController,
@@ -38,15 +36,13 @@ describe('HttpRouter', () => {
     interceptors: [],
     method: 'POST',
     path: 'users',
-    schema: {
-      requestBody: undefined,
-      requestCookies: undefined,
-      requestHeaders: undefined,
-      requestParams: undefined,
-      requestQuery: undefined,
-      responseBody: undefined,
-      responseHeaders: undefined,
-    },
+    requestBodySchema: undefined,
+    requestCookiesSchema: undefined,
+    requestHeadersSchema: undefined,
+    requestParamsSchema: undefined,
+    requestQuerySchema: undefined,
+    responseBodySchema: undefined,
+    responseHeadersSchema: undefined,
   };
 
   const loggerTraceSpy: jest.SpyInstance = jest.spyOn(Logger.prototype, 'trace').mockImplementation(jest.fn());
