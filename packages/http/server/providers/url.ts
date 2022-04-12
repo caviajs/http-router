@@ -8,4 +8,3 @@ export class Url {
     return qsParse(urlParse(url || '').query) as Record<string, string | string[]>;
   }
 }
-
