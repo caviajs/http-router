@@ -1,12 +1,14 @@
 import { Package, Provider } from '@caviajs/core';
-import { BodyParserInterceptor } from './providers/body-parser-interceptor';
+import { Body } from './providers/body';
+import { Cookies } from './providers/cookies';
 import { HttpRouter } from './providers/http-router';
 import { HttpRouterManager } from './providers/http-router-manager';
 import { HttpServerProvider } from './providers/http-server';
 import { HttpServerHandler } from './providers/http-server-handler';
 import { HttpServerManager } from './providers/http-server-manager';
 import { HttpServerPortProvider } from './providers/http-server-port';
-import { MimeTypeParser } from './providers/mime-type-parser';
+import { MimeType } from './providers/mime-type';
+import { Url } from './providers/url';
 
 export class HttpServerPackage {
   public static configure(): HttpServerPackage {
@@ -14,14 +16,16 @@ export class HttpServerPackage {
   }
 
   protected readonly providers: Provider[] = [
-    BodyParserInterceptor,
+    Body,
+    Cookies,
     HttpRouter,
     HttpRouterManager,
     HttpServerProvider,
     HttpServerHandler,
     HttpServerManager,
     HttpServerPortProvider,
-    MimeTypeParser,
+    MimeType,
+    Url,
   ];
 
   protected constructor() {

@@ -5,17 +5,13 @@ import { readable } from 'is-stream';
 import { USE_INTERCEPTOR_METADATA } from '../decorators/use-interceptor';
 import { Interceptor, InterceptorContext } from '../types/interceptor';
 import { Method } from '../types/method';
-import { Path } from '../types/path';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
-import { HttpRouter, Route } from './http-router';
 import { HttpException } from '../http-exception';
-
-declare module 'http' {
-  export interface IncomingMessage {
-    path: Path;
-  }
-}
+import { Body } from './body';
+import { Cookies } from './cookies';
+import { HttpRouter, Route } from './http-router';
+import { Url } from './url';
 
 @Injectable()
 export class HttpServerHandler implements OnApplicationBoot {
@@ -23,8 +19,11 @@ export class HttpServerHandler implements OnApplicationBoot {
 
   constructor(
     @Inject(APPLICATION_REF) protected readonly applicationRef: ApplicationRef,
+    protected readonly body: Body,
+    protected readonly cookies: Cookies,
     protected readonly httpRouter: HttpRouter,
     protected readonly injector: Injector,
+    protected readonly url: Url,
     protected readonly validator: Validator,
   ) {
   }
@@ -37,42 +36,75 @@ export class HttpServerHandler implements OnApplicationBoot {
     );
   }
 
-  public handle(request: Request, response: Response): void {
+  public async handle(request: Request, response: Response): Promise<void> {
     const route: Route | undefined = this.httpRouter.find(request.method as Method, request.url);
+
+    request.path = route?.path;
 
     const route$ = from(
       this
         .composeInterceptors(
-          this.globalInterceptors.map(it => ({
-            interceptor: it.interceptor,
-            interceptorContext: {
-              getArgs: () => it.args,
-              getClass: () => route.controller.prototype.constructor,
-              getHandler: () => route.handler,
-              getRequest: () => request,
-              getResponse: () => response,
+          [
+            {
+              interceptor: {
+                intercept: async (ctx, next) => {
+                  ctx.request.body = await this.body.parseBody(ctx.request);
+                  ctx.request.cookies = this.cookies.parseCookies(ctx.request);
+                  ctx.request.params = this.url.parseParams(ctx.request.url, route?.path);
+                  ctx.request.query = this.url.parseQuery(ctx.request.url);
+
+                  return next.handle();
+                },
+              },
+              interceptorContext: {
+                args: [],
+                controller: route?.controller?.prototype?.constructor,
+                handler: route?.handler,
+                request: request,
+                response: response,
+              },
             },
-          })),
+            ...this.globalInterceptors.map(it => ({
+              interceptor: it.interceptor,
+              interceptorContext: {
+                args: it.args,
+                controller: route?.controller?.prototype?.constructor,
+                handler: route?.handler,
+                request: request,
+                response: response,
+              },
+            }))
+          ],
           (): Promise<unknown> => {
             if (!route) {
               throw new HttpException(404, 'Route not found');
             }
-
-            request.path = route.path;
 
             return this
               .composeInterceptors(
                 route.interceptors.map(it => ({
                   interceptor: it.interceptor,
                   interceptorContext: {
-                    getArgs: () => it.args,
-                    getClass: () => route.controller.prototype.constructor,
-                    getHandler: () => route.handler,
-                    getRequest: () => request,
-                    getResponse: () => response,
+                    args: it.args,
+                    controller: route?.controller?.prototype?.constructor,
+                    handler: route?.handler,
+                    request: request,
+                    response: response,
                   },
                 })),
-                (): Promise<unknown> => {
+                async (): Promise<unknown> => {
+                  const validationErrors = [
+                    ...route.requestBodySchema ? this.validator.validate(route.requestBodySchema, request.body).errors : [],
+                    ...route.requestCookiesSchema ? this.validator.validate(route.requestCookiesSchema, request.cookies).errors : [],
+                    ...route.requestHeadersSchema ? this.validator.validate(route.requestHeadersSchema, request.headers).errors : [],
+                    ...route.requestParamsSchema ? this.validator.validate(route.requestParamsSchema, request.params).errors : [],
+                    ...route.requestQuerySchema ? this.validator.validate(route.requestQuerySchema, request.query).errors : [],
+                  ];
+
+                  if (validationErrors.length) {
+                    throw new HttpException(400, validationErrors);
+                  }
+
                   return Promise.resolve(route.handler.apply(route.controller, [request, response]));
                 },
               );
@@ -82,8 +114,8 @@ export class HttpServerHandler implements OnApplicationBoot {
 
     route$
       .pipe(mergeAll())
-      .subscribe(
-        (data: any) => {
+      .subscribe({
+        next: (data: any) => {
           if (response.writableEnded === false) {
             if (data === undefined) {
               response
@@ -121,7 +153,7 @@ export class HttpServerHandler implements OnApplicationBoot {
             }
           }
         },
-        (error: any) => {
+        error: (error: any) => {
           const exception: HttpException = error instanceof HttpException ? error : new HttpException(500);
           const data: any = exception.getResponse();
 
@@ -132,7 +164,7 @@ export class HttpServerHandler implements OnApplicationBoot {
             })
             .end(JSON.stringify(data));
         },
-      );
+      });
   }
 
   protected async composeInterceptors(interceptors: ComposeInterceptor[], handler: () => Promise<any>): Promise<any> {

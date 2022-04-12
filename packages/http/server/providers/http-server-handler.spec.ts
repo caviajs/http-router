@@ -1,7 +1,10 @@
 import { Injector, Logger, LoggerLevel, Validator } from '@caviajs/core';
 import { Readable, Stream } from 'stream';
+import { Body } from './body';
+import { Cookies } from './cookies';
 import { HttpRouter } from './http-router';
 import { HttpServerHandler } from './http-server-handler';
+import { Url } from './url';
 
 class FooController {
   public getUndefined(): undefined {
@@ -42,14 +45,20 @@ class FooController {
 }
 
 describe('HttpServerHandler', () => {
+  let cookies: Cookies;
+  let body: Body;
   let validator: Validator;
   let httpRouter: HttpRouter;
   let httpServerHandler: HttpServerHandler;
+  let url: Url;
 
   beforeEach(async () => {
+    cookies = new Cookies();
+    body = new Body({} as any);
+    url = new Url();
     validator = new Validator();
     httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
-    httpServerHandler = new HttpServerHandler({} as any, httpRouter, await Injector.create([]), validator);
+    httpServerHandler = new HttpServerHandler({} as any, body, cookies, httpRouter, await Injector.create([]), url, validator);
   });
 
   afterEach(() => {

@@ -1,4 +1,4 @@
-import { Schema } from 'jtd';
+import { Schema } from '@caviajs/core';
 import { Path } from '../types/path';
 import { Method } from '../types/method';
 

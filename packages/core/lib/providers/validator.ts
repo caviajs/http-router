@@ -1,10 +1,10 @@
-import { Schema, validate } from 'jtd';
 import { Injectable } from '../decorators/injectable';
+import * as jtd from 'jtd';
 
 @Injectable()
 export class Validator {
-  public async validate(schema: Schema, data: any): Promise<ValidateResult> {
-    return { errors: validate(schema, data) };
+  public validate(schema: Schema, data: any): ValidateResult {
+    return { errors: jtd.validate(schema, data) };
   }
 }
 
@@ -16,3 +16,5 @@ export interface ValidateError {
 export interface ValidateResult {
   errors: ValidateError[];
 }
+
+export type Schema = jtd.Schema;

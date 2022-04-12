@@ -1,49 +1,27 @@
 import { Injectable } from '@caviajs/core';
 import zlib from 'zlib';
 import stream from 'stream';
-import { Next, Interceptor, InterceptorContext } from '../types/interceptor';
-import { MimeTypeParser } from './mime-type-parser';
-import { getContentTypeMime } from '../utils/get-content-type-mime';
 import { HttpException } from '../http-exception';
 import { Request } from '../types/request';
+import { MimeType } from './mime-type';
 
-declare module 'http' {
-  export interface IncomingMessage {
-    body?: any;
-  }
-}
-
-const DEFAULT_PARSE_OPTIONS: ParseOptions = {
+const DEFAULT_PARSE_BODY_OPTIONS: ParseBodyOptions = {
   limit: 1048576, // 10 Mbits
 };
 
 @Injectable()
-export class BodyParserInterceptor implements Interceptor {
+export class Body {
   constructor(
-    protected readonly mimeTypeParser: MimeTypeParser,
+    protected readonly mimeType: MimeType,
   ) {
   }
 
-  public async intercept(ctx: InterceptorContext, next: Next): Promise<any> {
-    const request = ctx.getRequest();
-
-    request.body = await this.parse(request);
-
-    return next.handle();
-  }
-
-  protected async parse<T = any>(request: Request, options?: ParseOptions): Promise<T> {
+  public async parseBody<T = any>(request: Request, options?: ParseBodyOptions): Promise<T> {
     return new Promise((resolve, reject) => {
-      options = { ...DEFAULT_PARSE_OPTIONS, ...options || {} };
+      options = { ...DEFAULT_PARSE_BODY_OPTIONS, ...options || {} };
 
       if (request.headers['transfer-encoding'] === undefined && isNaN(parseInt(request.headers['content-length'], 10))) {
         return resolve(undefined);
-      }
-
-      const mimeType = getContentTypeMime(request.headers['content-type']);
-
-      if (!this.mimeTypeParser.has(mimeType)) {
-        throw new HttpException(415, `Unsupported Media Type: ${ mimeType }`);
       }
 
       // The Content-Length header is mandatory for messages with entity bodies,
@@ -95,7 +73,7 @@ export class BodyParserInterceptor implements Interceptor {
           return reject(new HttpException(400, 'Request size did not match Content-Length'));
         }
 
-        return resolve(this.mimeTypeParser.get(mimeType)(data, request.headers));
+        return resolve(this.mimeType.parseBuffer(data, request.headers));
       });
 
       requestStream.on('error', error => {
@@ -105,6 +83,6 @@ export class BodyParserInterceptor implements Interceptor {
   }
 }
 
-export interface ParseOptions {
+export interface ParseBodyOptions {
   limit?: number;
 }

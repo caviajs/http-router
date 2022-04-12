@@ -48,15 +48,13 @@ export class HttpRouterManager implements OnApplicationBoot {
               ],
               method: routeMappingMetadata.method,
               path: `/${ controllerMetadata.path }/${ routeMappingMetadata.path }`.replace(/\/+/g, '/').replace(/\/$/g, ''),
-              schema: {
-                requestBody: routeMappingMetadata.schema?.requestBody,
-                requestCookies: routeMappingMetadata.schema?.requestCookies,
-                requestHeaders: routeMappingMetadata.schema?.requestHeaders,
-                requestParams: routeMappingMetadata.schema?.requestParams,
-                requestQuery: routeMappingMetadata.schema?.requestQuery,
-                responseBody: routeMappingMetadata.schema?.responseBody,
-                responseHeaders: routeMappingMetadata.schema?.responseHeaders,
-              },
+              requestBodySchema: routeMappingMetadata.schema?.requestBody,
+              requestCookiesSchema: routeMappingMetadata.schema?.requestCookies,
+              requestHeadersSchema: routeMappingMetadata.schema?.requestHeaders,
+              requestParamsSchema: routeMappingMetadata.schema?.requestParams,
+              requestQuerySchema: routeMappingMetadata.schema?.requestQuery,
+              responseBodySchema: routeMappingMetadata.schema?.responseBody,
+              responseHeadersSchema: routeMappingMetadata.schema?.responseHeaders,
             });
           }),
       );

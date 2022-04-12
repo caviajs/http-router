@@ -1,5 +1,4 @@
-import { Injectable, Logger } from '@caviajs/core';
-import { Schema } from 'jtd';
+import { Injectable, Logger, Schema } from '@caviajs/core';
 import { match } from 'path-to-regexp';
 import { parse } from 'url';
 import { Interceptor } from '../types/interceptor';
@@ -53,15 +52,13 @@ export interface Route {
   interceptors: RouteInterceptor[];
   method: Method;
   path: Path;
-  schema: {
-    requestBody: Schema | undefined;
-    requestCookies: Schema | undefined;
-    requestHeaders: Schema | undefined;
-    requestParams: Schema | undefined;
-    requestQuery: Schema | undefined;
-    responseBody: Schema | undefined;
-    responseHeaders: Schema | undefined;
-  };
+  requestBodySchema: Schema | undefined;
+  requestCookiesSchema: Schema | undefined;
+  requestHeadersSchema: Schema | undefined;
+  requestParamsSchema: Schema | undefined;
+  requestQuerySchema: Schema | undefined;
+  responseBodySchema: Schema | undefined;
+  responseHeadersSchema: Schema | undefined;
 }
 
 export interface RouteInterceptor {

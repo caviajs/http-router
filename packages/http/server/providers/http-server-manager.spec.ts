@@ -5,12 +5,15 @@ import { HttpServer } from './http-server';
 import { HttpServerHandler } from './http-server-handler';
 import { HttpServerManager } from './http-server-manager';
 import { HttpServerPort } from './http-server-port';
+import { Url } from './url';
+import { Cookies } from './cookies';
 
 class MyApp {
 }
 
 describe('HttpServerManager', () => {
   let applicationRef: ApplicationRef;
+  let cookies: Cookies;
   let logger: Logger;
   let validator: Validator;
   let httpRouter: HttpRouter;
@@ -18,15 +21,18 @@ describe('HttpServerManager', () => {
   let httpServer: HttpServer;
   let httpServerPort: HttpServerPort;
   let httpServerManager: HttpServerManager;
+  let url: Url;
 
   beforeEach(async () => {
     jest.spyOn(Logger.prototype, 'trace').mockImplementation(jest.fn());
 
     applicationRef = new MyApp();
+    cookies = new Cookies();
     logger = new Logger(LoggerLevel.ALL, () => '');
     httpRouter = new HttpRouter(logger);
     validator = new Validator();
-    httpServerHandler = new HttpServerHandler(applicationRef, httpRouter, await Injector.create([]), validator);
+    url = new Url();
+    httpServerHandler = new HttpServerHandler(applicationRef, cookies, httpRouter, await Injector.create([]), url, validator);
     httpServer = http.createServer();
     httpServerPort = 3000;
     httpServerManager = new HttpServerManager(logger, httpServer, httpServerHandler, httpServerPort);

@@ -8,15 +8,11 @@ export interface Interceptor<T = any, R = any> {
 }
 
 export interface InterceptorContext {
-  getArgs(): any[];
-
-  getClass(): Type;
-
-  getHandler(): Function;
-
-  getRequest(): Request;
-
-  getResponse(): Response;
+  readonly args: any[];
+  readonly controller: Type;
+  readonly handler: Function;
+  readonly request: Request;
+  readonly response: Response;
 }
 
 export interface Next<T = any> {

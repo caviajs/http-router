@@ -74,15 +74,13 @@ describe('HttpRouterManager', () => {
         ],
         method: 'GET',
         path: '/foo',
-        schema: {
-          requestBody: undefined,
-          requestCookies: undefined,
-          requestHeaders: undefined,
-          requestParams: undefined,
-          requestQuery: undefined,
-          responseBody: undefined,
-          responseHeaders: undefined,
-        },
+        requestBodySchema: undefined,
+        requestCookiesSchema: undefined,
+        requestHeadersSchema: undefined,
+        requestParamsSchema: undefined,
+        requestQuerySchema: undefined,
+        responseBodySchema: undefined,
+        responseHeadersSchema: undefined,
       } as Route);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
         controller: fooController,
@@ -93,15 +91,13 @@ describe('HttpRouterManager', () => {
         ],
         method: 'POST',
         path: '/foo/create',
-        schema: {
-          requestBody: undefined,
-          requestCookies: undefined,
-          requestHeaders: undefined,
-          requestParams: undefined,
-          requestQuery: undefined,
-          responseBody: undefined,
-          responseHeaders: undefined,
-        },
+        requestBodySchema: undefined,
+        requestCookiesSchema: undefined,
+        requestHeadersSchema: undefined,
+        requestParamsSchema: undefined,
+        requestQuerySchema: undefined,
+        responseBodySchema: undefined,
+        responseHeadersSchema: undefined,
       } as Route);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
         controller: barController,
@@ -112,15 +108,13 @@ describe('HttpRouterManager', () => {
         ],
         method: 'GET',
         path: '/bar/:id',
-        schema: {
-          requestBody: undefined,
-          requestCookies: undefined,
-          requestHeaders: undefined,
-          requestParams: undefined,
-          requestQuery: undefined,
-          responseBody: undefined,
-          responseHeaders: undefined,
-        },
+        requestBodySchema: undefined,
+        requestCookiesSchema: undefined,
+        requestHeadersSchema: undefined,
+        requestParamsSchema: undefined,
+        requestQuerySchema: undefined,
+        responseBodySchema: undefined,
+        responseHeadersSchema: undefined,
       } as Route);
     });
 
