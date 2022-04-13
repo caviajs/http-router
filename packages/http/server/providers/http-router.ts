@@ -10,6 +10,10 @@ import { LOGGER_CONTEXT } from '../http-constants';
 export class HttpRouter {
   protected readonly routes: Route[] = [];
 
+  public get specification() {
+    return this.routes;
+  }
+
   constructor(
     protected readonly logger: Logger,
   ) {
@@ -50,18 +54,33 @@ export interface Route {
   controller: any;
   handler: Function;
   interceptors: RouteInterceptor[];
+  meta: RouteMeta;
   method: Method;
   path: Path;
-  requestBodySchema: Schema | undefined;
-  requestCookiesSchema: Schema | undefined;
-  requestHeadersSchema: Schema | undefined;
-  requestParamsSchema: Schema | undefined;
-  requestQuerySchema: Schema | undefined;
-  responseBodySchema: Schema | undefined;
-  responseHeadersSchema: Schema | undefined;
 }
 
 export interface RouteInterceptor {
   args: any[];
   interceptor: Interceptor;
+}
+
+export interface RouteMeta {
+  request: {
+    body: Schema | undefined;
+    cookies: Schema | undefined;
+    headers: Schema | undefined;
+    params: Schema | undefined;
+    query: Schema | undefined;
+  };
+  responses: {
+    [status: number]: {
+      content: {
+        [mimeType: string]: {
+          body: Schema | undefined;
+          headers: Schema | undefined;
+        };
+      };
+      description?: string;
+    };
+  };
 }

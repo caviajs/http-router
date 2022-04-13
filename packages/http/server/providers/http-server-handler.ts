@@ -35,13 +35,17 @@ export class HttpServerHandler implements OnApplicationBoot {
     const route: Route | undefined = this.httpRouter.find(request.method as Method, request.url);
 
     request.meta = {
-      requestBodySchema: route?.requestBodySchema,
-      requestCookiesSchema: route?.requestCookiesSchema,
-      requestHeadersSchema: route?.requestHeadersSchema,
-      requestParamsSchema: route?.requestParamsSchema,
-      requestQuerySchema: route?.requestQuerySchema,
-      responseBodySchema: route?.responseBodySchema,
-      responseHeadersSchema: route?.responseHeadersSchema,
+      request: {
+        body: route?.meta?.request?.body,
+        cookies: route?.meta?.request?.cookies,
+        headers: route?.meta?.request?.headers,
+        params: route?.meta?.request?.params,
+        query: route?.meta?.request?.query,
+      },
+      responses: {
+        // responseBodySchema: route?.meta.responses[200].body,
+        // responseHeadersSchema: route?.meta.responses[200].headers,
+      },
     };
     request.params = route?.path ? (match(route?.path)(urlParse(request.url).pathname) as MatchResult)?.params as any : {};
     request.path = route?.path;

@@ -72,15 +72,21 @@ describe('HttpRouterManager', () => {
         interceptors: [
           { args: ['admin:foo:get'], interceptor: fooInterceptor },
         ],
+        meta: {
+          request: {
+            body: undefined,
+            cookies: undefined,
+            headers: undefined,
+            params: undefined,
+            query: undefined,
+          },
+          responses: {
+            // responseBodySchema: undefined,
+            // responseHeadersSchema: undefined,
+          },
+        },
         method: 'GET',
         path: '/foo',
-        requestBodySchema: undefined,
-        requestCookiesSchema: undefined,
-        requestHeadersSchema: undefined,
-        requestParamsSchema: undefined,
-        requestQuerySchema: undefined,
-        responseBodySchema: undefined,
-        responseHeadersSchema: undefined,
       } as Route);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
         controller: fooController,
@@ -89,15 +95,21 @@ describe('HttpRouterManager', () => {
           { args: ['admin:foo:create'], interceptor: fooInterceptor },
           { args: ['admin:foo:create'], interceptor: barInterceptor },
         ],
+        meta: {
+          request: {
+            body: undefined,
+            cookies: undefined,
+            headers: undefined,
+            params: undefined,
+            query: undefined,
+          },
+          responses: {
+            // responseBodySchema: undefined,
+            // responseHeadersSchema: undefined,
+          },
+        },
         method: 'POST',
         path: '/foo/create',
-        requestBodySchema: undefined,
-        requestCookiesSchema: undefined,
-        requestHeadersSchema: undefined,
-        requestParamsSchema: undefined,
-        requestQuerySchema: undefined,
-        responseBodySchema: undefined,
-        responseHeadersSchema: undefined,
       } as Route);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
         controller: barController,
@@ -106,15 +118,21 @@ describe('HttpRouterManager', () => {
           { args: ['admin:bar'], interceptor: fooInterceptor },
           { args: ['admin:bar'], interceptor: barInterceptor },
         ],
+        meta: {
+          request: {
+            body: undefined,
+            cookies: undefined,
+            headers: undefined,
+            params: undefined,
+            query: undefined,
+          },
+          responses: {
+            // responseBodySchema: undefined,
+            // responseHeadersSchema: undefined,
+          },
+        },
         method: 'GET',
         path: '/bar/:id',
-        requestBodySchema: undefined,
-        requestCookiesSchema: undefined,
-        requestHeadersSchema: undefined,
-        requestParamsSchema: undefined,
-        requestQuerySchema: undefined,
-        responseBodySchema: undefined,
-        responseHeadersSchema: undefined,
       } as Route);
     });
 

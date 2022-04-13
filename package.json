@@ -36,7 +36,6 @@
     "inquirer": "^7.1.0",
     "is-stream": "^2.0.0",
     "jest": "^27.1.1",
-    "jtd": "^0.1.1",
     "lodash.get": "^4.4.2",
     "node-cron": "^3.0.0",
     "parse-multipart-data": "^1.2.1",
