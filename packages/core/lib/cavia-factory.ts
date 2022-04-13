@@ -43,18 +43,18 @@ export class CaviaFactory {
     if (options?.env) {
       const env = await injector.find(Env);
       const validator = await injector.find(Validator);
-      const validateResult = await validator.validate({
-        data: env.variables,
-        schema: {
+      const validateErrors = await validator.validate(
+        {
           members: options.env,
           required: true,
           strict: false,
           type: 'object',
         },
-      });
+        env.variables,
+      );
 
-      if (validateResult.length) {
-        throw new Error(JSON.stringify({ message: 'Invalid env variables', errors: validateResult }));
+      if (validateErrors.length) {
+        throw new Error(JSON.stringify(validateErrors));
       }
     }
 
