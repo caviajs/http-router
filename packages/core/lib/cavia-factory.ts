@@ -6,7 +6,7 @@ import { Logger } from './providers/logger';
 import { LoggerLevelProvider } from './providers/logger-level';
 import { LoggerMessageFactoryProvider } from './providers/logger-message-factory';
 import { Storage } from './providers/storage';
-import { Schema, Validator } from './providers/validator';
+import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString, Validator } from './providers/validator';
 import { View } from './providers/view';
 import { ViewDirectoryPathProvider } from './providers/view-directory-path';
 import { Provider } from './types/provider';
@@ -43,11 +43,19 @@ export class CaviaFactory {
     if (options?.env) {
       const env = await injector.find(Env);
       const validator = await injector.find(Validator);
-      const validateResult = await validator.validate(options.env, env.variables);
+      const validateResult = await validator.validate({
+        data: env.variables,
+        schema: {
+          members: options.env,
+          required: true,
+          strict: false,
+          type: 'object',
+        },
+      });
 
-      // if (Object.keys(validateResult.errors).length) {
-      //   throw new Error(JSON.stringify({ message: 'Invalid env variables', errors: validateResult.errors }));
-      // }
+      if (validateResult.length) {
+        throw new Error(JSON.stringify({ message: 'Invalid env variables', errors: validateResult }));
+      }
     }
 
     await caviaApplication.boot();
@@ -75,5 +83,7 @@ export class CaviaFactory {
 }
 
 export interface CaviaFactoryOptions {
-  env?: Schema;
+  env?: {
+    [name: string]: SchemaBoolean | SchemaEnum | SchemaNumber | SchemaString;
+  };
 }

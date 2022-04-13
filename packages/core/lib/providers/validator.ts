@@ -1,76 +1,82 @@
 import { Injectable } from '../decorators/injectable';
 
+const DEFAULT_NULLABLE: boolean = false;
+const DEFAULT_STRICT: boolean = false;
+const DEFAULT_REQUIRED: boolean = false;
+
 @Injectable()
 export class Validator {
-  public validate(schema: Schema, data: any): ValidateResult {
-    return {
-      errors: this.validateByPath(schema, data, ['']).errors,
-    };
+  public async validate(options: ValidateOptions): Promise<ValidateError[]> {
+    return await this.executeValidation(options.schema, options.data, ['']);
   }
 
-  public validateByPath(schema: Schema, data: any, path: string[]): ValidateResult {
+  protected isSchemaArray(schema: any): schema is SchemaArray {
+    return schema?.type === 'array';
+  }
+
+  protected isSchemaBoolean(schema: any): schema is SchemaBoolean {
+    return schema?.type === 'boolean';
+  }
+
+  protected isSchemaEnum(schema: any): schema is SchemaEnum {
+    return schema?.type === 'enum';
+  }
+
+  protected isSchemaNumber(schema: any): schema is SchemaNumber {
+    return schema?.type === 'number';
+  }
+
+  protected isSchemaObject(schema: any): schema is SchemaObject {
+    return schema?.type === 'object';
+  }
+
+  protected isSchemaString(schema: any): schema is SchemaString {
+    return schema?.type === 'string';
+  }
+
+  protected async executeValidation(schema: Schema, data: any, path: string[]): Promise<ValidateError[]> {
     const errors: ValidateError[] = [];
 
-    if (this.isArraySchema(schema)) {
+    if (this.isSchemaArray(schema)) {
       if (Array.isArray(data)) {
         for (const [index, el] of Object.entries(data)) {
-          errors.push(...this.validateByPath(schema.members, el, [...path, index]).errors);
+          errors.push(...await this.executeValidation(schema.members, el, [...path, index]));
         }
       } else {
         errors.push({ message: `${ path.join('.') } should be array` });
       }
-    } else if (this.isBooleanSchema(schema)) {
+    } else if (this.isSchemaBoolean(schema)) {
       if (typeof data !== 'boolean') {
         errors.push({ message: `${ path.join('.') } should be boolean` });
       }
-    } else if (this.isDateSchema(schema)) {
-    } else if (this.isEnumSchema(schema)) {
-    } else if (this.isNumberSchema(schema)) {
+    } else if (this.isSchemaEnum(schema)) {
+    } else if (this.isSchemaNumber(schema)) {
       if (typeof data !== 'number') {
         errors.push({ message: `${ path.join('.') } should be number` });
       }
-    } else if (this.isObjectSchema(schema)) {
-    } else if (this.isStringSchema(schema)) {
+    } else if (this.isSchemaObject(schema)) {
+    } else if (this.isSchemaString(schema)) {
       if (typeof data !== 'string') {
         errors.push({ message: `${ path.join('.') } should be string` });
       }
     }
 
-    return { errors: errors };
+    return errors;
   }
-
-  protected isArraySchema(schema: any): schema is ArraySchema {
-    return schema?.type === 'array';
-  }
-
-  protected isBooleanSchema(schema: any): schema is BooleanSchema {
-    return schema?.type === 'boolean';
-  }
-
-  protected isDateSchema(schema: any): schema is DateSchema {
-    return schema?.type === 'date';
-  }
-
-  protected isEnumSchema(schema: any): schema is EnumSchema {
-    return schema?.type === 'enum';
-  }
-
-  protected isNumberSchema(schema: any): schema is NumberSchema {
-    return schema?.type === 'number';
-  }
-
-  protected isObjectSchema(schema: any): schema is ObjectSchema {
-    return schema?.type === 'object';
-  }
-
-  protected isStringSchema(schema: any): schema is StringSchema {
-    return schema?.type === 'string';
-  }
-
-  // protected validateByStringSchema(schema: StringSchema, data: any) {
-  //
-  // }
 }
+
+export type Rule = {
+  name: string;
+  options?: any;
+}
+
+export type Schema =
+  | SchemaArray
+  | SchemaBoolean
+  | SchemaEnum
+  | SchemaNumber
+  | SchemaObject
+  | SchemaString;
 
 /*
  defultowe wartości:
@@ -80,7 +86,7 @@ export class Validator {
 
 // nullable: jak true to: any[...] | null
 // required: jak true to property: any[...]; jak false to: property?: any[...];
-export type ArraySchema = {
+export type SchemaArray = {
   members?: Schema;
   nullable?: boolean;
   required?: boolean;
@@ -90,25 +96,16 @@ export type ArraySchema = {
 
 // nullable: jak true to: boolean | null
 // required: jak true to property: boolean; jak false to: property?: boolean;
-export type BooleanSchema = {
+export type SchemaBoolean = {
   nullable?: boolean;
   required?: boolean;
   rules?: Rule[];
   type: 'boolean';
 }
 
-// nullable: jak true to: Date | null
-// required: jak true to property: Date; jak false to: property?: Date;
-export type DateSchema = {
-  nullable?: boolean;
-  required?: boolean;
-  rules?: Rule[];
-  type: 'date';
-}
-
 // nullable: jak true to: enum[...] | null
 // required: jak true to property: enum[...]; jak false to: property?: enum[...];
-export type EnumSchema = {
+export type SchemaEnum = {
   enum: unknown[];
   nullable?: boolean;
   required?: boolean;
@@ -118,7 +115,7 @@ export type EnumSchema = {
 
 // nullable: jak true to: number | null
 // required: jak true to property: number; jak false to: property?: number;
-export type NumberSchema = {
+export type SchemaNumber = {
   nullable?: boolean;
   required?: boolean;
   rules?: Rule[];
@@ -127,7 +124,7 @@ export type NumberSchema = {
 
 // nullable: jak true to: {...} | null
 // required: jak true to property: {...}; jak false to: property?: {...};
-export type ObjectSchema = {
+export type SchemaObject = {
   members?: { [name: string]: Schema; };
   nullable?: boolean;
   required?: boolean;
@@ -136,23 +133,9 @@ export type ObjectSchema = {
   type: 'object';
 }
 
-export type Rule = {
-  name: string;
-  options?: any;
-}
-
-export type Schema =
-  | ArraySchema
-  | BooleanSchema
-  | DateSchema
-  | EnumSchema
-  | NumberSchema
-  | ObjectSchema
-  | StringSchema;
-
 // nullable: jak true to: string | null
 // required: jak true to property: string; jak false to: property?: string;
-export type StringSchema = {
+export type SchemaString = {
   nullable?: boolean;
   required?: boolean;
   rules?: Rule[];
@@ -163,6 +146,7 @@ export interface ValidateError {
   message: string;
 }
 
-export interface ValidateResult {
-  errors: ValidateError[];
+export interface ValidateOptions {
+  data: any;
+  schema: Schema;
 }
