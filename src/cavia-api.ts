@@ -82,6 +82,7 @@ export * from './lib/storage/providers/storage';
 
 // validator
 export * from './lib/validator/providers/validator';
+export * from './lib/validator/types/schema';
 
 // view
 export * from './lib/view/providers/view';

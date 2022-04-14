@@ -6,7 +6,7 @@ import { Path } from '../types/path';
 import { Injectable } from '../../ioc/decorators/injectable';
 import { Logger } from '../../logger/providers/logger';
 import { LOGGER_CONTEXT } from '../../constants';
-import { Schema } from '../../validator/providers/validator';
+import { Schema } from '../../validator/types/schema';
 
 @Injectable()
 export class HttpRouter {

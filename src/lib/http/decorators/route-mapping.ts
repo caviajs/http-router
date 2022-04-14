@@ -1,6 +1,6 @@
 import { Path } from '../types/path';
 import { Method } from '../types/method';
-import { Schema } from '../../validator/providers/validator';
+import { Schema } from '../../validator/types/schema';
 
 export const ROUTE_MAPPING_METADATA: Symbol = Symbol('ROUTE_MAPPING_METADATA');
 
