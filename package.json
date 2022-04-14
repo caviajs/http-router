@@ -1,53 +1,69 @@
 {
-  "name": "root",
+  "name": "@caviajs/core",
+  "description": "next generation framework for node.js",
+  "version": "0.0.1",
+  "author": "Paweł Partyka",
+  "license": "MIT",
+  "files": [
+    "dist/**/*"
+  ],
+  "bin": {
+    "cavia": "dist/cavia-cli.js"
+  },
+  "main": "dist/cavia-api.js",
+  "types": "dist/cavia-api.d.ts",
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prebuild": "rimraf dist",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "release:dev": "ts-node release.ts --registry=http://localhost:4873/ --unpublish",
-    "release:prod:major": "ts-node release.ts --registry=https://registry.npmjs.org/ --version=major",
-    "release:prod:minor": "ts-node release.ts --registry=https://registry.npmjs.org/ --version=minor",
-    "release:prod:patch": "ts-node release.ts --registry=https://registry.npmjs.org/ --version=patch",
-    "release:prod:premajor": "ts-node release.ts --registry=https://registry.npmjs.org/ --version=premajor",
-    "release:prod:preminor": "ts-node release.ts --registry=https://registry.npmjs.org/ --version=preminor",
-    "release:prod:prepatch": "ts-node release.ts --registry=https://registry.npmjs.org/ --version=prepatch",
-    "release:prod:prerelease": "ts-node release.ts --registry=https://registry.npmjs.org/ --version=prerelease",
+    "publish:local": "npm publish --registry=http://localhost:4873/",
+    "publish:prod": "npm publish --registry=https://registry.npmjs.org/",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:debug": "node --inspect-brk -r ts-node/register jest --runInBand",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "unpublish:local": "npm unpublish --force --registry=http://localhost:4873/",
+    "unpublish:prod": "npm unpublish --force --registry=https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@types/cli-color": "^2.0.0",
-    "@types/fs-extra": "^9.0.13",
-    "@types/jest": "^27.4.0",
-    "@types/lodash.get": "^4.4.6",
-    "@types/node": "^14.14.37",
-    "@types/node-cron": "^3.0.1",
-    "@types/qs": "^6.9.6",
-    "@types/yargs": "^17.0.9",
-    "@typescript-eslint/eslint-plugin": "^4.21.0",
-    "@typescript-eslint/parser": "^4.21.0",
-    "cli-color": "^2.0.0",
-    "dotenv": "^16.0.0",
-    "edge.js": "^5.3.2",
-    "eslint": "^7.24.0",
-    "fs-extra": "^10.0.0",
-    "iconv-lite": "^0.6.2",
-    "inquirer": "^7.1.0",
-    "is-stream": "^2.0.0",
-    "jest": "^27.1.1",
-    "lodash.get": "^4.4.2",
-    "node-cron": "^3.0.0",
-    "parse-multipart-data": "^1.2.1",
-    "path-to-regexp": "^6.2.0",
-    "qs": "^6.10.1",
-    "ramda": "^0.27.1",
-    "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.5.4",
-    "ts-jest": "^27.1.2",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.2.4",
-    "yargs": "^17.3.1"
+    "cli-color": "~2.0.0",
+    "dotenv": "~16.0.0",
+    "edge.js": "~5.3.2",
+    "fs-extra": "~10.0.0",
+    "iconv-lite": "~0.6.2",
+    "inquirer": "~7.1.0",
+    "is-stream": "~2.0.0",
+    "lodash.get": "~4.4.2",
+    "node-cron": "~3.0.0",
+    "parse-multipart-data": "~1.2.1",
+    "path-to-regexp": "~6.2.0",
+    "qs": "~6.10.1",
+    "yargs": "~17.3.1"
+  },
+  "devDependencies": {
+    "@types/cli-color": "~2.0.0",
+    "@types/fs-extra": "~9.0.13",
+    "@types/jest": "~27.4.0",
+    "@types/lodash.get": "~4.4.6",
+    "@types/node": "~14.14.37",
+    "@types/node-cron": "~3.0.1",
+    "@types/qs": "~6.9.6",
+    "@types/yargs": "~17.0.9",
+    "@typescript-eslint/eslint-plugin": "~4.21.0",
+    "@typescript-eslint/parser": "~4.21.0",
+    "eslint": "~7.24.0",
+    "jest": "~27.1.1",
+    "reflect-metadata": "~0.1.13",
+    "rimraf": "~3.0.2",
+    "rxjs": "~7.5.4",
+    "ts-jest": "~27.1.2",
+    "ts-node": "~9.1.1",
+    "typescript": "~4.2.4"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "~0.1.13",
+    "rxjs": "~7.5.4"
   },
   "jest": {
     "coverageDirectory": "coverage",
@@ -57,7 +73,7 @@
       "ts"
     ],
     "roots": [
-      "packages"
+      "src"
     ],
     "testEnvironment": "node",
     "testRegex": ".spec.ts$",
@@ -66,9 +82,6 @@
     },
     "setupFiles": [
       "<rootDir>/node_modules/reflect-metadata/Reflect.js"
-    ],
-    "moduleNameMapper": {
-      "@caviajs/core": "<rootDir>/packages/core/index.ts"
-    }
+    ]
   }
 }

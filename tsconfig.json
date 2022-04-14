@@ -13,19 +13,9 @@
     "incremental": true,
     "lib": [
       "es2020"
-    ],
-    "types": [
-      "jest",
-      "node"
-    ],
-    "paths": {
-      "@caviajs/core": [
-        "packages/core/index.ts"
-      ]
-    }
+    ]
   },
   "include": [
-    "packages/**/*",
-    "release.ts"
+    "src/**/*"
   ]
 }
