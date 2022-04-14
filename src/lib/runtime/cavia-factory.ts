@@ -5,6 +5,8 @@ import { EnvPathProvider } from '../env/providers/env-path';
 import { Logger } from '../logger/providers/logger';
 import { LoggerLevelProvider } from '../logger/providers/logger-level';
 import { LoggerMessageFactoryProvider } from '../logger/providers/logger-message-factory';
+import { Schedule } from '../schedule/providers/schedule';
+import { ScheduleManager } from '../schedule/providers/schedule-manager';
 import { Storage } from '../storage/providers/storage';
 import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString, Validator } from '../validator/providers/validator';
 import { View } from '../view/providers/view';
@@ -33,6 +35,8 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   Logger,
   LoggerLevelProvider,
   LoggerMessageFactoryProvider,
+  Schedule,
+  ScheduleManager,
   Storage,
   Validator,
   View,
