@@ -71,12 +71,6 @@ export * from './lib/runtime/types/package';
 export * from './lib/runtime/cavia-application';
 export * from './lib/runtime/cavia-factory';
 
-// schedule
-export * from './lib/schedule/adapters/worker';
-export * from './lib/schedule/decorators/scheduled';
-export * from './lib/schedule/providers/schedule';
-export * from './lib/schedule/providers/schedule-manager';
-
 // storage
 export * from './lib/storage/providers/storage';
 
