@@ -5,8 +5,6 @@ import { EnvPathProvider } from './providers/env-path';
 import { Logger } from './providers/logger';
 import { LoggerLevelProvider } from './providers/logger-level';
 import { LoggerMessageFactoryProvider } from './providers/logger-message-factory';
-import { Schedule } from './providers/schedule';
-import { ScheduleManager } from './providers/schedule-manager';
 import { Storage } from './providers/storage';
 import { Validator } from './providers/validator';
 import { View } from './providers/view';
@@ -29,8 +27,6 @@ import { HttpServerPortProvider } from './providers/http-server-port';
 import { MimeType } from './providers/mime-type';
 import { Url } from './providers/url';
 import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from './types/schema';
-import { EventEmitter } from './providers/event-emitter';
-import { EventEmitterManager } from './providers/event-emitter-manager';
 import { HttpClient } from './providers/http-client';
 
 const BUILT_IN_PROVIDERS: Provider[] = [
@@ -38,8 +34,6 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   Cookies,
   Env,
   EnvPathProvider,
-  EventEmitter,
-  EventEmitterManager,
   HttpClient,
   HttpRouter,
   HttpRouterManager,
@@ -51,8 +45,6 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   LoggerLevelProvider,
   LoggerMessageFactoryProvider,
   MimeType,
-  Schedule,
-  ScheduleManager,
   Storage,
   Url,
   Validator,
