@@ -26,6 +26,7 @@ export * from './main/providers/body-manager';
 export * from './main/providers/cookies';
 export * from './main/providers/env';
 export * from './main/providers/env-path';
+export * from './main/providers/env-schema';
 export * from './main/providers/http-client';
 export * from './main/providers/http-router';
 export * from './main/providers/http-router-manager';

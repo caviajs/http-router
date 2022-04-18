@@ -26,6 +26,7 @@ import http from 'http';
 import { HttpServerHandler } from './providers/http-server-handler';
 import { HttpServerManager } from './providers/http-server-manager';
 import { HTTP_SERVER_PORT } from './providers/http-server-port';
+import { ENV_SCHEMA } from './providers/env-schema';
 
 describe('CaviaFactory', () => {
   afterEach(() => {
@@ -61,6 +62,7 @@ describe('CaviaFactory', () => {
       expect(await application.injector.find(Cookies)).toBeInstanceOf(Cookies);
       expect(await application.injector.find(Env)).toBeInstanceOf(Env);
       expect(await application.injector.find(ENV_PATH)).toEqual(path.join(process.cwd(), '.env'));
+      expect(await application.injector.find(ENV_SCHEMA)).toEqual({});
       expect(await application.injector.find(Headers)).toBeInstanceOf(Headers);
       expect(await application.injector.find(Injector)).toBeInstanceOf(Injector);
       expect(await application.injector.find(HttpClient)).toBeInstanceOf(HttpClient);
