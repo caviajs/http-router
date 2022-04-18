@@ -8,10 +8,10 @@
     "dist/**/*"
   ],
   "bin": {
-    "cavia": "dist/cavia-cli.js"
+    "cavia": "dist/bin.js"
   },
-  "main": "dist/cavia-api.js",
-  "types": "dist/cavia-api.d.ts",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "prebuild": "rimraf dist",
@@ -33,9 +33,10 @@
     "fs-extra": "~10.0.0",
     "iconv-lite": "~0.6.2",
     "inquirer": "~7.1.0",
+    "ioredis": "~5.0.4",
     "is-stream": "~2.0.0",
     "lodash.get": "~4.4.2",
-    "node-cron": "^3.0.0",
+    "node-cron": "~3.0.0",
     "parse-multipart-data": "~1.2.1",
     "path-to-regexp": "~6.2.0",
     "qs": "~6.10.1",
@@ -46,7 +47,7 @@
     "@types/fs-extra": "~9.0.13",
     "@types/jest": "~27.4.0",
     "@types/lodash.get": "~4.4.6",
-    "@types/node": "~14.14.37",
+    "@types/node": "~16.11.7",
     "@types/node-cron": "^3.0.1",
     "@types/qs": "~6.9.6",
     "@types/yargs": "~17.0.9",

@@ -8,7 +8,7 @@ import { LoggerMessageFactoryProvider } from '../logger/providers/logger-message
 import { Schedule } from '../schedule/providers/schedule';
 import { ScheduleManager } from '../schedule/providers/schedule-manager';
 import { Storage } from '../storage/providers/storage';
-import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString, Validator } from '../validator/providers/validator';
+import { Validator } from '../validator/providers/validator';
 import { View } from '../view/providers/view';
 import { ViewDirectoryPathProvider } from '../view/providers/view-directory-path';
 import { Provider } from '../ioc/types/provider';
@@ -28,6 +28,7 @@ import { HttpServerManager } from '../http/providers/http-server-manager';
 import { HttpServerPortProvider } from '../http/providers/http-server-port';
 import { MimeType } from '../http/providers/mime-type';
 import { Url } from '../http/providers/url';
+import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from '../validator/types/schema';
 
 const BUILT_IN_PROVIDERS: Provider[] = [
   Env,

@@ -63,6 +63,16 @@ export * from './lib/logger/providers/logger';
 export * from './lib/logger/providers/logger-level';
 export * from './lib/logger/providers/logger-message-factory';
 
+// queue
+export * from './lib/queue/decorators/queue-consumer';
+export * from './lib/queue/queue-package';
+
+// redis
+export * from './lib/redis/decorators/inject-redis-connection';
+export * from './lib/redis/providers/redis-connection';
+export * from './lib/redis/providers/redis-connection-options';
+export * from './lib/redis/redis-package';
+
 // runtime
 export * from './lib/runtime/decorators/application';
 export * from './lib/runtime/providers/application-ref';
