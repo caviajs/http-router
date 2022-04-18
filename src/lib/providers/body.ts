@@ -1,6 +1,6 @@
 import zlib from 'zlib';
 import stream from 'stream';
-import { HttpException } from '../http-exception';
+import { HttpException } from '../exceptions/http-exception';
 import { Request } from '../types/request';
 import { MimeType } from './mime-type';
 import { Injectable } from '../decorators/injectable';

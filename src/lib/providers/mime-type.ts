@@ -4,7 +4,7 @@ import qs from 'qs';
 import * as multipart from 'parse-multipart-data';
 import { getContentTypeMime } from '../utils/get-content-type-mime';
 import { getContentTypeParameter } from '../utils/get-content-type-parameter';
-import { HttpException } from '../http-exception';
+import { HttpException } from '../exceptions/http-exception';
 import { Injectable } from '../decorators/injectable';
 
 const BUILT_IN_MIME_TYPE_PARSERS: { [name: string]: MimeTypeParser } = {

@@ -8,7 +8,7 @@ import { Interceptor, InterceptorContext } from '../types/interceptor';
 import { Method } from '../types/method';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
-import { HttpException } from '../http-exception';
+import { HttpException } from '../exceptions/http-exception';
 import { HttpRouter, Route } from './http-router';
 import { OnApplicationBoot } from '../types/hooks';
 import { APPLICATION_REF, ApplicationRef } from './application-ref';

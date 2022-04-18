@@ -24,6 +24,8 @@ export * from './lib/decorators/route-mapping';
 export * from './lib/decorators/scheduled';
 export * from './lib/decorators/use-interceptor';
 
+export * from './lib/exceptions/http-exception';
+
 export * from './lib/packages/queue-package';
 export * from './lib/packages/redis-package';
 
@@ -83,5 +85,4 @@ export * from './lib/utils/is-value-provider';
 export * from './lib/cavia-application';
 export * from './lib/cavia-factory';
 export * from './lib/constants';
-export * from './lib/http-exception';
 export * from './lib/injector';

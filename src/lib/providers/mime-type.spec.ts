@@ -1,5 +1,5 @@
 import { File, MimeType, MimeTypeParser } from './mime-type';
-import { HttpException } from '../http-exception';
+import { HttpException } from '../exceptions/http-exception';
 
 class MimeTypeTest extends MimeType {
   public get getMimeTypeParsers() {
