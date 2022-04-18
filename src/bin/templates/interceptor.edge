@@ -1,0 +1,9 @@
+import { Injectable, Interceptor, InterceptorContext, Next } from '@caviajs/core';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class {{ name }}Interceptor implements Interceptor {
+  public async intercept(context: InterceptorContext, next: Next): Promise<Observable<any>> {
+    return next.handle();
+  }
+}
