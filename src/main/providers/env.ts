@@ -1,6 +1,5 @@
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import get from 'lodash.get';
 import { Inject } from '../decorators/inject';
 import { Injectable } from '../decorators/injectable';
 import { ENV_PATH, EnvPath } from './env-path';
@@ -18,6 +17,6 @@ export class Env {
   }
 
   public get(name: string, defaultValue?: any): any {
-    return get(this.variables, name, defaultValue);
+    return this.variables[name] || defaultValue;
   }
 }
