@@ -22,6 +22,7 @@ export * from './main/exceptions/http-exception';
 
 export * from './main/providers/application-ref';
 export * from './main/providers/body';
+export * from './main/providers/body-manager';
 export * from './main/providers/cookies';
 export * from './main/providers/env';
 export * from './main/providers/env-path';
@@ -35,13 +36,12 @@ export * from './main/providers/http-server-port';
 export * from './main/providers/logger';
 export * from './main/providers/logger-level';
 export * from './main/providers/logger-message-factory';
-export * from './main/providers/mime-type';
 export * from './main/providers/storage';
-export * from './main/providers/url';
 export * from './main/providers/validator';
 export * from './main/providers/view';
 export * from './main/providers/view-directory-path';
 
+export * from './main/types/file';
 export * from './main/types/hooks';
 export * from './main/types/interceptor';
 export * from './main/types/method';
@@ -55,8 +55,6 @@ export * from './main/types/token';
 export * from './main/types/type';
 
 export * from './main/utils/forward-ref';
-export * from './main/utils/get-content-type-mime';
-export * from './main/utils/get-content-type-parameter';
 export * from './main/utils/get-provider-name';
 export * from './main/utils/get-provider-token';
 export * from './main/utils/get-token-name';

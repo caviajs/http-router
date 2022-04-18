@@ -17,6 +17,8 @@ import { CaviaApplication } from './cavia-application';
 import { LOGGER_CONTEXT } from './constants';
 import { Injector } from './injector';
 import { Body } from './providers/body';
+import { BodyManager } from './providers/body-manager';
+import { Headers } from './providers/headers';
 import { Cookies } from './providers/cookies';
 import { HttpRouter } from './providers/http-router';
 import { HttpRouterManager } from './providers/http-router-manager';
@@ -24,16 +26,16 @@ import { HttpServerProvider } from './providers/http-server';
 import { HttpServerHandler } from './providers/http-server-handler';
 import { HttpServerManager } from './providers/http-server-manager';
 import { HttpServerPortProvider } from './providers/http-server-port';
-import { MimeType } from './providers/mime-type';
-import { Url } from './providers/url';
 import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from './types/schema';
 import { HttpClient } from './providers/http-client';
 
 const BUILT_IN_PROVIDERS: Provider[] = [
   Body,
+  BodyManager,
   Cookies,
   Env,
   EnvPathProvider,
+  Headers,
   HttpClient,
   HttpRouter,
   HttpRouterManager,
@@ -44,9 +46,7 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   Logger,
   LoggerLevelProvider,
   LoggerMessageFactoryProvider,
-  MimeType,
   Storage,
-  Url,
   Validator,
   View,
   ViewDirectoryPathProvider,

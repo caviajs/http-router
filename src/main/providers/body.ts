@@ -2,8 +2,9 @@ import zlib from 'zlib';
 import stream from 'stream';
 import { HttpException } from '../exceptions/http-exception';
 import { Request } from '../types/request';
-import { MimeType } from './mime-type';
 import { Injectable } from '../decorators/injectable';
+import http from 'http';
+import { Headers } from './headers';
 
 const DEFAULT_PARSE_BODY_OPTIONS: ParseBodyOptions = {
   limit: 1048576, // 10 Mbits
@@ -11,8 +12,10 @@ const DEFAULT_PARSE_BODY_OPTIONS: ParseBodyOptions = {
 
 @Injectable()
 export class Body {
-  constructor(
-    protected readonly mimeType: MimeType,
+  public readonly mimeTypeParsers: Map<string, MimeTypeParser> = new Map();
+
+  public constructor(
+    protected readonly headers: Headers,
   ) {
   }
 
@@ -73,7 +76,13 @@ export class Body {
           return reject(new HttpException(400, 'Request size did not match Content-Length'));
         }
 
-        return resolve(this.mimeType.parseBuffer(data, request.headers));
+        const mimeType = this.headers.contentType.getMime(request.headers['content-type']);
+
+        if (!this.mimeTypeParsers.has(mimeType)) {
+          return reject(new HttpException(415, `Unsupported Media Type: ${ mimeType }`));
+        }
+
+        return resolve(this.mimeTypeParsers.get(mimeType)(data, request.headers));
       });
 
       requestStream.on('error', error => {
@@ -85,4 +94,8 @@ export class Body {
 
 export interface ParseBodyOptions {
   limit?: number;
+}
+
+export interface MimeTypeParser {
+  (buffer: Buffer, headers: http.IncomingHttpHeaders): any;
 }
