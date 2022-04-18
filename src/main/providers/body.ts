@@ -14,7 +14,7 @@ const DEFAULT_PARSE_BODY_OPTIONS: ParseBodyOptions = {
 export class Body {
   public readonly mimeTypeParsers: Map<string, MimeTypeParser> = new Map();
 
-  public constructor(
+  constructor(
     protected readonly headers: Headers,
   ) {
   }

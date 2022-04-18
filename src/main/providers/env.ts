@@ -6,7 +6,7 @@ import { ENV_PATH, EnvPath } from './env-path';
 
 @Injectable()
 export class Env {
-  public readonly variables: { readonly [name: string]: string; } = process.env;
+  protected readonly variables: { readonly [name: string]: string; } = process.env;
 
   constructor(
     @Inject(ENV_PATH) protected readonly envPath: EnvPath,

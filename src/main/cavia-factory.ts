@@ -66,14 +66,18 @@ export class CaviaFactory {
     if (options?.env) {
       const env = await injector.find(Env);
       const validator = await injector.find(Validator);
-      const validateErrors = await validator.validate(
+      const validateErrors = validator.validate(
         {
           members: options.env,
           required: true,
           strict: false,
           type: 'object',
         },
-        env.variables,
+        Object
+          .keys(options.env || {})
+          .reduce((previousValue, currentValue) => {
+            return { ...previousValue, [currentValue]: env.get(currentValue) };
+          }, {}),
       );
 
       if (validateErrors.length) {
