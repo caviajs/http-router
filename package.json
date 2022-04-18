@@ -36,6 +36,7 @@
     "ioredis": "~5.0.4",
     "is-stream": "~2.0.0",
     "lodash.get": "~4.4.2",
+    "matcher": "~3.0.0",
     "node-cron": "~3.0.0",
     "parse-multipart-data": "~1.2.1",
     "path-to-regexp": "~6.2.0",

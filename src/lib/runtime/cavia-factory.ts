@@ -29,6 +29,8 @@ import { HttpServerPortProvider } from '../http/providers/http-server-port';
 import { MimeType } from '../http/providers/mime-type';
 import { Url } from '../http/providers/url';
 import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from '../validator/types/schema';
+import { EventEmitter } from '../event/providers/event-emitter';
+import { EventEmitterManager } from '../event/providers/event-emitter-manager';
 
 const BUILT_IN_PROVIDERS: Provider[] = [
   Env,
@@ -52,6 +54,8 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   HttpServerPortProvider,
   MimeType,
   Url,
+  EventEmitter,
+  EventEmitterManager,
 ];
 
 export class CaviaFactory {
