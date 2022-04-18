@@ -14,6 +14,7 @@
   "types": "dist/main.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "postbuild": "cpx 'src/bin/templates/*.edge' 'dist/bin/templates'",
     "prebuild": "rimraf dist",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -54,6 +55,7 @@
     "@types/yargs": "~17.0.9",
     "@typescript-eslint/eslint-plugin": "~4.21.0",
     "@typescript-eslint/parser": "~4.21.0",
+    "cpx": "~1.5.0",
     "eslint": "~7.24.0",
     "jest": "~27.1.1",
     "reflect-metadata": "~0.1.13",
