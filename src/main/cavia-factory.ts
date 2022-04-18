@@ -31,31 +31,33 @@ import { Url } from './providers/url';
 import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from './types/schema';
 import { EventEmitter } from './providers/event-emitter';
 import { EventEmitterManager } from './providers/event-emitter-manager';
+import { HttpClient } from './providers/http-client';
 
 const BUILT_IN_PROVIDERS: Provider[] = [
-  Env,
-  EnvPathProvider,
-  Logger,
-  LoggerLevelProvider,
-  LoggerMessageFactoryProvider,
-  Schedule,
-  ScheduleManager,
-  Storage,
-  Validator,
-  View,
-  ViewDirectoryPathProvider,
   Body,
   Cookies,
+  Env,
+  EnvPathProvider,
+  EventEmitter,
+  EventEmitterManager,
+  HttpClient,
   HttpRouter,
   HttpRouterManager,
   HttpServerProvider,
   HttpServerHandler,
   HttpServerManager,
   HttpServerPortProvider,
+  Logger,
+  LoggerLevelProvider,
+  LoggerMessageFactoryProvider,
   MimeType,
+  Schedule,
+  ScheduleManager,
+  Storage,
   Url,
-  EventEmitter,
-  EventEmitterManager,
+  Validator,
+  View,
+  ViewDirectoryPathProvider,
 ];
 
 export class CaviaFactory {
