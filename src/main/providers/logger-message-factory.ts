@@ -1,4 +1,4 @@
-import clc from 'cli-color';
+import chalk from 'chalk';
 import { FactoryProvider } from '../types/provider';
 import { Token } from '../types/token';
 import { LoggerLevel } from './logger-level';
@@ -9,26 +9,26 @@ export const LoggerMessageFactoryProvider: FactoryProvider<LoggerMessageFactory>
   provide: LOGGER_MESSAGE_FACTORY,
   useFactory: (): LoggerMessageFactory => {
     return ({ context, level, message }): string => {
-      let color: clc.Format;
+      let color: chalk.Chalk;
 
       switch (level) {
         case LoggerLevel.FATAL:
-          color = clc.red;
+          color = chalk.red;
           break;
         case LoggerLevel.ERROR:
-          color = clc.redBright;
+          color = chalk.redBright;
           break;
         case LoggerLevel.WARN:
-          color = clc.yellowBright;
+          color = chalk.yellowBright;
           break;
         case LoggerLevel.INFO:
-          color = clc.blueBright;
+          color = chalk.blueBright;
           break;
         case LoggerLevel.DEBUG:
-          color = clc.magentaBright;
+          color = chalk.magentaBright;
           break;
         case LoggerLevel.TRACE:
-          color = clc.green;
+          color = chalk.green;
           break;
       }
 
@@ -44,7 +44,7 @@ export const LoggerMessageFactoryProvider: FactoryProvider<LoggerMessageFactory>
       let output: string = `${ color(`[Cavia] ${ process.pid } -`) } ${ datetime }`;
 
       if (context) {
-        output += ` ${ clc.yellow(`[${ context }]`) }`;
+        output += ` ${ chalk.yellow(`[${ context }]`) }`;
       }
 
       output += ` ${ color(`- ${ message }`) }\n`;

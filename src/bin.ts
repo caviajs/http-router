@@ -4,7 +4,7 @@ import yargs from 'yargs';
 import { Edge } from 'edge.js';
 import { join, sep } from 'path';
 import fs from 'fs';
-import clc from 'cli-color';
+import chalk from 'chalk';
 
 yargs
   .command({
@@ -41,7 +41,7 @@ yargs
 
       fs.writeFileSync(dist, data);
 
-      process.stdout.write(`File '${ clc.magentaBright(dist) } has been generated'\n`);
+      process.stdout.write(`File '${ chalk.magentaBright(dist) } has been generated'\n`);
     },
   })
   .parse();
