@@ -14,10 +14,10 @@ export * from './lib/adapters/worker';
 
 export * from './lib/decorators/application';
 export * from './lib/decorators/controller';
+export * from './lib/decorators/event-listener';
 export * from './lib/decorators/inject';
 export * from './lib/decorators/inject-redis-connection';
 export * from './lib/decorators/injectable';
-export * from './lib/decorators/on-event';
 export * from './lib/decorators/optional';
 export * from './lib/decorators/queue-consumer';
 export * from './lib/decorators/route-mapping';

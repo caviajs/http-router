@@ -3,7 +3,7 @@ import { OnApplicationBoot } from '../types/hooks';
 import { Injector } from '../injector';
 import { isTypeProvider } from '../utils/is-type-provider';
 import { Type } from '../types/type';
-import { ON_EVENT_METADATA, OnEventMetadata } from '../decorators/on-event';
+import { EVENT_LISTENER_METADATA, EventListenerMetadata } from '../decorators/event-listener';
 import { EventEmitter } from './event-emitter';
 
 @Injectable()
@@ -27,14 +27,14 @@ export class EventEmitterManager implements OnApplicationBoot {
         Object
           .getOwnPropertyNames(prototype)
           .filter((name: string) => {
-            return Reflect.hasMetadata(ON_EVENT_METADATA, constructor, name);
+            return Reflect.hasMetadata(EVENT_LISTENER_METADATA, constructor, name);
           })
           .forEach((name: string) => {
-            const onEventMetadata: OnEventMetadata = Reflect.getMetadata(ON_EVENT_METADATA, constructor, name);
+            const eventListenerMetadata: EventListenerMetadata = Reflect.getMetadata(EVENT_LISTENER_METADATA, constructor, name);
 
             this
               .eventEmitter
-              .listen(onEventMetadata.event, Object.getOwnPropertyDescriptor(prototype, name).value.bind(instance));
+              .listen(eventListenerMetadata.event, Object.getOwnPropertyDescriptor(prototype, name).value.bind(instance));
           });
       });
   }

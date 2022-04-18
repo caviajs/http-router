@@ -1,6 +1,6 @@
-import { ON_EVENT_METADATA, OnEvent, OnEventMetadata } from './on-event';
+import { EVENT_LISTENER_METADATA, EventListener, EventListenerMetadata } from './event-listener';
 
-describe('@OnEvent', () => {
+describe('@EventListener', () => {
   let defineMetadataSpy: jest.SpyInstance;
 
   beforeEach(() => {
@@ -13,16 +13,16 @@ describe('@OnEvent', () => {
 
   it('should add the appropriate metadata while using decorator', () => {
     class Popcorn {
-      @OnEvent('foo')
+      @EventListener('foo')
       getPigs() {
       }
     }
 
-    const onEventMetadata: OnEventMetadata = {
+    const eventListenerMetadata: EventListenerMetadata = {
       event: 'foo',
     };
 
     expect(defineMetadataSpy).toHaveBeenCalledTimes(1);
-    expect(defineMetadataSpy).toHaveBeenCalledWith(ON_EVENT_METADATA, onEventMetadata, Popcorn, 'getPigs');
+    expect(defineMetadataSpy).toHaveBeenCalledWith(EVENT_LISTENER_METADATA, eventListenerMetadata, Popcorn, 'getPigs');
   });
 });
