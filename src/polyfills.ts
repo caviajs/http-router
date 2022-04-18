@@ -1,5 +1,5 @@
 import http from 'http';
-import { RouteMeta } from './lib/providers/http-router';
+import { RouteMeta } from './main/providers/http-router';
 
 declare module 'http' {
   export interface IncomingMessage {
