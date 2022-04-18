@@ -74,7 +74,7 @@ export class CaviaFactory {
           type: 'object',
         },
         Object
-          .keys(options.env || {})
+          .keys(options.env)
           .reduce((previousValue, currentValue) => {
             return { ...previousValue, [currentValue]: env.get(currentValue) };
           }, {}),
