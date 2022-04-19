@@ -1,5 +1,5 @@
 import { CONTROLLER_METADATA, ControllerMetadata } from '../decorators/controller';
-import { ROUTE_MAPPING_METADATA, RouteMappingMetadata } from '../decorators/route-mapping';
+import { ROUTE_METADATA, RouteMetadata } from '../decorators/route';
 import { USE_INTERCEPTOR_METADATA, UseInterceptorMetadata } from '../decorators/use-interceptor';
 import { Interceptor } from '../types/interceptor';
 import { HttpRouter } from './http-router';
@@ -30,10 +30,10 @@ export class HttpRouterManager implements OnApplicationBoot {
         Object
           .getOwnPropertyNames(Object.getPrototypeOf(controllerInstance))
           .filter((name: string) => {
-            return Reflect.hasMetadata(ROUTE_MAPPING_METADATA, controllerConstructor, name);
+            return Reflect.hasMetadata(ROUTE_METADATA, controllerConstructor, name);
           })
           .map(async (routeHandlerName: string) => {
-            const routeMappingMetadata: RouteMappingMetadata = Reflect.getMetadata(ROUTE_MAPPING_METADATA, controllerConstructor, routeHandlerName);
+            const routeMappingMetadata: RouteMetadata = Reflect.getMetadata(ROUTE_METADATA, controllerConstructor, routeHandlerName);
 
             this.httpRouter.push({
               controller: controllerInstance,

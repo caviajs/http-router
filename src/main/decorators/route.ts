@@ -2,27 +2,27 @@ import { Path } from '../types/path';
 import { Method } from '../types/method';
 import { Schema } from '../types/schema';
 
-export const ROUTE_MAPPING_METADATA: Symbol = Symbol('ROUTE_MAPPING_METADATA');
+export const ROUTE_METADATA: Symbol = Symbol('ROUTE_METADATA');
 
-export function RouteMapping(method: Method, path: Path, schema?: RouteMappingSchema): MethodDecorator {
+export function Route(method: Method, path: Path, schema?: RouteSchema): MethodDecorator {
   return (target: Function, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) => {
-    const routeMappingMetadata: RouteMappingMetadata = {
+    const routeMetadata: RouteMetadata = {
       method: method,
       path: path,
       schema: schema,
     };
 
-    Reflect.defineMetadata(ROUTE_MAPPING_METADATA, routeMappingMetadata, target.constructor, propertyKey);
+    Reflect.defineMetadata(ROUTE_METADATA, routeMetadata, target.constructor, propertyKey);
   };
 }
 
-export interface RouteMappingMetadata {
+export interface RouteMetadata {
   method: Method;
   path: Path;
-  schema?: RouteMappingSchema;
+  schema?: RouteSchema;
 }
 
-export interface RouteMappingSchema {
+export interface RouteSchema {
   request?: {
     body?: Schema;
     cookies?: Schema;

@@ -9,7 +9,7 @@ import { Method } from '../types/method';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
 import { HttpException } from '../exceptions/http-exception';
-import { HttpRouter, Route } from './http-router';
+import { HttpRouter, HttpRoute } from './http-router';
 import { OnApplicationBoot } from '../types/hooks';
 import { APPLICATION_REF, ApplicationRef } from './application-ref';
 import { Injector } from '../injector';
@@ -38,7 +38,7 @@ export class HttpServerHandler implements OnApplicationBoot {
   }
 
   public async handle(request: Request, response: Response): Promise<void> {
-    const route: Route | undefined = this.httpRouter.find(request.method as Method, request.url);
+    const route: HttpRoute | undefined = this.httpRouter.find(request.method as Method, request.url);
 
     request.meta = {
       request: {

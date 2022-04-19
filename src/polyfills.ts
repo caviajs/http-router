@@ -1,9 +1,9 @@
 import http from 'http';
-import { RouteMeta } from './main/providers/http-router';
+import { HttpRouteMeta } from './main/providers/http-router';
 
 declare module 'http' {
   export interface IncomingMessage {
-    meta: RouteMeta;
+    meta: HttpRouteMeta;
     params: Record<string, string>;
     path: string | undefined;
   }

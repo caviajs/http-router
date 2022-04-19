@@ -1,9 +1,9 @@
 import { Controller } from '../decorators/controller';
 import { UseInterceptor } from '../decorators/use-interceptor';
 import { Interceptor } from '../types/interceptor';
-import { HttpRouter, Route } from './http-router';
+import { HttpRouter, HttpRoute } from './http-router';
 import { HttpRouterManager } from './http-router-manager';
-import { RouteMapping } from '../decorators/route-mapping';
+import { Route } from '../decorators/route';
 import { Injectable } from '../decorators/injectable';
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
@@ -27,13 +27,13 @@ class BarInterceptor implements Interceptor {
 @Controller('foo')
 class FooController {
   @UseInterceptor(FooInterceptor, ['admin:foo:get'])
-  @RouteMapping('GET', '/')
+  @Route('GET', '/')
   public getFoo() {
   }
 
   @UseInterceptor(FooInterceptor, ['admin:foo:create'])
   @UseInterceptor(BarInterceptor, ['admin:foo:create'])
-  @RouteMapping('POST', 'create')
+  @Route('POST', 'create')
   public postFoo() {
   }
 }
@@ -42,7 +42,7 @@ class FooController {
 @UseInterceptor(BarInterceptor, ['admin:bar'])
 @Controller('bar')
 class BarController {
-  @RouteMapping('GET', ':id')
+  @Route('GET', ':id')
   public getBar() {
   }
 }
@@ -91,7 +91,7 @@ describe('HttpRouterManager', () => {
         },
         method: 'GET',
         path: '/foo',
-      } as Route);
+      } as HttpRoute);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
         controller: fooController,
         handler: fooController.postFoo,
@@ -114,7 +114,7 @@ describe('HttpRouterManager', () => {
         },
         method: 'POST',
         path: '/foo/create',
-      } as Route);
+      } as HttpRoute);
       expect(httpRouterPushSpy).toHaveBeenCalledWith({
         controller: barController,
         handler: barController.getBar,
@@ -137,7 +137,7 @@ describe('HttpRouterManager', () => {
         },
         method: 'GET',
         path: '/bar/:id',
-      } as Route);
+      } as HttpRoute);
     });
 
     it('should throw an exception if the interceptor cannot resolve', async () => {

@@ -10,23 +10,19 @@ import { Schema } from '../types/schema';
 
 @Injectable()
 export class HttpRouter {
-  protected readonly routes: Route[] = [];
-
-  public get specification() {
-    return this.routes;
-  }
+  protected readonly httpRoutes: HttpRoute[] = [];
 
   constructor(
     protected readonly logger: Logger,
   ) {
   }
 
-  public find(method: Method, url: string): Route | undefined {
-    let route: Route | undefined;
+  public find(method: Method, url: string): HttpRoute | undefined {
+    let route: HttpRoute | undefined;
 
     const pathname: string = parse(url).pathname;
 
-    for (const it of this.routes.filter(r => r.method === method)) {
+    for (const it of this.httpRoutes.filter(r => r.method === method)) {
       if (match(it.path)(pathname)) {
         route = it;
         break;
@@ -36,37 +32,37 @@ export class HttpRouter {
     return route;
   }
 
-  public push(route: Route): void {
+  public push(route: HttpRoute): void {
     if (!route.path.startsWith('/')) {
       route.path = `/${ route.path }`;
     }
 
     const matcher = match(route.path);
 
-    if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
+    if (this.httpRoutes.some(it => it.method === route.method && matcher(it.path))) {
       throw new Error(`Duplicated {${ route.path }, ${ route.method }} HTTP route`);
     }
 
-    this.routes.push(route);
+    this.httpRoutes.push(route);
     this.logger.trace(`Mapped {${ route.path }, ${ route.method }} HTTP route`, LOGGER_CONTEXT);
   }
 }
 
-export interface Route {
+export interface HttpRoute {
   controller: any;
   handler: Function;
-  interceptors: RouteInterceptor[];
-  meta: RouteMeta;
+  interceptors: HttpRouteInterceptor[];
+  meta: HttpRouteMeta;
   method: Method;
   path: Path;
 }
 
-export interface RouteInterceptor {
+export interface HttpRouteInterceptor {
   args: any[];
   interceptor: Interceptor;
 }
 
-export interface RouteMeta {
+export interface HttpRouteMeta {
   request: {
     body: Schema | undefined;
     cookies: Schema | undefined;

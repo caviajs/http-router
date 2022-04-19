@@ -1,10 +1,10 @@
-import { HttpRouter, Route } from './http-router';
+import { HttpRouter, HttpRoute } from './http-router';
 import { LOGGER_CONTEXT } from '../constants';
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
 
 class HttpRouterTest extends HttpRouter {
-  public readonly routes: Route[] = [];
+  public readonly routes: HttpRoute[] = [];
 }
 
 class FooController {
@@ -17,7 +17,7 @@ class FooController {
 
 describe('HttpRouter', () => {
   const fooController: FooController = new FooController();
-  const route1: Route = {
+  const route1: HttpRoute = {
     controller: fooController,
     handler: fooController.getUsers,
     interceptors: [],
@@ -34,7 +34,7 @@ describe('HttpRouter', () => {
     method: 'GET',
     path: 'users',
   };
-  const route2: Route = {
+  const route2: HttpRoute = {
     controller: fooController,
     handler: fooController.createUser,
     interceptors: [],

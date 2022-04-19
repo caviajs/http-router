@@ -15,7 +15,7 @@ export * from './main/decorators/controller';
 export * from './main/decorators/inject';
 export * from './main/decorators/injectable';
 export * from './main/decorators/optional';
-export * from './main/decorators/route-mapping';
+export * from './main/decorators/route';
 export * from './main/decorators/use-interceptor';
 
 export * from './main/exceptions/http-exception';
