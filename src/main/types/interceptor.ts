@@ -3,8 +3,8 @@ import { Request } from './request';
 import { Response } from './response';
 import { Type } from './type';
 
-export interface Interceptor<T = any, R = any> {
-  intercept(context: InterceptorContext, next: Next<T>): Observable<R> | Promise<Observable<R>>;
+export abstract class Interceptor<T = any, R = any> {
+  public abstract intercept(context: InterceptorContext, next: Next<T>): Observable<R> | Promise<Observable<R>>;
 }
 
 export interface InterceptorContext {

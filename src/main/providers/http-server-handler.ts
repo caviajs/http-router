@@ -3,13 +3,12 @@ import { Stream } from 'stream';
 import { readable } from 'is-stream';
 import { parse as urlParse } from 'url';
 import { match, MatchResult } from 'path-to-regexp';
-import { USE_INTERCEPTOR_METADATA } from '../decorators/use-interceptor';
 import { Interceptor, InterceptorContext } from '../types/interceptor';
 import { Method } from '../types/method';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
 import { HttpException } from '../exceptions/http-exception';
-import { HttpRouter, HttpRoute } from './http-router';
+import { HttpRouter } from './http-router';
 import { OnApplicationBoot } from '../types/hooks';
 import { APPLICATION_REF, ApplicationRef } from './application-ref';
 import { Injector } from '../injector';
@@ -17,6 +16,7 @@ import { Inject } from '../decorators/inject';
 import { Injectable } from '../decorators/injectable';
 import { getProviderName } from '../utils/get-provider-name';
 import { Type } from '../types/type';
+import { Route } from '../types/route';
 
 @Injectable()
 export class HttpServerHandler implements OnApplicationBoot {
@@ -30,45 +30,29 @@ export class HttpServerHandler implements OnApplicationBoot {
   }
 
   public async onApplicationBoot(): Promise<void> {
-    this.globalInterceptors = await Promise.all(
-      (Reflect.getMetadata(USE_INTERCEPTOR_METADATA, this.applicationRef.constructor) || [])
-        .map(async it => ({ args: it.args, interceptor: await this.resolveInterceptor(it.interceptor) }))
-        .reverse()
-    );
+    this.globalInterceptors = [];
   }
 
   public async handle(request: Request, response: Response): Promise<void> {
-    const route: HttpRoute | undefined = this.httpRouter.find(request.method as Method, request.url);
+    const route: Route | undefined = this.httpRouter.find(request.method as Method, request.url);
 
-    request.meta = {
-      request: {
-        body: route?.meta?.request?.body,
-        cookies: route?.meta?.request?.cookies,
-        headers: route?.meta?.request?.headers,
-        params: route?.meta?.request?.params,
-        query: route?.meta?.request?.query,
-      },
-      responses: {
-        // responseBodySchema: route?.meta.responses[200].body,
-        // responseHeadersSchema: route?.meta.responses[200].headers,
-      },
-    };
-    request.params = route?.path ? (match(route?.path)(urlParse(request.url).pathname) as MatchResult)?.params as any : {};
-    request.path = route?.path;
+    request.route = route;
+    request.params = route?.metadata.path ? (match(route?.metadata.path)(urlParse(request.url).pathname) as MatchResult)?.params as any : {};
 
     const route$ = from(
       this
         .composeInterceptors(
-          this.globalInterceptors.map(it => ({
-            interceptor: it.interceptor,
-            interceptorContext: {
-              args: it.args,
-              controller: route?.controller?.prototype?.constructor,
-              handler: route?.handler,
-              request: request,
-              response: response,
-            },
-          })),
+          // this.globalInterceptors.map(it => ({
+          //   interceptor: it.interceptor,
+          //   interceptorContext: {
+          //     args: it.args,
+          //     controller: (route as any)?.prototype?.constructor,
+          //     handler: route?.handle,
+          //     request: request,
+          //     response: response,
+          //   },
+          // })),
+          [],
           (): Promise<unknown> => {
             if (!route) {
               throw new HttpException(404, 'Route not found');
@@ -76,18 +60,19 @@ export class HttpServerHandler implements OnApplicationBoot {
 
             return this
               .composeInterceptors(
-                route.interceptors.map(it => ({
-                  interceptor: it.interceptor,
-                  interceptorContext: {
-                    args: it.args,
-                    controller: route?.controller?.prototype?.constructor,
-                    handler: route?.handler,
-                    request: request,
-                    response: response,
-                  },
-                })),
+                // route.interceptors.map(it => ({
+                //   interceptor: it.interceptor,
+                //   interceptorContext: {
+                //     args: it.args,
+                //     controller: route?.controller?.prototype?.constructor,
+                //     handler: route?.handler,
+                //     request: request,
+                //     response: response,
+                //   },
+                // })),
+                [],
                 async (): Promise<unknown> => {
-                  return Promise.resolve(route.handler.apply(route.controller, [request, response]));
+                  return Promise.resolve(route.handle.apply(route, [request, response]));
                 },
               );
           },
@@ -98,6 +83,8 @@ export class HttpServerHandler implements OnApplicationBoot {
       .pipe(mergeAll())
       .subscribe({
         next: (data: any) => {
+          console.log('data: ', data);
+
           if (response.writableEnded === false) {
             if (data === undefined) {
               response

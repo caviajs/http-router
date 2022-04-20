@@ -11,12 +11,9 @@ import './polyfills';
 /*********/
 
 export * from './main/decorators/application';
-export * from './main/decorators/controller';
 export * from './main/decorators/inject';
 export * from './main/decorators/injectable';
 export * from './main/decorators/optional';
-export * from './main/decorators/route';
-export * from './main/decorators/use-interceptor';
 
 export * from './main/exceptions/http-exception';
 
@@ -51,6 +48,7 @@ export * from './main/types/path';
 export * from './main/types/provider';
 export * from './main/types/request';
 export * from './main/types/response';
+export * from './main/types/route';
 export * from './main/types/schema';
 export * from './main/types/token';
 export * from './main/types/type';

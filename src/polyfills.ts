@@ -1,23 +1,12 @@
 import http from 'http';
-import { HttpRouteMeta } from './main/providers/http-router';
+import { Route } from './main/types/route';
 
 declare module 'http' {
   export interface IncomingMessage {
-    meta: HttpRouteMeta;
     params: Record<string, string>;
-    path: string | undefined;
+    route: Route | undefined;
   }
 }
 
-http.IncomingMessage.prototype.meta = {
-  request: {
-    body: undefined,
-    cookies: undefined,
-    headers: undefined,
-    params: undefined,
-    query: undefined,
-  },
-  responses: {},
-};
 http.IncomingMessage.prototype.params = {};
-http.IncomingMessage.prototype.path = undefined;
+http.IncomingMessage.prototype.route = undefined;
