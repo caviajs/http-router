@@ -17,6 +17,7 @@ yargs
             'interceptor',
             'route',
             'service',
+            'worker',
           ],
           demandOption: false,
           type: 'string',

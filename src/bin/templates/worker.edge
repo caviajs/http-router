@@ -1,0 +1,14 @@
+import { Injectable, Worker, WorkerMetadata } from '@caviajs/core';
+
+@Injectable()
+export class {{ name }}Worker extends Worker {
+
+  public readonly metadata: WorkerMetadata = {
+    expression: '* * * * *',
+  };
+
+  public async handle(): Promise<void> {
+    // ...
+  }
+
+}
