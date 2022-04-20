@@ -1,0 +1,15 @@
+import { Request, Response, Injectable, Route, RouteMetadata, HttpException } from '@caviajs/core';
+
+@Injectable()
+export class {{ name }}Route extends Route {
+
+  public readonly metadata: RouteMetadata = {
+    method: 'GET',
+    path: '/',
+  };
+
+  public async handle(request: Request, response: Response): Promise<string> {
+    throw new HttpException(501);
+  }
+
+}

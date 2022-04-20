@@ -13,7 +13,11 @@ yargs
     builder: args => {
       return args
         .positional('template', {
-          choices: ['controller', 'interceptor', 'service'],
+          choices: [
+            'interceptor',
+            'route',
+            'service',
+          ],
           demandOption: false,
           type: 'string',
         })
