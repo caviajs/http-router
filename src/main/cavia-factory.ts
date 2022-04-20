@@ -21,13 +21,15 @@ import { BodyManager } from './providers/body-manager';
 import { Headers } from './providers/headers';
 import { Cookies } from './providers/cookies';
 import { HttpRouter } from './providers/http-router';
-import { HttpRouterManager } from './providers/http-router-manager';
+import { RouteExplorer } from './providers/route-explorer';
 import { HttpServerProvider } from './providers/http-server';
 import { HttpServerHandler } from './providers/http-server-handler';
 import { HttpServerManager } from './providers/http-server-manager';
 import { HttpServerPortProvider } from './providers/http-server-port';
 import { HttpClient } from './providers/http-client';
 import { ENV_SCHEMA, EnvSchemaProvider } from './providers/env-schema';
+import { WorkerExplorer } from './providers/worker-explorer';
+import { Schedule } from './providers/schedule';
 
 const BUILT_IN_PROVIDERS: Provider[] = [
   Body,
@@ -39,7 +41,6 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   Headers,
   HttpClient,
   HttpRouter,
-  HttpRouterManager,
   HttpServerProvider,
   HttpServerHandler,
   HttpServerManager,
@@ -47,10 +48,13 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   Logger,
   LoggerLevelProvider,
   LoggerMessageFactoryProvider,
+  RouteExplorer,
+  Schedule,
   Storage,
   Validator,
   View,
   ViewDirectoryPathProvider,
+  WorkerExplorer,
 ];
 
 export class CaviaFactory {

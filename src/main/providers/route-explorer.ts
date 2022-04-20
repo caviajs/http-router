@@ -5,7 +5,7 @@ import { Injector } from '../injector';
 import { Route } from '../types/route';
 
 @Injectable()
-export class HttpRouterManager implements OnApplicationBoot {
+export class RouteExplorer implements OnApplicationBoot {
   constructor(
     protected readonly httpRouter: HttpRouter,
     protected readonly injector: Injector,
