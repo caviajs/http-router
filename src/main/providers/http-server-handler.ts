@@ -3,7 +3,7 @@ import { Stream } from 'stream';
 import { readable } from 'is-stream';
 import { parse as urlParse } from 'url';
 import { match, MatchResult } from 'path-to-regexp';
-import { Interceptor, InterceptorContext } from '../types/interceptor';
+import { Interceptor } from '../types/interceptor';
 import { Method } from '../types/method';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
@@ -14,8 +14,6 @@ import { APPLICATION_REF, ApplicationRef } from './application-ref';
 import { Injector } from '../injector';
 import { Inject } from '../decorators/inject';
 import { Injectable } from '../decorators/injectable';
-import { getProviderName } from '../utils/get-provider-name';
-import { Type } from '../types/type';
 import { Route } from '../types/route';
 
 @Injectable()
@@ -46,13 +44,8 @@ export class HttpServerHandler implements OnApplicationBoot {
         .composeInterceptors(
           this.interceptors.map(interceptor => ({
             interceptor: interceptor,
-            interceptorContext: {
-              args: [],
-              controller: (route as any)?.prototype?.constructor,
-              handler: route?.handle,
-              request: request,
-              response: response,
-            },
+            request: request,
+            response: response,
           })),
           (): Promise<unknown> => {
             if (!route) {
@@ -163,7 +156,7 @@ export class HttpServerHandler implements OnApplicationBoot {
         ));
       }
 
-      return interceptors[index].interceptor.intercept(interceptors[index].interceptorContext, {
+      return interceptors[index].interceptor.intercept(interceptors[index].request, interceptors[index].response, {
         handle: () => from(nextFn(index + 1)).pipe(mergeAll()),
       });
     };
@@ -204,19 +197,10 @@ export class HttpServerHandler implements OnApplicationBoot {
       return undefined;
     }
   }
-
-  protected async resolveInterceptor(interceptor: Type<Interceptor>): Promise<Interceptor> {
-    const instance = await this.injector.find(interceptor);
-
-    if (!instance) {
-      throw new Error(`Cavia can't resolve interceptor '${ getProviderName(interceptor) }'`);
-    }
-
-    return instance;
-  }
 }
 
 export interface ComposeInterceptor {
   interceptor: Interceptor;
-  interceptorContext: InterceptorContext;
+  request: Request;
+  response: Response;
 }
