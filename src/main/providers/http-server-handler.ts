@@ -20,7 +20,7 @@ import { Route } from '../types/route';
 
 @Injectable()
 export class HttpServerHandler implements OnApplicationBoot {
-  public globalInterceptors: { args: any[]; interceptor: Interceptor }[] = [];
+  public interceptors: Interceptor[] = [];
 
   constructor(
     @Inject(APPLICATION_REF) protected readonly applicationRef: ApplicationRef,
@@ -30,7 +30,9 @@ export class HttpServerHandler implements OnApplicationBoot {
   }
 
   public async onApplicationBoot(): Promise<void> {
-    this.globalInterceptors = [];
+    this.interceptors = await this
+      .injector
+      .filter(provider => typeof provider === 'function' && provider.prototype instanceof Interceptor);
   }
 
   public async handle(request: Request, response: Response): Promise<void> {
@@ -42,17 +44,16 @@ export class HttpServerHandler implements OnApplicationBoot {
     const route$ = from(
       this
         .composeInterceptors(
-          // this.globalInterceptors.map(it => ({
-          //   interceptor: it.interceptor,
-          //   interceptorContext: {
-          //     args: it.args,
-          //     controller: (route as any)?.prototype?.constructor,
-          //     handler: route?.handle,
-          //     request: request,
-          //     response: response,
-          //   },
-          // })),
-          [],
+          this.interceptors.map(interceptor => ({
+            interceptor: interceptor,
+            interceptorContext: {
+              args: [],
+              controller: (route as any)?.prototype?.constructor,
+              handler: route?.handle,
+              request: request,
+              response: response,
+            },
+          })),
           (): Promise<unknown> => {
             if (!route) {
               throw new HttpException(404, 'Route not found');
@@ -138,7 +139,15 @@ export class HttpServerHandler implements OnApplicationBoot {
 
   protected async composeInterceptors(interceptors: ComposeInterceptor[], handler: () => Promise<any>): Promise<any> {
     if (interceptors.length <= 0) {
-      return handler();
+      return defer(() => from(handler()).pipe(
+        switchMap((result: any) => {
+          if (result instanceof Promise || result instanceof Observable) {
+            return result;
+          } else {
+            return Promise.resolve(result);
+          }
+        }),
+      ));
     }
 
     const nextFn = async (index: number) => {
