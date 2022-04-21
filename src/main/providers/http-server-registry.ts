@@ -38,10 +38,10 @@ export class HttpServerRegistry {
     const matcher = match(route.metadata.path);
 
     if (this.routes.some(it => it.metadata.method === route.metadata.method && matcher(it.metadata.path))) {
-      throw new Error(`Duplicated {${ route.metadata.path }, ${ route.metadata.method }} HTTP route`);
+      throw new Error(`Duplicated {${ route.metadata.method } ${ route.metadata.path }} HTTP route`);
     }
 
     this.routes.push(route);
-    this.logger.trace(`Mapped {${ route.metadata.path }, ${ route.metadata.method }} HTTP route`, HTTP_CONTEXT);
+    this.logger.trace(`Mapped {${ route.metadata.method } ${ route.metadata.path }} HTTP route`, HTTP_CONTEXT);
   }
 }
