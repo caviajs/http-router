@@ -18,67 +18,39 @@ import { Route } from '../types/route';
 
 @Injectable()
 export class HttpServerHandler implements OnApplicationBoot {
-  public interceptors: Interceptor[] = [];
+  public readonly interceptors: Interceptor[] = [];
 
   constructor(
     @Inject(APPLICATION_REF) protected readonly applicationRef: ApplicationRef,
-    protected readonly httpRouter: HttpServerRegistry,
+    protected readonly httpServerRegistry: HttpServerRegistry,
     protected readonly injector: Injector,
   ) {
   }
 
   public async onApplicationBoot(): Promise<void> {
-    this.interceptors = await this
-      .injector
-      .filter(provider => typeof provider === 'function' && provider.prototype instanceof Interceptor);
+    this.interceptors.push(...await this.injector.filter(provider => {
+      return typeof provider === 'function' && provider.prototype instanceof Interceptor;
+    }));
   }
 
   public async handle(request: Request, response: Response): Promise<void> {
-    const route: Route | undefined = this.httpRouter.find(request.method as Method, request.url);
+    const route: Route | undefined = this.httpServerRegistry.find(request.method as Method, request.url);
 
     request.route = route;
     request.params = route?.metadata.path ? (match(route?.metadata.path)(urlParse(request.url).pathname) as MatchResult)?.params as any : {};
 
-    const route$ = from(
-      this
-        .composeInterceptors(
-          this.interceptors.map(interceptor => ({
-            interceptor: interceptor,
-            request: request,
-            response: response,
-          })),
-          (): Promise<unknown> => {
-            if (!route) {
-              throw new HttpException(404, 'Route not found');
-            }
+    const route$ = from(this.composeInterceptors(request, response, this.interceptors, (): Promise<unknown> => {
+      if (!route) {
+        throw new HttpException(404, 'Route not found');
+      }
 
-            return this
-              .composeInterceptors(
-                // route.interceptors.map(it => ({
-                //   interceptor: it.interceptor,
-                //   interceptorContext: {
-                //     args: it.args,
-                //     controller: route?.controller?.prototype?.constructor,
-                //     handler: route?.handler,
-                //     request: request,
-                //     response: response,
-                //   },
-                // })),
-                [],
-                async (): Promise<unknown> => {
-                  return Promise.resolve(route.handle.apply(route, [request, response]));
-                },
-              );
-          },
-        ),
-    );
+      return Promise.resolve(route.handle.apply(route, [request, response]));
+    }));
 
     route$
       .pipe(mergeAll())
       .subscribe({
         next: (data: any) => {
-          console.log('data: ', data);
-
           if (response.writableEnded === false) {
             if (data === undefined) {
               response
@@ -130,7 +102,7 @@ export class HttpServerHandler implements OnApplicationBoot {
       });
   }
 
-  protected async composeInterceptors(interceptors: ComposeInterceptor[], handler: () => Promise<any>): Promise<any> {
+  protected async composeInterceptors(request: Request, response: Response, interceptors: Interceptor[], handler: () => Promise<any>): Promise<any> {
     if (interceptors.length <= 0) {
       return defer(() => from(handler()).pipe(
         switchMap((result: any) => {
@@ -156,7 +128,7 @@ export class HttpServerHandler implements OnApplicationBoot {
         ));
       }
 
-      return interceptors[index].interceptor.intercept(interceptors[index].request, interceptors[index].response, {
+      return interceptors[index].intercept(request, response, {
         handle: () => from(nextFn(index + 1)).pipe(mergeAll()),
       });
     };
@@ -197,10 +169,4 @@ export class HttpServerHandler implements OnApplicationBoot {
       return undefined;
     }
   }
-}
-
-export interface ComposeInterceptor {
-  interceptor: Interceptor;
-  request: Request;
-  response: Response;
 }
