@@ -2,8 +2,6 @@ import { Method } from './method';
 import { Path } from './path';
 import { Request } from './request';
 import { Response } from './response';
-import { Type } from './type';
-import { Interceptor } from './interceptor';
 import { Schema } from './schema';
 
 export abstract class Route {
@@ -14,34 +12,26 @@ export abstract class Route {
 
 export interface RouteMetadata {
   readonly data?: any;
-  readonly interceptors?: RouteMetadataInterceptor[];
   readonly method: Method;
   readonly path: Path;
-  readonly schema?: RouteMetadataSchema;
-}
-
-export interface RouteMetadataInterceptor {
-  args: any[];
-  interceptor: Type<Interceptor>;
-}
-
-export interface RouteMetadataSchema {
-  request?: {
-    body?: Schema;
-    cookies?: Schema;
-    headers?: Schema;
-    params?: Schema;
-    query?: Schema;
-  };
-  responses?: {
-    [status: number]: {
-      content?: {
-        [mimeType: string]: {
-          body?: Schema;
-          headers?: Schema;
+  readonly schema?: {
+    readonly request?: {
+      readonly body?: Schema;
+      readonly cookies?: Schema;
+      readonly headers?: Schema;
+      readonly params?: Schema;
+      readonly query?: Schema;
+    };
+    readonly responses?: {
+      readonly [status: number]: {
+        readonly content?: {
+          readonly [mimeType: string]: {
+            readonly body?: Schema;
+            readonly headers?: Schema;
+          };
         };
+        readonly description?: string;
       };
-      description?: string;
     };
   };
 }
