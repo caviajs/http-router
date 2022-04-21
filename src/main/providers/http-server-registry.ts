@@ -3,11 +3,11 @@ import { parse } from 'url';
 import { Method } from '../types/method';
 import { Injectable } from '../decorators/injectable';
 import { Logger } from './logger';
-import { LOGGER_CONTEXT } from '../constants';
+import { HTTP_CONTEXT } from '../constants';
 import { Route } from '../types/route';
 
 @Injectable()
-export class HttpRouter {
+export class HttpServerRegistry {
   public readonly routes: Route[] = []; // todo protected
 
   constructor(
@@ -42,6 +42,6 @@ export class HttpRouter {
     }
 
     this.routes.push(route);
-    this.logger.trace(`Mapped {${ route.metadata.path }, ${ route.metadata.method }} HTTP route`, LOGGER_CONTEXT);
+    this.logger.trace(`Mapped {${ route.metadata.path }, ${ route.metadata.method }} HTTP route`, HTTP_CONTEXT);
   }
 }

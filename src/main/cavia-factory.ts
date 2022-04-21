@@ -14,22 +14,23 @@ import { Token } from './types/token';
 import { Type } from './types/type';
 import { getProviderToken } from './utils/get-provider-token';
 import { CaviaApplication } from './cavia-application';
-import { LOGGER_CONTEXT } from './constants';
+import { CORE_CONTEXT } from './constants';
 import { Injector } from './injector';
 import { Body } from './providers/body';
 import { BodyManager } from './providers/body-manager';
 import { Headers } from './providers/headers';
 import { Cookies } from './providers/cookies';
-import { HttpRouter } from './providers/http-router';
-import { RouteExplorer } from './providers/route-explorer';
+import { HttpServerRegistry } from './providers/http-server-registry';
+import { HttpServerExplorer } from './providers/http-server-explorer';
 import { HttpServerProvider } from './providers/http-server';
 import { HttpServerHandler } from './providers/http-server-handler';
 import { HttpServerManager } from './providers/http-server-manager';
 import { HttpServerPortProvider } from './providers/http-server-port';
 import { HttpClient } from './providers/http-client';
 import { ENV_SCHEMA, EnvSchemaProvider } from './providers/env-schema';
-import { WorkerExplorer } from './providers/worker-explorer';
+import { ScheduleExplorer } from './providers/schedule-explorer';
 import { Schedule } from './providers/schedule';
+import { ScheduleManager } from './providers/schedule-manager';
 
 const BUILT_IN_PROVIDERS: Provider[] = [
   Body,
@@ -40,21 +41,22 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   EnvSchemaProvider,
   Headers,
   HttpClient,
-  HttpRouter,
   HttpServerProvider,
+  HttpServerExplorer,
   HttpServerHandler,
   HttpServerManager,
   HttpServerPortProvider,
+  HttpServerRegistry,
   Logger,
   LoggerLevelProvider,
   LoggerMessageFactoryProvider,
-  RouteExplorer,
   Schedule,
+  ScheduleExplorer,
+  ScheduleManager,
   Storage,
   Validator,
   View,
   ViewDirectoryPathProvider,
-  WorkerExplorer,
 ];
 
 export class CaviaFactory {
@@ -66,7 +68,7 @@ export class CaviaFactory {
     const injector: Injector = await Injector.create([...this.getApplicationProviders(application).values()]);
     const caviaApplication: CaviaApplication = new CaviaApplication(injector);
 
-    (await injector.find(Logger)).trace('Starting application...', LOGGER_CONTEXT);
+    (await injector.find(Logger)).trace('Starting application...', CORE_CONTEXT);
 
     const env = await injector.find(Env);
     const envSchema = await injector.find(ENV_SCHEMA);

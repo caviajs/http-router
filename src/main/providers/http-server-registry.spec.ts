@@ -1,10 +1,9 @@
-import { HttpRouter } from './http-router';
-import { LOGGER_CONTEXT } from '../constants';
+import { HttpServerRegistry } from './http-server-registry';
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
 import { Route } from '../types/route';
 
-class HttpRouterTest extends HttpRouter {
+class HttpRouterTest extends HttpServerRegistry {
   public readonly routes: Route[] = [];
 }
 

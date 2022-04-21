@@ -8,7 +8,7 @@ import { Method } from '../types/method';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
 import { HttpException } from '../exceptions/http-exception';
-import { HttpRouter } from './http-router';
+import { HttpServerRegistry } from './http-server-registry';
 import { OnApplicationBoot } from '../types/hooks';
 import { APPLICATION_REF, ApplicationRef } from './application-ref';
 import { Injector } from '../injector';
@@ -22,7 +22,7 @@ export class HttpServerHandler implements OnApplicationBoot {
 
   constructor(
     @Inject(APPLICATION_REF) protected readonly applicationRef: ApplicationRef,
-    protected readonly httpRouter: HttpRouter,
+    protected readonly httpRouter: HttpServerRegistry,
     protected readonly injector: Injector,
   ) {
   }

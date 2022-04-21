@@ -1,13 +1,13 @@
-import { HttpRouter } from './http-router';
+import { HttpServerRegistry } from './http-server-registry';
 import { Injectable } from '../decorators/injectable';
 import { OnApplicationBoot } from '../types/hooks';
 import { Injector } from '../injector';
 import { Route } from '../types/route';
 
 @Injectable()
-export class RouteExplorer implements OnApplicationBoot {
+export class HttpServerExplorer implements OnApplicationBoot {
   constructor(
-    protected readonly httpRouter: HttpRouter,
+    protected readonly httpRouter: HttpServerRegistry,
     protected readonly injector: Injector,
   ) {
   }

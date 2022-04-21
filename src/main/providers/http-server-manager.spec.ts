@@ -1,5 +1,5 @@
 import http from 'http';
-import { HttpRouter } from './http-router';
+import { HttpServerRegistry } from './http-server-registry';
 import { HttpServer } from './http-server';
 import { HttpServerHandler } from './http-server-handler';
 import { HttpServerManager } from './http-server-manager';
@@ -15,7 +15,7 @@ class MyApp {
 describe('HttpServerManager', () => {
   let applicationRef: ApplicationRef;
   let logger: Logger;
-  let httpRouter: HttpRouter;
+  let httpRouter: HttpServerRegistry;
   let httpServerHandler: HttpServerHandler;
   let httpServer: HttpServer;
   let httpServerPort: HttpServerPort;
@@ -26,7 +26,7 @@ describe('HttpServerManager', () => {
 
     applicationRef = new MyApp();
     logger = new Logger(LoggerLevel.ALL, () => '');
-    httpRouter = new HttpRouter(logger);
+    httpRouter = new HttpServerRegistry(logger);
     httpServerHandler = new HttpServerHandler(applicationRef, httpRouter, await Injector.create([]));
     httpServer = http.createServer();
     httpServerPort = 3000;

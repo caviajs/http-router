@@ -7,7 +7,7 @@ import { OnApplicationBoot, OnApplicationListen, OnApplicationShutdown } from '.
 import { Logger } from './logger';
 import { Inject } from '../decorators/inject';
 import { Injectable } from '../decorators/injectable';
-import { LOGGER_CONTEXT } from '../constants';
+import { HTTP_CONTEXT } from '../constants';
 
 @Injectable()
 export class HttpServerManager implements OnApplicationBoot, OnApplicationListen, OnApplicationShutdown {
@@ -30,7 +30,7 @@ export class HttpServerManager implements OnApplicationBoot, OnApplicationListen
       this.httpServer.listen(this.httpServerPort, () => resolve());
     });
 
-    this.logger.trace(`Http server listening at port ${ this.httpServerPort }`, LOGGER_CONTEXT);
+    this.logger.trace(`Http server listening at port ${ this.httpServerPort }`, HTTP_CONTEXT);
   }
 
   public async onApplicationShutdown(): Promise<void> {
@@ -38,6 +38,6 @@ export class HttpServerManager implements OnApplicationBoot, OnApplicationListen
       this.httpServer.close(() => resolve());
     });
 
-    this.logger.trace('Http server has been stopped', LOGGER_CONTEXT);
+    this.logger.trace('Http server has been stopped', HTTP_CONTEXT);
   }
 }

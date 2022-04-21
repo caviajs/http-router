@@ -2,11 +2,13 @@ import { Injectable } from '../decorators/injectable';
 import { OnApplicationBoot } from '../types/hooks';
 import { Injector } from '../injector';
 import { Worker } from '../types/worker';
+import { Schedule } from './schedule';
 
 @Injectable()
-export class WorkerExplorer implements OnApplicationBoot {
+export class ScheduleExplorer implements OnApplicationBoot {
   constructor(
     protected readonly injector: Injector,
+    protected readonly schedule: Schedule,
   ) {
   }
 
@@ -17,7 +19,7 @@ export class WorkerExplorer implements OnApplicationBoot {
 
     workers
       .map((worker: Worker) => {
-        // todo
+        this.schedule.register(worker);
       });
   }
 }

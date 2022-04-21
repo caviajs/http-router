@@ -1,5 +1,5 @@
 import { Readable, Stream } from 'stream';
-import { HttpRouter } from './http-router';
+import { HttpServerRegistry } from './http-server-registry';
 import { HttpServerHandler } from './http-server-handler';
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
@@ -44,11 +44,11 @@ class FooController {
 }
 
 describe('HttpServerHandler', () => {
-  let httpRouter: HttpRouter;
+  let httpRouter: HttpServerRegistry;
   let httpServerHandler: HttpServerHandler;
 
   beforeEach(async () => {
-    httpRouter = new HttpRouter(new Logger(LoggerLevel.ALL, () => ''));
+    httpRouter = new HttpServerRegistry(new Logger(LoggerLevel.ALL, () => ''));
     httpServerHandler = new HttpServerHandler({} as any, httpRouter, await Injector.create([]));
   });
 
