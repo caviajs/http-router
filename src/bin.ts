@@ -37,32 +37,24 @@ yargs
     command: 'make:controller <path>',
     describe: 'Generate controller component',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => {
-      generate({ template: 'controller', path: args.path as string });
-    },
+    handler: args => generate({ template: 'controller', path: args.path as string }),
   })
   .command({
     command: 'make:interceptor <path>',
     describe: 'Generate interceptor component',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => {
-      generate({ template: 'interceptor', path: args.path as string });
-    },
+    handler: args => generate({ template: 'interceptor', path: args.path as string }),
   })
   .command({
     command: 'make:service <path>',
     describe: 'Generate service component',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => {
-      generate({ template: 'service', path: args.path as string });
-    },
+    handler: args => generate({ template: 'service', path: args.path as string }),
   })
   .command({
     command: 'make:worker <path>',
     describe: 'Generate worker component',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => {
-      generate({ template: 'worker', path: args.path as string });
-    },
+    handler: args => generate({ template: 'worker', path: args.path as string }),
   })
   .parse();
