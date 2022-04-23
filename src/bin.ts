@@ -6,52 +6,59 @@ import { join, sep } from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 
+async function generate(options: { template: string, path: string }): Promise<void> {
+  const edge: Edge = new Edge().mount(join(__dirname, 'bin', 'templates'));
+
+  const paths: string[] = options.path.split(sep);
+  const componentDir: string = join(process.cwd(), ...paths.slice(0, -1));
+  const componentName: string = paths[paths.length - 1].toLowerCase();
+
+  const data = await edge.render(options.template, {
+    name: componentName,
+  });
+
+  if (!fs.existsSync(componentDir)) {
+    fs.mkdirSync(componentDir);
+  }
+
+  const dist: string = join(componentDir, `${ componentName }.${ options.template }.ts`);
+
+  fs.writeFileSync(dist, data);
+
+  process.stdout.write(`File '${ chalk.magentaBright(dist) }' has been generated\n`);
+}
+
 yargs
   .command({
-    command: 'generate <template> <name>',
-    describe: 'generate cavia component',
-    builder: args => {
-      return args
-        .positional('template', {
-          choices: [
-            'interceptor',
-            'route',
-            'service',
-            'worker',
-          ],
-          demandOption: false,
-          type: 'string',
-        })
-        .positional('name', {
-          demandOption: false,
-          type: 'string',
-        })
-        .option('path', {
-          demandOption: true,
-          type: 'string',
-          default: '',
-        });
+    command: 'make:interceptor <path>',
+    describe: 'Generate interceptor component',
+    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
+    handler: args => {
+      generate({ template: 'interceptor', path: args.path as string });
     },
-    handler: async argv => {
-      const edge: Edge = new Edge().mount(join(__dirname, 'bin', 'templates'));
-
-      const template: string = argv.template as string;
-      const name: string = (argv.name as string).toLowerCase();
-      const path: string[] = argv.path ? (argv.path as string).split(sep) : [];
-
-      const distPath = join(process.cwd(), ...path);
-      const dist = join(distPath, `${ name }.${ template }.ts`);
-      const data = await edge.render(template, {
-        name: name[0].toUpperCase() + name.slice(1),
-      });
-
-      if (!fs.existsSync(distPath)) {
-        fs.mkdirSync(distPath);
-      }
-
-      fs.writeFileSync(dist, data);
-
-      process.stdout.write(`File '${ chalk.magentaBright(dist) }' has been generated\n`);
+  })
+  .command({
+    command: 'make:route <path>',
+    describe: 'Generate route component',
+    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
+    handler: args => {
+      generate({ template: 'route', path: args.path as string });
+    },
+  })
+  .command({
+    command: 'make:service <path>',
+    describe: 'Generate service component',
+    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
+    handler: args => {
+      generate({ template: 'service', path: args.path as string });
+    },
+  })
+  .command({
+    command: 'make:worker <path>',
+    describe: 'Generate worker component',
+    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
+    handler: args => {
+      generate({ template: 'worker', path: args.path as string });
     },
   })
   .parse();
