@@ -1,7 +1,6 @@
 import { APPLICATION_METADATA, ApplicationMetadata } from './decorators/application';
 import { createApplicationRefProvider } from './providers/application-ref';
 import { Env } from './providers/env';
-import { EnvPathProvider } from './providers/env-path';
 import { Logger } from './providers/logger';
 import { LoggerLevelProvider } from './providers/logger-level';
 import { LoggerMessageFactoryProvider } from './providers/logger-message-factory';
@@ -27,18 +26,16 @@ import { HttpServerHandler } from './providers/http-server-handler';
 import { HttpServerManager } from './providers/http-server-manager';
 import { HttpServerPortProvider } from './providers/http-server-port';
 import { HttpClient } from './providers/http-client';
-import { ENV_SCHEMA, EnvSchemaProvider } from './providers/env-schema';
 import { ScheduleExplorer } from './providers/schedule-explorer';
 import { Schedule } from './providers/schedule';
 import { ScheduleManager } from './providers/schedule-manager';
+import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from './types/schema';
 
 const BUILT_IN_PROVIDERS: Provider[] = [
   Body,
   BodyManager,
   Cookies,
   Env,
-  EnvPathProvider,
-  EnvSchemaProvider,
   Headers,
   HttpClient,
   HttpServerProvider,
@@ -60,7 +57,7 @@ const BUILT_IN_PROVIDERS: Provider[] = [
 ];
 
 export class CaviaFactory {
-  public static async create(application: Type): Promise<CaviaApplication> {
+  public static async create(application: Type, options?: CaviaFactoryOptions): Promise<CaviaApplication> {
     if (Reflect.hasMetadata(APPLICATION_METADATA, application) === false) {
       throw new Error(`The '${ application?.name }' should be annotated as an application`);
     }
@@ -70,27 +67,27 @@ export class CaviaFactory {
 
     (await injector.find(Logger)).trace('Starting application...', CORE_CONTEXT);
 
-    const env = await injector.find(Env);
-    const envSchema = await injector.find(ENV_SCHEMA);
-    const validator = await injector.find(Validator);
-    const validateErrors = validator.validate(
-      {
-        members: envSchema,
-        required: true,
-        strict: false,
-        type: 'object',
-      },
-      Object
-        .keys(envSchema)
-        .reduce((previousValue, currentValue) => {
-          return { ...previousValue, [currentValue]: env.get(currentValue) };
-        }, {}),
-    );
+    if (options?.env) {
+      const env = await injector.find(Env);
+      const validator = await injector.find(Validator);
+      const validateErrors = validator.validate(
+        {
+          members: options.env,
+          required: true,
+          strict: false,
+          type: 'object',
+        },
+        Object
+          .keys(options.env)
+          .reduce((previousValue, currentValue) => {
+            return { ...previousValue, [currentValue]: env.get(currentValue) };
+          }, {}),
+      );
 
-    if (validateErrors.length) {
-      throw new Error(JSON.stringify(validateErrors));
+      if (validateErrors.length) {
+        throw new Error(JSON.stringify(validateErrors));
+      }
     }
-
 
     await caviaApplication.boot();
 
@@ -114,4 +111,10 @@ export class CaviaFactory {
 
     return providers;
   }
+}
+
+export interface CaviaFactoryOptions {
+  env?: {
+    [name: string]: SchemaBoolean | SchemaEnum | SchemaNumber | SchemaString;
+  };
 }

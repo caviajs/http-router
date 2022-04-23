@@ -1,16 +1,15 @@
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import { Inject } from '../decorators/inject';
 import { Injectable } from '../decorators/injectable';
-import { ENV_PATH, EnvPath } from './env-path';
+import { join } from 'path';
 
 @Injectable()
 export class Env {
   protected readonly variables: { readonly [name: string]: string; } = process.env;
 
-  constructor(
-    @Inject(ENV_PATH) protected readonly envPath: EnvPath,
-  ) {
+  constructor() {
+    const envPath: string = join(process.cwd(), '.env');
+
     if (fs.existsSync(envPath)) {
       this.variables = { ...this.variables, ...dotenv.parse(fs.readFileSync(envPath)) || {} };
     }

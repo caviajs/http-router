@@ -16,7 +16,7 @@ describe('Env', () => {
   it('should not load the contents of the .env file if it does not exist', () => {
     jest.spyOn(fs, 'existsSync').mockReturnValue(false);
 
-    new Env(envPath);
+    new Env();
 
     expect(fs.readFileSync).not.toHaveBeenCalled();
     expect(dotenv.parse).not.toHaveBeenCalled();
@@ -30,7 +30,7 @@ describe('Env', () => {
     jest.spyOn(fs, 'readFileSync').mockReturnValue(buffer);
     jest.spyOn(dotenv, 'parse').mockReturnValue({ FOO: 'bar' });
 
-    const env: Env = new Env(envPath);
+    const env: Env = new Env();
 
     expect(fs.readFileSync).toHaveBeenNthCalledWith(1, envPath);
     expect(dotenv.parse).toHaveBeenNthCalledWith(1, buffer);
@@ -43,7 +43,7 @@ describe('Env', () => {
     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
     jest.spyOn(dotenv, 'parse').mockReturnValue({ FOO: '2', BAR: '2' });
 
-    const env: Env = new Env(envPath);
+    const env: Env = new Env();
 
     expect(env.get('FOO')).toEqual('2');
     expect(env.get('BAR')).toEqual('2');
@@ -52,7 +52,7 @@ describe('Env', () => {
   });
 
   it('should return a default value if the environment does not exist', () => {
-    const env: Env = new Env(envPath);
+    const env: Env = new Env();
 
     expect(env.get('CAVIA', 'popcorn')).toEqual('popcorn');
   });
