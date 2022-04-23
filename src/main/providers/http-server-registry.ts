@@ -21,18 +21,18 @@ export class HttpServerRegistry {
   }
 
   public find(method: Method, url: string): Controller | undefined {
-    let route: Controller | undefined;
+    let controller: Controller | undefined;
 
     const pathname: string = parse(url).pathname;
 
     for (const it of this.controllers.filter(r => r.metadata.method === method)) {
       if (match(it.metadata.path)(pathname)) {
-        route = it;
+        controller = it;
         break;
       }
     }
 
-    return route;
+    return controller;
   }
 
   public push(controller: Controller): void {
