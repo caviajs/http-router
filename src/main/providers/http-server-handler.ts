@@ -14,7 +14,7 @@ import { APPLICATION_REF, ApplicationRef } from './application-ref';
 import { Injector } from '../injector';
 import { Inject } from '../decorators/inject';
 import { Injectable } from '../decorators/injectable';
-import { Route } from '../types/route';
+import { Controller } from '../types/controller';
 
 @Injectable()
 export class HttpServerHandler implements OnApplicationBoot {
@@ -34,17 +34,17 @@ export class HttpServerHandler implements OnApplicationBoot {
   }
 
   public async handle(request: Request, response: Response): Promise<void> {
-    const route: Route | undefined = this.httpServerRegistry.find(request.method as Method, request.url);
+    const controller: Controller | undefined = this.httpServerRegistry.find(request.method as Method, request.url);
 
-    request.route = route;
-    request.params = route?.metadata.path ? (match(route?.metadata.path)(urlParse(request.url).pathname) as MatchResult)?.params as any : {};
+    request.metadata = controller?.metadata;
+    request.params = controller?.metadata.path ? (match(controller?.metadata.path)(urlParse(request.url).pathname) as MatchResult)?.params as any : {};
 
     const route$ = from(this.composeInterceptors(request, response, this.interceptors, (): Promise<unknown> => {
-      if (!route) {
+      if (!controller) {
         throw new HttpException(404, 'Route not found');
       }
 
-      return Promise.resolve(route.handle.apply(route, [request, response]));
+      return Promise.resolve(controller.handle.apply(controller, [request, response]));
     }));
 
     route$

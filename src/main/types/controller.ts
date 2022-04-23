@@ -4,13 +4,13 @@ import { Request } from './request';
 import { Response } from './response';
 import { Schema } from './schema';
 
-export abstract class Route {
-  public abstract readonly metadata: RouteMetadata;
+export abstract class Controller {
+  public abstract readonly metadata: ControllerMetadata;
 
   public abstract handle(request: Request, response: Response): unknown;
 }
 
-export interface RouteMetadata {
+export interface ControllerMetadata {
   readonly data?: any;
   readonly method: Method;
   readonly path: Path;

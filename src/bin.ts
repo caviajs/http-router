@@ -30,19 +30,19 @@ async function generate(options: { template: string, path: string }): Promise<vo
 
 yargs
   .command({
+    command: 'make:controller <path>',
+    describe: 'Generate controller component',
+    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
+    handler: args => {
+      generate({ template: 'controller', path: args.path as string });
+    },
+  })
+  .command({
     command: 'make:interceptor <path>',
     describe: 'Generate interceptor component',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => {
       generate({ template: 'interceptor', path: args.path as string });
-    },
-  })
-  .command({
-    command: 'make:route <path>',
-    describe: 'Generate route component',
-    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => {
-      generate({ template: 'route', path: args.path as string });
     },
   })
   .command({

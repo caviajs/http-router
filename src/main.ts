@@ -42,6 +42,7 @@ export * from './main/providers/validator';
 export * from './main/providers/view';
 export * from './main/providers/view-directory-path';
 
+export * from './main/types/controller';
 export * from './main/types/file';
 export * from './main/types/hooks';
 export * from './main/types/interceptor';
@@ -51,7 +52,6 @@ export * from './main/types/path';
 export * from './main/types/provider';
 export * from './main/types/request';
 export * from './main/types/response';
-export * from './main/types/route';
 export * from './main/types/schema';
 export * from './main/types/token';
 export * from './main/types/type';

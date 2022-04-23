@@ -2,24 +2,24 @@ import { HttpServerRegistry } from './http-server-registry';
 import { Injectable } from '../decorators/injectable';
 import { OnApplicationBoot } from '../types/hooks';
 import { Injector } from '../injector';
-import { Route } from '../types/route';
+import { Controller } from '../types/controller';
 
 @Injectable()
 export class HttpServerExplorer implements OnApplicationBoot {
   constructor(
-    protected readonly httpRouter: HttpServerRegistry,
+    protected readonly httpServerRegistry: HttpServerRegistry,
     protected readonly injector: Injector,
   ) {
   }
 
   public async onApplicationBoot(): Promise<void> {
-    const routes: Route[] = await this
+    const controllers: Controller[] = await this
       .injector
-      .filter(provider => typeof provider === 'function' && provider.prototype instanceof Route);
+      .filter(provider => typeof provider === 'function' && provider.prototype instanceof Controller);
 
-    routes
-      .map((route: Route) => {
-        this.httpRouter.push(route);
+    controllers
+      .map((controller: Controller) => {
+        this.httpServerRegistry.push(controller);
       });
   }
 }

@@ -1,12 +1,12 @@
 import http from 'http';
-import { Route } from './main/types/route';
+import { ControllerMetadata } from './main/types/controller';
 
 declare module 'http' {
   export interface IncomingMessage {
+    metadata: ControllerMetadata | undefined;
     params: Record<string, string>;
-    route: Route | undefined;
   }
 }
 
+http.IncomingMessage.prototype.metadata = undefined;
 http.IncomingMessage.prototype.params = {};
-http.IncomingMessage.prototype.route = undefined;

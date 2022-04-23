@@ -1,10 +1,10 @@
 import { HttpServerRegistry } from './http-server-registry';
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
-import { Route } from '../types/route';
+import { Controller } from '../types/controller';
 
 class HttpRouterTest extends HttpServerRegistry {
-  public readonly routes: Route[] = [];
+  public readonly routes: Controller[] = [];
 }
 
 class FooController {
