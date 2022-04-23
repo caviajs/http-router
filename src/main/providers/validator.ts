@@ -12,8 +12,8 @@ const DEFAULT_STRICT: boolean = false;
 
 @Injectable()
 export class Validator {
-  public validate(schema: Schema, data: any): ValidateError[] {
-    return this.executeValidation(schema, data, []);
+  public validate(schema: Schema, data: any, path?: string[]): ValidateError[] {
+    return this.executeValidation(schema, data, path || []);
   }
 
   protected isSchemaArray(schema: any): schema is SchemaArray {
@@ -48,22 +48,25 @@ export class Validator {
         errors.push(...this.executeValidation(schema.members, it, [...path, index]));
       }
     } else {
-      errors.push({ message: 'The value should be array', path: path.join('.') });
+      errors.push({ message: `The value should be array /${ path.join('.') }`, path: path.join('.') });
     }
 
     return errors;
   }
 
   protected validateSchemaBoolean(schema: SchemaBoolean, data: any, path: string[]): ValidateError[] {
-    return typeof data !== 'boolean' ? [{ message: 'The value should be boolean', path: path.join('.') }] : [];
+    return typeof data !== 'boolean' ? [{ message: `The value should be boolean at /${ path.join('.') }`, path: path.join('.') }] : [];
   }
 
   protected validateSchemaEnum(schema: SchemaEnum, data: any, path: string[]): ValidateError[] {
-    return schema.enum.includes(data) ? [{ message: `The value must be one of ${ schema.enum.join(', ') }`, path: path.join('.') }] : [];
+    return schema.enum.includes(data) ? [{
+      message: `The value must be one of ${ schema.enum.join(', ') } at /${ path.join('.') }`,
+      path: path.join('.')
+    }] : [];
   }
 
   protected validateSchemaNumber(schema: SchemaNumber, data: any, path: string[]): ValidateError[] {
-    return typeof data !== 'number' ? [{ message: 'The value should be number', path: path.join('.') }] : [];
+    return typeof data !== 'number' ? [{ message: `The value should be number at /${ path.join('.') }`, path: path.join('.') }] : [];
   }
 
   protected validateSchemaObject(schema: SchemaObject, data: any, path: string[]): ValidateError[] {
@@ -74,21 +77,21 @@ export class Validator {
         errors.push(...this.executeValidation(memberSchema, data[memberName], [...path, memberName]));
       }
     } else {
-      errors.push({ message: 'The value should be object', path: path.join('.') });
+      errors.push({ message: `The value should be object at /${ path.join('.') }`, path: path.join('.') });
     }
 
     return errors;
   }
 
   protected validateSchemaString(schema: SchemaString, data: any, path: string[]): ValidateError[] {
-    return typeof data !== 'string' ? [{ message: 'The value should be string', path: path.join('.') }] : [];
+    return typeof data !== 'string' ? [{ message: `The value should be string at /${ path.join('.') }`, path: path.join('.') }] : [];
   }
 
   protected executeValidation(schema: Schema, data: any, path: string[]): ValidateError[] {
     const errors: ValidateError[] = [];
 
     if (schema.required === true && data === undefined) {
-      errors.push({ message: 'The value is required', path: path.join('.') });
+      errors.push({ message: `The value is required at /${ path.join('.') }`, path: path.join('.') });
     }
 
     if (schema.nullable === true && data === null) {
