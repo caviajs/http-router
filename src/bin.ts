@@ -1,31 +1,35 @@
 #!/usr/bin/env node
 import yargs from 'yargs';
-
 import { Edge } from 'edge.js';
 import { join, sep } from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
+import { noCase } from 'no-case';
+
+const edge: Edge = new Edge().mount(join(__dirname, 'bin', 'templates'));
 
 async function generate(options: { template: string, path: string }): Promise<void> {
-  const edge: Edge = new Edge().mount(join(__dirname, 'bin', 'templates'));
-
-  const paths: string[] = options.path.split(sep);
+  const paths: string[] = options.path.replace(/(\/|\\)/g, sep).split(sep);
   const componentDir: string = join(process.cwd(), ...paths.slice(0, -1));
-  const componentName: string = paths[paths.length - 1].toLowerCase();
+  const componentNameAsKebabCase: string = noCase(paths[paths.length - 1])
+    .split(' ')
+    .join('-');
+  const componentNameAsPascalCase: string = noCase(paths[paths.length - 1])
+    .split(' ')
+    .map((it: string) => it.charAt(0).toUpperCase() + it.slice(1).toLowerCase())
+    .join('');
 
-  const data = await edge.render(options.template, {
-    name: componentName,
-  });
+  const dist: string = join(componentDir, `${ componentNameAsKebabCase }.${ options.template }.ts`);
 
   if (!fs.existsSync(componentDir)) {
     fs.mkdirSync(componentDir);
   }
 
-  const dist: string = join(componentDir, `${ componentName }.${ options.template }.ts`);
+  fs.writeFileSync(dist, await edge.render(options.template, {
+    name: componentNameAsPascalCase,
+  }));
 
-  fs.writeFileSync(dist, data);
-
-  process.stdout.write(`File '${ chalk.magentaBright(dist) }' has been generated\n`);
+  process.stdout.write(`File '${ chalk.blueBright(dist) }' has been generated\n`);
 }
 
 yargs
