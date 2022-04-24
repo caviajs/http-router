@@ -1,9 +1,9 @@
 import http from 'http';
-import { ControllerMetadata } from './main/types/controller';
+import { EndpointMetadata } from './main/types/endpoint';
 
 declare module 'http' {
   export interface IncomingMessage {
-    metadata: ControllerMetadata | undefined;
+    metadata: EndpointMetadata | undefined;
     params: Record<string, string>;
   }
 }

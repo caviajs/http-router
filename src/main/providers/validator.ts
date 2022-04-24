@@ -5,15 +5,30 @@ const DEFAULT_NULLABLE: boolean = false;
 const DEFAULT_REQUIRED: boolean = true;
 const DEFAULT_STRICT: boolean = false;
 
-// TODO PATH - znaleźć rozwiązanie
-// TODO CUSTOM VALIDATORS (format/pattern/rules) - znaleźć rozwiązanie + async
-// TODO VALIDATION
-// TODO PARSING/CASTING
+const MESSAGES = {
+  'required': 'The value is required',
+};
 
 @Injectable()
 export class Validator {
-  public validate(schema: Schema, data: any, path?: string[]): ValidateError[] {
-    return this.executeValidation(schema, data, path || []);
+  public async validate(schema: Schema, data: any, path: string[] = []): Promise<ValidationError[]> {
+    const errors: ValidationError[] = [];
+
+    if (this.isSchemaArray(schema)) {
+      errors.push(...await this.validateSchemaArray(schema, data, path));
+    } else if (this.isSchemaBoolean(schema)) {
+      errors.push(...await this.validateSchemaBoolean(schema, data, path));
+    } else if (this.isSchemaEnum(schema)) {
+      errors.push(...await this.validateSchemaEnum(schema, data, path));
+    } else if (this.isSchemaNumber(schema)) {
+      errors.push(...await this.validateSchemaNumber(schema, data, path));
+    } else if (this.isSchemaObject(schema)) {
+      errors.push(...await this.validateSchemaObject(schema, data, path));
+    } else if (this.isSchemaString(schema)) {
+      errors.push(...await this.validateSchemaString(schema, data, path));
+    }
+
+    return errors;
   }
 
   protected isSchemaArray(schema: any): schema is SchemaArray {
@@ -40,83 +55,124 @@ export class Validator {
     return schema?.type === 'string';
   }
 
-  protected validateSchemaArray(schema: SchemaArray, data: any, path: string[]): ValidateError[] {
-    const errors: ValidateError[] = [];
+  protected async validateSchemaArray(schema: SchemaArray, data: any, path: string[]): Promise<ValidationError[]> {
+    const errors: ValidationError[] = [];
+
+    if (schema.nullable === true && data === null) {
+      return errors;
+    }
+
+    if (schema.required === true && data === undefined) {
+      errors.push({ message: `The value is required`, path: path.join('.') });
+    }
 
     if (Array.isArray(data)) {
       for (const [index, it] of Object.entries(data)) {
-        errors.push(...this.executeValidation(schema.members, it, [...path, index]));
+        errors.push(...await this.validate(schema.members, it, [...path, index]));
       }
     } else {
-      errors.push({ message: `The value should be array /${ path.join('.') }`, path: path.join('.') });
+      errors.push({ message: `The value should be array`, path: path.join('.') });
     }
 
     return errors;
   }
 
-  protected validateSchemaBoolean(schema: SchemaBoolean, data: any, path: string[]): ValidateError[] {
-    return typeof data !== 'boolean' ? [{ message: `The value should be boolean at /${ path.join('.') }`, path: path.join('.') }] : [];
+  protected async validateSchemaBoolean(schema: SchemaBoolean, data: any, path: string[]): Promise<ValidationError[]> {
+    const errors: ValidationError[] = [];
+
+    if (schema.nullable === true && data === null) {
+      return errors;
+    }
+
+    if (schema.required === true && data === undefined) {
+      errors.push({ message: `The value is required`, path: path.join('.') });
+    }
+
+    if (typeof data !== 'boolean') {
+      errors.push({ message: `The value should be boolean`, path: path.join('.') });
+    }
+
+    return errors;
   }
 
-  protected validateSchemaEnum(schema: SchemaEnum, data: any, path: string[]): ValidateError[] {
-    return schema.enum.includes(data) ? [{
-      message: `The value must be one of ${ schema.enum.join(', ') } at /${ path.join('.') }`,
-      path: path.join('.')
-    }] : [];
+  protected async validateSchemaEnum(schema: SchemaEnum, data: any, path: string[]): Promise<ValidationError[]> {
+    const errors: ValidationError[] = [];
+
+    if (schema.nullable === true && data === null) {
+      return errors;
+    }
+
+    if (schema.required === true && data === undefined) {
+      errors.push({ message: `The value is required`, path: path.join('.') });
+    }
+
+    if (!schema.enum.includes(data)) {
+      errors.push({ message: `The value must be one of ${ schema.enum.join(', ') }`, path: path.join('.') });
+    }
+
+    return errors;
   }
 
-  protected validateSchemaNumber(schema: SchemaNumber, data: any, path: string[]): ValidateError[] {
-    return typeof data !== 'number' ? [{ message: `The value should be number at /${ path.join('.') }`, path: path.join('.') }] : [];
+  protected async validateSchemaNumber(schema: SchemaNumber, data: any, path: string[]): Promise<ValidationError[]> {
+    const errors: ValidationError[] = [];
+
+    if (schema.nullable === true && data === null) {
+      return errors;
+    }
+
+    if (schema.required === true && data === undefined) {
+      errors.push({ message: `The value is required`, path: path.join('.') });
+    }
+
+    if (typeof data !== 'number' || isNaN(data)) {
+      errors.push({ message: `The value should be number`, path: path.join('.') });
+    }
+
+    return errors;
   }
 
-  protected validateSchemaObject(schema: SchemaObject, data: any, path: string[]): ValidateError[] {
-    const errors: ValidateError[] = [];
+  protected async validateSchemaObject(schema: SchemaObject, data: any, path: string[]): Promise<ValidationError[]> {
+    const errors: ValidationError[] = [];
+
+    if (schema.nullable === true && data === null) {
+      return errors;
+    }
+
+    if (schema.required === true && data === undefined) {
+      errors.push({ message: `The value is required at`, path: path.join('.') });
+    }
 
     if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
       for (const [memberName, memberSchema] of Object.entries(schema.members || {})) {
-        errors.push(...this.executeValidation(memberSchema, data[memberName], [...path, memberName]));
+        errors.push(...await this.validate(memberSchema, data[memberName], [...path, memberName]));
       }
     } else {
-      errors.push({ message: `The value should be object at /${ path.join('.') }`, path: path.join('.') });
+      errors.push({ message: `The value should be object`, path: path.join('.') });
     }
 
     return errors;
   }
 
-  protected validateSchemaString(schema: SchemaString, data: any, path: string[]): ValidateError[] {
-    return typeof data !== 'string' ? [{ message: `The value should be string at /${ path.join('.') }`, path: path.join('.') }] : [];
-  }
-
-  protected executeValidation(schema: Schema, data: any, path: string[]): ValidateError[] {
-    const errors: ValidateError[] = [];
-
-    if (schema.required === true && data === undefined) {
-      errors.push({ message: `The value is required at /${ path.join('.') }`, path: path.join('.') });
-    }
+  protected async validateSchemaString(schema: SchemaString, data: any, path: string[]): Promise<ValidationError[]> {
+    const errors: ValidationError[] = [];
 
     if (schema.nullable === true && data === null) {
-      return [];
+      return errors;
     }
 
-    if (this.isSchemaArray(schema)) {
-      errors.push(...this.validateSchemaArray(schema, data, path));
-    } else if (this.isSchemaBoolean(schema)) {
-      errors.push(...this.validateSchemaBoolean(schema, data, path));
-    } else if (this.isSchemaEnum(schema)) {
-      errors.push(...this.validateSchemaEnum(schema, data, path));
-    } else if (this.isSchemaNumber(schema)) {
-      errors.push(...this.validateSchemaNumber(schema, data, path));
-    } else if (this.isSchemaObject(schema)) {
-      errors.push(...this.validateSchemaObject(schema, data, path));
-    } else if (this.isSchemaString(schema)) {
-      errors.push(...this.validateSchemaString(schema, data, path));
+    if (schema.required === true && data === undefined) {
+      errors.push({ message: `The value is required`, path: path.join('.') });
+    }
+
+    if (typeof data !== 'string') {
+      errors.push({ message: `The value should be string`, path: path.join('.') });
     }
 
     return errors;
   }
 }
 
-export interface ValidateError {
+export interface ValidationError {
   message: string;
-  path?: string;
+  path: string;
 }

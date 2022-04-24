@@ -34,10 +34,16 @@ async function generate(options: { template: string, path: string }): Promise<vo
 
 yargs
   .command({
-    command: 'make:controller <path>',
-    describe: 'Generate controller component',
+    command: 'make:endpoint <path>',
+    describe: 'Generate endpoint component',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => generate({ template: 'controller', path: args.path as string }),
+    handler: args => generate({ template: 'endpoint', path: args.path as string }),
+  })
+  .command({
+    command: 'make:exception <path>',
+    describe: 'Generate exception component',
+    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
+    handler: args => generate({ template: 'exception', path: args.path as string }),
   })
   .command({
     command: 'make:interceptor <path>',

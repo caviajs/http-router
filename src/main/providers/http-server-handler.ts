@@ -10,18 +10,15 @@ import { Response } from '../types/response';
 import { HttpException } from '../exceptions/http-exception';
 import { HttpServerRegistry } from './http-server-registry';
 import { OnApplicationBoot } from '../types/hooks';
-import { APPLICATION_REF, ApplicationRef } from './application-ref';
 import { Injector } from '../injector';
-import { Inject } from '../decorators/inject';
 import { Injectable } from '../decorators/injectable';
-import { Controller } from '../types/controller';
+import { Endpoint } from '../types/endpoint';
 
 @Injectable()
 export class HttpServerHandler implements OnApplicationBoot {
   public readonly interceptors: Interceptor[] = [];
 
   constructor(
-    @Inject(APPLICATION_REF) protected readonly applicationRef: ApplicationRef,
     protected readonly httpServerRegistry: HttpServerRegistry,
     protected readonly injector: Injector,
   ) {
@@ -34,17 +31,17 @@ export class HttpServerHandler implements OnApplicationBoot {
   }
 
   public async handle(request: Request, response: Response): Promise<void> {
-    const controller: Controller | undefined = this.httpServerRegistry.find(request.method as Method, request.url);
+    const endpoint: Endpoint | undefined = this.httpServerRegistry.find(request.method as Method, request.url);
 
-    request.metadata = controller?.metadata;
-    request.params = controller?.metadata.path ? (match(controller?.metadata.path)(urlParse(request.url).pathname) as MatchResult)?.params as any : {};
+    request.metadata = endpoint?.metadata;
+    request.params = endpoint?.metadata.path ? (match(endpoint?.metadata.path)(urlParse(request.url).pathname) as MatchResult)?.params as any : {};
 
     const route$ = from(this.composeInterceptors(request, response, this.interceptors, (): Promise<unknown> => {
-      if (!controller) {
+      if (!endpoint) {
         throw new HttpException(404, 'Route not found');
       }
 
-      return Promise.resolve(controller.handle.apply(controller, [request, response]));
+      return Promise.resolve(endpoint.handle.apply(endpoint, [request, response]));
     }));
 
     route$

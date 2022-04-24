@@ -4,16 +4,11 @@ import { HttpServer } from './http-server';
 import { HttpServerHandler } from './http-server-handler';
 import { HttpServerManager } from './http-server-manager';
 import { HttpServerPort } from './http-server-port';
-import { ApplicationRef } from './application-ref';
 import { Logger } from './logger';
 import { Injector } from '../injector';
 import { LoggerLevel } from './logger-level';
 
-class MyApp {
-}
-
 describe('HttpServerManager', () => {
-  let applicationRef: ApplicationRef;
   let logger: Logger;
   let httpRouter: HttpServerRegistry;
   let httpServerHandler: HttpServerHandler;
@@ -24,10 +19,9 @@ describe('HttpServerManager', () => {
   beforeEach(async () => {
     jest.spyOn(Logger.prototype, 'trace').mockImplementation(jest.fn());
 
-    applicationRef = new MyApp();
     logger = new Logger(LoggerLevel.ALL, () => '');
     httpRouter = new HttpServerRegistry(logger);
-    httpServerHandler = new HttpServerHandler(applicationRef, httpRouter, await Injector.create([]));
+    httpServerHandler = new HttpServerHandler(httpRouter, await Injector.create([]));
     httpServer = http.createServer();
     httpServerPort = 3000;
     httpServerManager = new HttpServerManager(logger, httpServer, httpServerHandler, httpServerPort);

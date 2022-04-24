@@ -1,0 +1,15 @@
+import { Request, Response, Injectable, Endpoint, EndpointMetadata, HttpException } from '@caviajs/core';
+
+@Injectable()
+export class {{ name }}Endpoint extends Endpoint {
+
+  public readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/',
+  };
+
+  public async handle(request: Request, response: Response): Promise<string> {
+    throw new HttpException(501);
+  }
+
+}

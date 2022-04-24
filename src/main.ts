@@ -10,14 +10,12 @@ import './polyfills';
 /** api **/
 /*********/
 
-export * from './main/decorators/application';
 export * from './main/decorators/inject';
 export * from './main/decorators/injectable';
 export * from './main/decorators/optional';
 
 export * from './main/exceptions/http-exception';
 
-export * from './main/providers/application-ref';
 export * from './main/providers/body';
 export * from './main/providers/body-manager';
 export * from './main/providers/cookies';
@@ -40,12 +38,11 @@ export * from './main/providers/validator';
 export * from './main/providers/view';
 export * from './main/providers/view-directory-path';
 
-export * from './main/types/controller';
+export * from './main/types/endpoint';
 export * from './main/types/file';
 export * from './main/types/hooks';
 export * from './main/types/interceptor';
 export * from './main/types/method';
-export * from './main/types/package';
 export * from './main/types/path';
 export * from './main/types/provider';
 export * from './main/types/request';

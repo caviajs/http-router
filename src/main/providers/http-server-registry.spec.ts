@@ -1,10 +1,10 @@
 import { HttpServerRegistry } from './http-server-registry';
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
-import { Controller } from '../types/controller';
+import { Endpoint } from '../types/endpoint';
 
 class HttpRouterTest extends HttpServerRegistry {
-  public readonly routes: Controller[] = [];
+  public readonly routes: Endpoint[] = [];
 }
 
 class FooController {
@@ -16,6 +16,10 @@ class FooController {
 }
 
 describe('HttpRouter', () => {
+  it('example', () => {
+    expect(1).toBe(1);
+  });
+
   // const fooController: FooController = new FooController();
   // const route1: Route = {
   //   controller: fooController,

@@ -2,7 +2,7 @@ import { HttpServerRegistry } from './http-server-registry';
 import { Injectable } from '../decorators/injectable';
 import { OnApplicationBoot } from '../types/hooks';
 import { Injector } from '../injector';
-import { Controller } from '../types/controller';
+import { Endpoint } from '../types/endpoint';
 
 @Injectable()
 export class HttpServerExplorer implements OnApplicationBoot {
@@ -13,13 +13,13 @@ export class HttpServerExplorer implements OnApplicationBoot {
   }
 
   public async onApplicationBoot(): Promise<void> {
-    const controllers: Controller[] = await this
+    const endpoints: Endpoint[] = await this
       .injector
-      .filter(provider => typeof provider === 'function' && provider.prototype instanceof Controller);
+      .filter(provider => typeof provider === 'function' && provider.prototype instanceof Endpoint);
 
-    controllers
-      .map((controller: Controller) => {
-        this.httpServerRegistry.push(controller);
+    endpoints
+      .map((endpoint: Endpoint) => {
+        this.httpServerRegistry.push(endpoint);
       });
   }
 }

@@ -5,7 +5,7 @@ import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
 import { Injector } from '../injector';
 
-class FooController {
+class FooEndpoint {
   public getUndefined(): undefined {
     return undefined;
   }
@@ -49,7 +49,7 @@ describe('HttpServerHandler', () => {
 
   beforeEach(async () => {
     httpRouter = new HttpServerRegistry(new Logger(LoggerLevel.ALL, () => ''));
-    httpServerHandler = new HttpServerHandler({} as any, httpRouter, await Injector.create([]));
+    httpServerHandler = new HttpServerHandler(httpRouter, await Injector.create([]));
   });
 
   afterEach(() => {

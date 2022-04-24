@@ -4,15 +4,15 @@ import { Method } from '../types/method';
 import { Injectable } from '../decorators/injectable';
 import { Logger } from './logger';
 import { HTTP_CONTEXT } from '../constants';
-import { Controller, ControllerMetadata } from '../types/controller';
+import { Endpoint, EndpointMetadata } from '../types/endpoint';
 
 @Injectable()
 export class HttpServerRegistry {
-  protected readonly controllers: Controller[] = [];
+  protected readonly endpoints: Endpoint[] = [];
 
-  public get metadata(): ControllerMetadata[] {
+  public get metadata(): EndpointMetadata[] {
     // TODO: brakuje nazwa metody
-    return this.controllers.map(controller => controller.metadata);
+    return this.endpoints.map(endpoint => endpoint.metadata);
   }
 
   constructor(
@@ -20,33 +20,33 @@ export class HttpServerRegistry {
   ) {
   }
 
-  public find(method: Method, url: string): Controller | undefined {
-    let controller: Controller | undefined;
+  public find(method: Method, url: string): Endpoint | undefined {
+    let endpoint: Endpoint | undefined;
 
     const pathname: string = parse(url).pathname;
 
-    for (const it of this.controllers.filter(r => r.metadata.method === method)) {
+    for (const it of this.endpoints.filter(r => r.metadata.method === method)) {
       if (match(it.metadata.path)(pathname)) {
-        controller = it;
+        endpoint = it;
         break;
       }
     }
 
-    return controller;
+    return endpoint;
   }
 
-  public push(controller: Controller): void {
-    if (!controller.metadata.path.startsWith('/')) {
-      throw new Error(`The path in '${ controller.constructor.name }' should start with '/'`);
+  public push(endpoint: Endpoint): void {
+    if (!endpoint.metadata.path.startsWith('/')) {
+      throw new Error(`The path in '${ endpoint.constructor.name }' should start with '/'`);
     }
 
-    const matcher = match(controller.metadata.path);
+    const matcher = match(endpoint.metadata.path);
 
-    if (this.controllers.some(it => it.metadata.method === controller.metadata.method && matcher(it.metadata.path))) {
-      throw new Error(`Duplicated {${ controller.metadata.method } ${ controller.metadata.path }} http endpoint`);
+    if (this.endpoints.some(it => it.metadata.method === endpoint.metadata.method && matcher(it.metadata.path))) {
+      throw new Error(`Duplicated {${ endpoint.metadata.method } ${ endpoint.metadata.path }} http endpoint`);
     }
 
-    this.controllers.push(controller);
-    this.logger.trace(`Mapped {${ controller.metadata.method } ${ controller.metadata.path }} http endpoint`, HTTP_CONTEXT);
+    this.endpoints.push(endpoint);
+    this.logger.trace(`Mapped {${ endpoint.metadata.method } ${ endpoint.metadata.path }} http endpoint`, HTTP_CONTEXT);
   }
 }

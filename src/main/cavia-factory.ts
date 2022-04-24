@@ -1,5 +1,3 @@
-import { APPLICATION_METADATA, ApplicationMetadata } from './decorators/application';
-import { createApplicationRefProvider } from './providers/application-ref';
 import { Env } from './providers/env';
 import { Logger } from './providers/logger';
 import { LoggerLevelProvider } from './providers/logger-level';
@@ -10,7 +8,6 @@ import { View } from './providers/view';
 import { ViewDirectoryPathProvider } from './providers/view-directory-path';
 import { Provider } from './types/provider';
 import { Token } from './types/token';
-import { Type } from './types/type';
 import { getProviderToken } from './utils/get-provider-token';
 import { CaviaApplication } from './cavia-application';
 import { CORE_CONTEXT } from './constants';
@@ -57,28 +54,41 @@ const BUILT_IN_PROVIDERS: Provider[] = [
 ];
 
 export class CaviaFactory {
-  public static async create(application: Type, options?: CaviaFactoryOptions): Promise<CaviaApplication> {
-    if (Reflect.hasMetadata(APPLICATION_METADATA, application) === false) {
-      throw new Error(`The '${ application?.name }' should be annotated as an application`);
-    }
-
-    const injector: Injector = await Injector.create([...this.getApplicationProviders(application).values()]);
+  public static async create(options: CaviaFactoryOptions): Promise<CaviaApplication> {
+    const injector: Injector = await this.createInjector(options);
     const caviaApplication: CaviaApplication = new CaviaApplication(injector);
 
     (await injector.find(Logger)).trace('Starting application...', CORE_CONTEXT);
 
-    if (options?.env) {
+    await this.validateEnv(injector, options);
+    await caviaApplication.boot();
+
+    return caviaApplication;
+  }
+
+  protected static async createInjector(options: CaviaFactoryOptions): Promise<Injector> {
+    const providers: Map<Token, Provider> = new Map();
+
+    for (const provider of [...BUILT_IN_PROVIDERS, ...options?.components?.providers || []]) {
+      providers.set(getProviderToken(provider), provider);
+    }
+
+    return await Injector.create([...providers.values()]);
+  }
+
+  protected static async validateEnv(injector: Injector, options: CaviaFactoryOptions): Promise<void | never> {
+    if (options?.schemas?.env) {
       const env = await injector.find(Env);
       const validator = await injector.find(Validator);
-      const validateErrors = validator.validate(
+      const validateErrors = await validator.validate(
         {
-          members: options.env,
+          members: options.schemas.env,
           required: true,
           strict: false,
           type: 'object',
         },
         Object
-          .keys(options.env)
+          .keys(options.schemas.env)
           .reduce((previousValue, currentValue) => {
             return { ...previousValue, [currentValue]: env.get(currentValue) };
           }, {}),
@@ -88,33 +98,17 @@ export class CaviaFactory {
         throw new Error(JSON.stringify(validateErrors));
       }
     }
-
-    await caviaApplication.boot();
-
-    return caviaApplication;
-  }
-
-  protected static getApplicationProviders(application: Type): Map<Token, Provider> {
-    const applicationMetadata: ApplicationMetadata = Reflect.getMetadata(APPLICATION_METADATA, application);
-
-    const providers: Map<Token, Provider> = new Map();
-
-    for (const pkg of [...applicationMetadata?.packages || []]) {
-      for (const provider of pkg.providers || []) {
-        providers.set(getProviderToken(provider), provider);
-      }
-    }
-
-    for (const provider of [...BUILT_IN_PROVIDERS, ...applicationMetadata?.providers || [], createApplicationRefProvider(application)]) {
-      providers.set(getProviderToken(provider), provider);
-    }
-
-    return providers;
   }
 }
 
 export interface CaviaFactoryOptions {
-  env?: {
-    [name: string]: SchemaBoolean | SchemaEnum | SchemaNumber | SchemaString;
+  components?: {
+    providers?: Provider[];
+  };
+
+  schemas?: {
+    env?: {
+      [name: string]: SchemaBoolean | SchemaEnum | SchemaNumber | SchemaString;
+    };
   };
 }
