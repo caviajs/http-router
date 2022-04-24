@@ -52,10 +52,10 @@ yargs
     handler: args => generate({ template: 'interceptor', path: args.path as string }),
   })
   .command({
-    command: 'make:service <path>',
-    describe: 'Generate service component',
+    command: 'make:provider <path>',
+    describe: 'Generate provider component',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => generate({ template: 'service', path: args.path as string }),
+    handler: args => generate({ template: 'provider', path: args.path as string }),
   })
   .command({
     command: 'make:worker <path>',
