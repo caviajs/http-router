@@ -20,6 +20,21 @@ export class HttpServerRegistry {
   ) {
   }
 
+  public add(endpoint: Endpoint): void {
+    if (!endpoint.metadata.path.startsWith('/')) {
+      throw new Error(`The path in '${ endpoint.constructor.name }' should start with '/'`);
+    }
+
+    const matcher = match(endpoint.metadata.path);
+
+    if (this.endpoints.some(it => it.metadata.method === endpoint.metadata.method && matcher(it.metadata.path))) {
+      throw new Error(`Duplicated {${ endpoint.metadata.method } ${ endpoint.metadata.path }} http endpoint`);
+    }
+
+    this.endpoints.push(endpoint);
+    this.logger.trace(`Mapped {${ endpoint.metadata.method } ${ endpoint.metadata.path }} http endpoint`, HTTP_CONTEXT);
+  }
+
   public find(method: Method, url: string): Endpoint | undefined {
     let endpoint: Endpoint | undefined;
 
@@ -33,20 +48,5 @@ export class HttpServerRegistry {
     }
 
     return endpoint;
-  }
-
-  public push(endpoint: Endpoint): void {
-    if (!endpoint.metadata.path.startsWith('/')) {
-      throw new Error(`The path in '${ endpoint.constructor.name }' should start with '/'`);
-    }
-
-    const matcher = match(endpoint.metadata.path);
-
-    if (this.endpoints.some(it => it.metadata.method === endpoint.metadata.method && matcher(it.metadata.path))) {
-      throw new Error(`Duplicated {${ endpoint.metadata.method } ${ endpoint.metadata.path }} http endpoint`);
-    }
-
-    this.endpoints.push(endpoint);
-    this.logger.trace(`Mapped {${ endpoint.metadata.method } ${ endpoint.metadata.path }} http endpoint`, HTTP_CONTEXT);
   }
 }

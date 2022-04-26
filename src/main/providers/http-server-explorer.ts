@@ -19,7 +19,7 @@ export class HttpServerExplorer implements OnApplicationBoot {
 
     endpoints
       .map((endpoint: Endpoint) => {
-        this.httpServerRegistry.push(endpoint);
+        this.httpServerRegistry.add(endpoint);
       });
   }
 }
