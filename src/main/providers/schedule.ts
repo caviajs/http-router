@@ -15,7 +15,7 @@ export class Schedule {
   ) {
   }
 
-  public register(worker: Worker): void {
+  public add(worker: Worker): void {
     if (!cron.validate(worker.metadata.expression)) {
       throw new Error(`Invalid {${ worker.metadata.expression }} cron expression`);
     }

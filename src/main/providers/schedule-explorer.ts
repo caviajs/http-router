@@ -19,7 +19,7 @@ export class ScheduleExplorer implements OnApplicationBoot {
 
     workers
       .map((worker: Worker) => {
-        this.schedule.register(worker);
+        this.schedule.add(worker);
       });
   }
 }
