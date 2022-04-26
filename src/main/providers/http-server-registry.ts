@@ -25,6 +25,8 @@ export class HttpServerRegistry {
       throw new Error(`The path in '${ endpoint.constructor.name }' should start with '/'`);
     }
 
+    // todo endpoint.metadata.schema validation
+
     const matcher = match(endpoint.metadata.path);
 
     if (this.endpoints.some(it => it.metadata.method === endpoint.metadata.method && matcher(it.metadata.path))) {
