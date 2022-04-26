@@ -17,7 +17,7 @@ export class Schedule {
 
   public add(worker: Worker): void {
     if (!cron.validate(worker.metadata.expression)) {
-      throw new Error(`Invalid {${ worker.metadata.expression }} cron expression`);
+      throw new Error(`Invalid {${ worker.metadata.expression }} worker expression`);
     }
 
     this.workers.push(worker);
