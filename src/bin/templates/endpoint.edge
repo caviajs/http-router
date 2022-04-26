@@ -2,7 +2,6 @@ import { Request, Response, Injectable, Endpoint, EndpointMetadata, HttpExceptio
 
 @Injectable()
 export class {{ name }}Endpoint extends Endpoint {
-
   public readonly metadata: EndpointMetadata = {
     method: 'GET',
     path: '/',
@@ -11,5 +10,4 @@ export class {{ name }}Endpoint extends Endpoint {
   public async handle(request: Request, response: Response): Promise<string> {
     throw new HttpException(501);
   }
-
 }

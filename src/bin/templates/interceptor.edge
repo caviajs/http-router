@@ -3,9 +3,7 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class {{ name }}Interceptor extends Interceptor {
-
   public async intercept(request: Request, response: Response, next: Next): Promise<Observable<any>> {
     return next.handle();
   }
-
 }
