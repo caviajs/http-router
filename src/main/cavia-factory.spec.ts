@@ -67,14 +67,12 @@ describe('CaviaFactory', () => {
 
     it('should collect application providers', async () => {
       const application = await CaviaFactory.create({
-        components: {
-          providers: [
-            { provide: 'foo-1', useValue: 10 },
-            { provide: 'foo-2', useValue: 20 },
-            { provide: 'bar-1', useValue: 30 },
-            { provide: 'bar-2', useValue: 40 },
-          ],
-        },
+        providers: [
+          { provide: 'foo-1', useValue: 10 },
+          { provide: 'foo-2', useValue: 20 },
+          { provide: 'bar-1', useValue: 30 },
+          { provide: 'bar-2', useValue: 40 },
+        ],
       });
 
       expect(await application.injector.find('foo-1')).toEqual(10);
@@ -85,13 +83,11 @@ describe('CaviaFactory', () => {
 
     it('should determine the appropriate weighting of providers', async () => {
       const application = await CaviaFactory.create({
-        components: {
-          providers: [
-            { provide: 'foo', useValue: 1 },
-            { provide: 'foo', useValue: 2 },
-            { provide: 'foo', useValue: 3 },
-          ],
-        },
+        providers: [
+          { provide: 'foo', useValue: 1 },
+          { provide: 'foo', useValue: 2 },
+          { provide: 'foo', useValue: 3 },
+        ],
       });
 
       expect(await application.injector.find('foo')).toEqual(3);

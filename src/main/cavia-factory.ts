@@ -69,7 +69,7 @@ export class CaviaFactory {
   protected static async createInjector(options: CaviaFactoryOptions): Promise<Injector> {
     const providers: Map<Token, Provider> = new Map();
 
-    for (const provider of [...BUILT_IN_PROVIDERS, ...options?.components?.providers || []]) {
+    for (const provider of [...BUILT_IN_PROVIDERS, ...options?.providers || []]) {
       providers.set(getProviderToken(provider), provider);
     }
 
@@ -102,9 +102,7 @@ export class CaviaFactory {
 }
 
 export interface CaviaFactoryOptions {
-  components?: {
-    providers?: Provider[];
-  };
+  providers?: Provider[];
 
   schemas?: {
     env?: {
