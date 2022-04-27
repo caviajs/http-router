@@ -5,7 +5,7 @@ import { VIEW_DIRECTORY_PATH, ViewDirectoryPath } from './view-directory-path';
 
 @Injectable()
 export class View {
-  protected readonly edge: Edge = new Edge();
+  protected readonly edge: Edge = new Edge({ cache: false });
 
   constructor(
     @Inject(VIEW_DIRECTORY_PATH) protected readonly viewDirectoryPath: ViewDirectoryPath,
