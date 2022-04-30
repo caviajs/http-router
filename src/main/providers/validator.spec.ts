@@ -65,7 +65,6 @@ describe('Validator', () => {
   });
 
   describe('SchemaEnum', () => {
-    // SchemaEnum START
     it('should validate the nullable condition correctly', () => {
       // nullable: false (default)
       expect(validator.validate({ enum: ['Hello', 'World'], type: 'enum' }, null)).toEqual([
@@ -194,11 +193,6 @@ describe('Validator', () => {
         { message: 'The value must be one of the following values: Hello, World', path: 'foo.bar' },
       ]);
     });
-
-    // SchemaEnum END
-    // 1) nullable
-    // 2) required
-    // 3) check correct type
   });
 
   describe('SchemaNumber', () => {
