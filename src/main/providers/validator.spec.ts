@@ -31,7 +31,26 @@ describe('Validator', () => {
       expect(validator.validate({ nullable: true, type: 'array' }, null, path)).toEqual([]);
     });
 
-    // todo required
+    it('should validate the required condition correctly', () => {
+      // required: false (default)
+      expect(validator.validate({ type: 'array' }, undefined)).toEqual([]);
+      expect(validator.validate({ type: 'array' }, undefined, path)).toEqual([]);
+
+      // required: false
+      expect(validator.validate({ required: false, type: 'array' }, undefined)).toEqual([]);
+      expect(validator.validate({ required: false, type: 'array' }, undefined, path)).toEqual([]);
+
+      // required: true
+      expect(validator.validate({ required: true, type: 'array' }, undefined)).toEqual([
+        { message: 'The value is required', path: '' },
+        { message: 'The value should be array', path: '' },
+      ]);
+      expect(validator.validate({ required: true, type: 'array' }, undefined, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar' },
+        { message: 'The value should be array', path: 'foo.bar' },
+      ]);
+    });
+
     // todo schema
     // todo type
   });
