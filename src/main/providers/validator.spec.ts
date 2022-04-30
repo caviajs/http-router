@@ -1,4 +1,4 @@
-import { ValidationError, Validator } from './validator';
+import { Validator } from './validator';
 import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from '../types/schema';
 
 describe('Validator', () => {
