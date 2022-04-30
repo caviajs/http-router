@@ -141,11 +141,11 @@ export class Validator {
     }
 
     if (schema.hasOwnProperty('max') && (typeof data !== 'number' || data > schema.max)) {
-      errors.push({ message: `The value should be less than ${ schema.max }`, path: path.join('.') });
+      errors.push({ message: `The value should be less than or equal to ${ schema.max }`, path: path.join('.') });
     }
 
     if (schema.hasOwnProperty('min') && (typeof data !== 'number' || data < schema.min)) {
-      errors.push({ message: `The value should be greater than ${ schema.min }`, path: path.join('.') });
+      errors.push({ message: `The value should be greater than or equal to ${ schema.min }`, path: path.join('.') });
     }
 
     return errors;

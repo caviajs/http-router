@@ -76,8 +76,11 @@ describe('Validator', () => {
     it('should return an error if the number is greater than max value', () => {
       const path: string[] = ['foo', 'bar'];
 
-      expect(validator.validate({ max: 10, type: 'number' }, 15)).toEqual([{ message: 'The value should be less than 10', path: '' }]);
-      expect(validator.validate({ max: 10, type: 'number' }, 15, path)).toEqual([{ message: 'The value should be less than 10', path: 'foo.bar' }]);
+      expect(validator.validate({ max: 10, type: 'number' }, 15)).toEqual([{ message: 'The value should be less than or equal to 10', path: '' }]);
+      expect(validator.validate({ max: 10, type: 'number' }, 15, path)).toEqual([{ message: 'The value should be less than or equal to 10', path: 'foo.bar' }]);
+
+      expect(validator.validate({ max: 10, type: 'number' }, 10)).toEqual([]);
+      expect(validator.validate({ max: 10, type: 'number' }, 10, path)).toEqual([]);
 
       expect(validator.validate({ max: 10, type: 'number' }, 5)).toEqual([]);
       expect(validator.validate({ max: 10, type: 'number' }, 5, path)).toEqual([]);
@@ -87,8 +90,11 @@ describe('Validator', () => {
     it('should return an error if the number is less than min value', () => {
       const path: string[] = ['foo', 'bar'];
 
-      expect(validator.validate({ min: 10, type: 'number' }, 5)).toEqual([{ message: 'The value should be greater than 10', path: '' }]);
-      expect(validator.validate({ min: 10, type: 'number' }, 5, path)).toEqual([{ message: 'The value should be greater than 10', path: 'foo.bar' }]);
+      expect(validator.validate({ min: 10, type: 'number' }, 5)).toEqual([{ message: 'The value should be greater than or equal to 10', path: '' }]);
+      expect(validator.validate({ min: 10, type: 'number' }, 5, path)).toEqual([{ message: 'The value should be greater than or equal to 10', path: 'foo.bar' }]);
+
+      expect(validator.validate({ min: 10, type: 'number' }, 10)).toEqual([]);
+      expect(validator.validate({ min: 10, type: 'number' }, 10, path)).toEqual([]);
 
       expect(validator.validate({ min: 10, type: 'number' }, 15)).toEqual([]);
       expect(validator.validate({ min: 10, type: 'number' }, 15, path)).toEqual([]);
