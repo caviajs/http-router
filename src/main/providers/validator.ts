@@ -5,27 +5,23 @@ const DEFAULT_NULLABLE: boolean = false;
 const DEFAULT_REQUIRED: boolean = true;
 const DEFAULT_STRICT: boolean = false;
 
-const MESSAGES = {
-  'required': 'The value is required',
-};
-
 @Injectable()
 export class Validator {
-  public async validate(schema: Schema, data: any, path: string[] = []): Promise<ValidationError[]> {
+  public validate(schema: Schema, data: any, path: string[] = []): ValidationError[] {
     const errors: ValidationError[] = [];
 
     if (this.isSchemaArray(schema)) {
-      errors.push(...await this.validateSchemaArray(schema, data, path));
+      errors.push(...this.validateSchemaArray(schema, data, path));
     } else if (this.isSchemaBoolean(schema)) {
-      errors.push(...await this.validateSchemaBoolean(schema, data, path));
+      errors.push(...this.validateSchemaBoolean(schema, data, path));
     } else if (this.isSchemaEnum(schema)) {
-      errors.push(...await this.validateSchemaEnum(schema, data, path));
+      errors.push(...this.validateSchemaEnum(schema, data, path));
     } else if (this.isSchemaNumber(schema)) {
-      errors.push(...await this.validateSchemaNumber(schema, data, path));
+      errors.push(...this.validateSchemaNumber(schema, data, path));
     } else if (this.isSchemaObject(schema)) {
-      errors.push(...await this.validateSchemaObject(schema, data, path));
+      errors.push(...this.validateSchemaObject(schema, data, path));
     } else if (this.isSchemaString(schema)) {
-      errors.push(...await this.validateSchemaString(schema, data, path));
+      errors.push(...this.validateSchemaString(schema, data, path));
     }
 
     return errors;
@@ -55,7 +51,7 @@ export class Validator {
     return schema?.type === 'string';
   }
 
-  protected async validateSchemaArray(schema: SchemaArray, data: any, path: string[]): Promise<ValidationError[]> {
+  protected validateSchemaArray(schema: SchemaArray, data: any, path: string[]): ValidationError[] {
     const errors: ValidationError[] = [];
 
     if (schema.nullable === true && data === null) {
@@ -68,16 +64,24 @@ export class Validator {
 
     if (Array.isArray(data)) {
       for (const [index, it] of Object.entries(data)) {
-        errors.push(...await this.validate(schema.members, it, [...path, index]));
+        errors.push(...this.validate(schema.schema, it, [...path, index]));
       }
     } else {
       errors.push({ message: `The value should be array`, path: path.join('.') });
     }
 
+    if (schema.hasOwnProperty('maxItems') && (!Array.isArray(data) || data.length > schema.maxItems)) {
+      errors.push({ message: `The value can contain maximum ${ schema.maxItems } items`, path: path.join('.') });
+    }
+
+    if (schema.hasOwnProperty('minItems') && (!Array.isArray(data) || data.length < schema.minItems)) {
+      errors.push({ message: `The value should contain minimum ${ schema.maxItems } items`, path: path.join('.') });
+    }
+
     return errors;
   }
 
-  protected async validateSchemaBoolean(schema: SchemaBoolean, data: any, path: string[]): Promise<ValidationError[]> {
+  protected validateSchemaBoolean(schema: SchemaBoolean, data: any, path: string[]): ValidationError[] {
     const errors: ValidationError[] = [];
 
     if (schema.nullable === true && data === null) {
@@ -95,7 +99,7 @@ export class Validator {
     return errors;
   }
 
-  protected async validateSchemaEnum(schema: SchemaEnum, data: any, path: string[]): Promise<ValidationError[]> {
+  protected validateSchemaEnum(schema: SchemaEnum, data: any, path: string[]): ValidationError[] {
     const errors: ValidationError[] = [];
 
     if (schema.nullable === true && data === null) {
@@ -113,7 +117,7 @@ export class Validator {
     return errors;
   }
 
-  protected async validateSchemaNumber(schema: SchemaNumber, data: any, path: string[]): Promise<ValidationError[]> {
+  protected validateSchemaNumber(schema: SchemaNumber, data: any, path: string[]): ValidationError[] {
     const errors: ValidationError[] = [];
 
     if (schema.nullable === true && data === null) {
@@ -128,10 +132,18 @@ export class Validator {
       errors.push({ message: `The value should be number`, path: path.join('.') });
     }
 
+    if (schema.hasOwnProperty('max') && (typeof data !== 'number' || data > schema.max)) {
+      errors.push({ message: `The value should be less than ${ schema.max }`, path: path.join('.') });
+    }
+
+    if (schema.hasOwnProperty('min') && (typeof data !== 'number' || data < schema.min)) {
+      errors.push({ message: `The value should be greater than ${ schema.min }`, path: path.join('.') });
+    }
+
     return errors;
   }
 
-  protected async validateSchemaObject(schema: SchemaObject, data: any, path: string[]): Promise<ValidationError[]> {
+  protected validateSchemaObject(schema: SchemaObject, data: any, path: string[]): ValidationError[] {
     const errors: ValidationError[] = [];
 
     if (schema.nullable === true && data === null) {
@@ -143,8 +155,8 @@ export class Validator {
     }
 
     if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
-      for (const [memberName, memberSchema] of Object.entries(schema.members || {})) {
-        errors.push(...await this.validate(memberSchema, data[memberName], [...path, memberName]));
+      for (const [propertyName, propertySchema] of Object.entries(schema.properties || {})) {
+        errors.push(...this.validate(propertySchema, data[propertyName], [...path, propertyName]));
       }
     } else {
       errors.push({ message: `The value should be object`, path: path.join('.') });
@@ -153,7 +165,7 @@ export class Validator {
     return errors;
   }
 
-  protected async validateSchemaString(schema: SchemaString, data: any, path: string[]): Promise<ValidationError[]> {
+  protected validateSchemaString(schema: SchemaString, data: any, path: string[]): ValidationError[] {
     const errors: ValidationError[] = [];
 
     if (schema.nullable === true && data === null) {
@@ -166,6 +178,22 @@ export class Validator {
 
     if (typeof data !== 'string') {
       errors.push({ message: `The value should be string`, path: path.join('.') });
+    }
+
+    if (schema.hasOwnProperty('expressions')) {
+      for (const expression of schema.expressions) {
+        if (typeof data !== 'string' || expression.test(data)) {
+          errors.push({ message: `The value should match a regular expression ${ expression }`, path: path.join('.') });
+        }
+      }
+    }
+
+    if (schema.hasOwnProperty('minLength') && (typeof data !== 'string' || data.length < schema.minLength)) {
+      errors.push({ message: `The value must be longer than or equal to ${ schema.minLength } characters`, path: path.join('.') });
+    }
+
+    if (schema.hasOwnProperty('maxLength') && (typeof data !== 'string' || data.length > schema.maxLength)) {
+      errors.push({ message: `The value must be shorter than or equal to ${ schema.maxLength } characters`, path: path.join('.') });
     }
 
     return errors;

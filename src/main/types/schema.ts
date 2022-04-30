@@ -7,9 +7,11 @@ export type Schema =
   | SchemaString;
 
 export type SchemaArray = {
-  members?: Schema;
+  maxItems?: number;
+  minItems?: number;
   nullable?: boolean;
   required?: boolean;
+  schema?: Schema;
   type: 'array';
 }
 
@@ -27,20 +29,25 @@ export type SchemaEnum = {
 }
 
 export type SchemaNumber = {
+  max?: number;
+  min?: number;
   nullable?: boolean;
   required?: boolean;
   type: 'number';
 }
 
 export type SchemaObject = {
-  members?: { [name: string]: Schema; };
+  additionalProperties?: boolean;
   nullable?: boolean;
+  properties?: { [name: string]: Schema; };
   required?: boolean;
-  strict?: boolean;
   type: 'object';
 }
 
 export type SchemaString = {
+  expressions?: RegExp[];
+  maxLength?: number;
+  minLength?: number;
   nullable?: boolean;
   required?: boolean;
   type: 'string';
