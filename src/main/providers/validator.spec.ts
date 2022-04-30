@@ -64,7 +64,54 @@ describe('Validator', () => {
   });
 
   describe('SchemaEnum', () => {
-    // SchemaEnum
+    // SchemaEnum START
+    it('should validate the nullable condition correctly', () => {
+      // nullable: false (default)
+      expect(validator.validate({ enum: ['hello', 'world'], type: 'enum' }, null)).toEqual([
+        { message: 'The value must be one of the following values: hello, world', path: '' },
+      ]);
+      expect(validator.validate({ enum: ['hello', 'world'], type: 'enum' }, null, path)).toEqual([
+        { message: 'The value must be one of the following values: hello, world', path: 'foo.bar' },
+      ]);
+
+      // nullable: false
+      expect(validator.validate({ enum: ['hello', 'world'], nullable: false, type: 'enum' }, null)).toEqual([
+        { message: 'The value must be one of the following values: hello, world', path: '' },
+      ]);
+      expect(validator.validate({ enum: ['hello', 'world'], nullable: false, type: 'enum' }, null, path)).toEqual([
+        { message: 'The value must be one of the following values: hello, world', path: 'foo.bar' },
+      ]);
+
+      // nullable: true
+      expect(validator.validate({ enum: ['hello', 'world'], nullable: true, type: 'enum' }, null)).toEqual([]);
+      expect(validator.validate({ enum: ['hello', 'world'], nullable: true, type: 'enum' }, null, path)).toEqual([]);
+    });
+
+    it('should validate the required condition correctly', () => {
+      // required: false (default)
+      expect(validator.validate({ enum: ['hello', 'world'], type: 'enum' }, undefined)).toEqual([]);
+      expect(validator.validate({ enum: ['hello', 'world'], type: 'enum' }, undefined, path)).toEqual([]);
+
+      // required: false
+      expect(validator.validate({ enum: ['hello', 'world'], required: false, type: 'enum' }, undefined)).toEqual([]);
+      expect(validator.validate({ enum: ['hello', 'world'], required: false, type: 'enum' }, undefined, path)).toEqual([]);
+
+      // required: true
+      expect(validator.validate({ enum: ['hello', 'world'], required: true, type: 'enum' }, undefined)).toEqual([
+        { message: 'The value is required', path: '' },
+        { message: 'The value must be one of the following values: hello, world', path: '' },
+      ]);
+      expect(validator.validate({ enum: ['hello', 'world'], required: true, type: 'enum' }, undefined, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar' },
+        { message: 'The value must be one of the following values: hello, world', path: 'foo.bar' },
+      ]);
+    });
+
+    it('should validate the type condition correctly', () => {
+      // todo
+    });
+
+    // SchemaEnum END
     // 1) nullable
     // 2) required
     // 3) check correct type

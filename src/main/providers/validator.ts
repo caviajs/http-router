@@ -118,8 +118,8 @@ export class Validator {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
-    if (!schema.enum.includes(data)) {
-      errors.push({ message: `The value must be one of ${ schema.enum.join(', ') }`, path: path.join('.') });
+    if (schema.enum.includes(data) === false) {
+      errors.push({ message: `The value must be one of the following values: ${ schema.enum.join(', ') }`, path: path.join('.') });
     }
 
     return errors;
