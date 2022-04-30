@@ -198,48 +198,48 @@ describe('Validator', () => {
 
     it('should validate the type condition correctly', () => {
       // string
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, 'Hello World')).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, 'Hello World')).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, 'Hello World', path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, 'Hello World', path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // number
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, 1245)).toEqual([]);
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, 1245, path)).toEqual([]);
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, 1245)).toEqual([]);
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, 1245, path)).toEqual([]);
 
       // true
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, true)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, true)).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, true, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, true, path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // false
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, false)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, false)).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, false, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, false, path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // undefined
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, undefined)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, undefined)).toEqual([
         { message: 'The value is required', path: '' },
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, undefined, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, undefined, path)).toEqual([
         { message: 'The value is required', path: 'foo.bar' },
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // symbol
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, Symbol('Hello World'))).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, Symbol('Hello World'))).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, Symbol('Hello World'), path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, Symbol('Hello World'), path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
@@ -252,26 +252,26 @@ describe('Validator', () => {
       ]);
 
       // NaN
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, NaN)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, NaN)).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, NaN, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, NaN, path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // array
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, [])).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, [])).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, [], path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, [], path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // object
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, {})).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, {})).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'number' }, {}, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'number' }, {}, path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
     });
@@ -391,48 +391,48 @@ describe('Validator', () => {
 
     it('should validate the type condition correctly', () => {
       // string
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, 'Hello World')).toEqual([]);
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, 'Hello World', path)).toEqual([]);
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, 'Hello World')).toEqual([]);
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, 'Hello World', path)).toEqual([]);
 
       // string
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, 1245)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, 1245)).toEqual([
         { message: 'The value should be string', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, 1245, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, 1245, path)).toEqual([
         { message: 'The value should be string', path: 'foo.bar' },
       ]);
 
       // true
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, true)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, true)).toEqual([
         { message: 'The value should be string', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, true, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, true, path)).toEqual([
         { message: 'The value should be string', path: 'foo.bar' },
       ]);
 
       // false
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, false)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, false)).toEqual([
         { message: 'The value should be string', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, false, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, false, path)).toEqual([
         { message: 'The value should be string', path: 'foo.bar' },
       ]);
 
       // undefined
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, undefined)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, undefined)).toEqual([
         { message: 'The value is required', path: '' },
         { message: 'The value should be string', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, undefined, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, undefined, path)).toEqual([
         { message: 'The value is required', path: 'foo.bar' },
         { message: 'The value should be string', path: 'foo.bar' },
       ]);
 
       // symbol
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, Symbol('Hello World'))).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, Symbol('Hello World'))).toEqual([
         { message: 'The value should be string', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, Symbol('Hello World'), path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, Symbol('Hello World'), path)).toEqual([
         { message: 'The value should be string', path: 'foo.bar' },
       ]);
 
@@ -445,26 +445,26 @@ describe('Validator', () => {
       ]);
 
       // NaN
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, NaN)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, NaN)).toEqual([
         { message: 'The value should be string', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, NaN, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, NaN, path)).toEqual([
         { message: 'The value should be string', path: 'foo.bar' },
       ]);
 
       // array
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, [])).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, [])).toEqual([
         { message: 'The value should be string', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, [], path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, [], path)).toEqual([
         { message: 'The value should be string', path: 'foo.bar' },
       ]);
 
       // object
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, {})).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, {})).toEqual([
         { message: 'The value should be string', path: '' },
       ]);
-      expect(validator.validate({ required: true, nullable: false, type: 'string' }, {}, path)).toEqual([
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, {}, path)).toEqual([
         { message: 'The value should be string', path: 'foo.bar' },
       ]);
     });
