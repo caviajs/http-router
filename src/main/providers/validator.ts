@@ -196,12 +196,12 @@ export class Validator {
       }
     }
 
-    if (schema.hasOwnProperty('minLength') && (typeof data !== 'string' || data.length < schema.minLength)) {
-      errors.push({ message: `The value must be longer than or equal to ${ schema.minLength } characters`, path: path.join('.') });
-    }
-
     if (schema.hasOwnProperty('maxLength') && (typeof data !== 'string' || data.length > schema.maxLength)) {
       errors.push({ message: `The value must be shorter than or equal to ${ schema.maxLength } characters`, path: path.join('.') });
+    }
+
+    if (schema.hasOwnProperty('minLength') && (typeof data !== 'string' || data.length < schema.minLength)) {
+      errors.push({ message: `The value must be longer than or equal to ${ schema.minLength } characters`, path: path.join('.') });
     }
 
     return errors;

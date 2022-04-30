@@ -238,63 +238,166 @@ describe('Validator', () => {
   });
 
   describe('SchemaString', () => {
-    // SchemaString
-    // 1) nullable
-    it('should not return an error if the schema is marked as nullable', () => {
+    it('should validate the expressions condition correctly', () => {
+      // todo
+    });
+
+    it('should validate the maxLength condition correctly', () => {
+      // greater than maxLength
+      expect(validator.validate({ maxLength: 10, type: 'string' }, 'HelloHelloHello')).toEqual([
+        { message: 'The value must be shorter than or equal to 10 characters', path: '' },
+      ]);
+      expect(validator.validate({ maxLength: 10, type: 'string' }, 'HelloHelloHello', path)).toEqual([
+        { message: 'The value must be shorter than or equal to 10 characters', path: 'foo.bar' },
+      ]);
+
+      // equal to maxLength
+      expect(validator.validate({ maxLength: 10, type: 'string' }, 'HelloHello')).toEqual([]);
+      expect(validator.validate({ maxLength: 10, type: 'string' }, 'HelloHello', path)).toEqual([]);
+
+      // shorter than maxLength
+      expect(validator.validate({ maxLength: 10, type: 'string' }, 'Hello')).toEqual([]);
+      expect(validator.validate({ maxLength: 10, type: 'string' }, 'Hello', path)).toEqual([]);
+    });
+
+    it('should validate the minLength condition correctly', () => {
+      // less than minLength
+      expect(validator.validate({ minLength: 10, type: 'string' }, 'Hello')).toEqual([
+        { message: 'The value must be longer than or equal to 10 characters', path: '' },
+      ]);
+      expect(validator.validate({ minLength: 10, type: 'string' }, 'Hello', path)).toEqual([
+        { message: 'The value must be longer than or equal to 10 characters', path: 'foo.bar' },
+      ]);
+
+      // equal to minLength
+      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHello')).toEqual([]);
+      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHello', path)).toEqual([]);
+
+      // longer than minLength
+      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHelloHello')).toEqual([]);
+      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHelloHello', path)).toEqual([]);
+    });
+
+    it('should validate the nullable condition correctly', () => {
+      // nullable: false (default)
+      expect(validator.validate({ type: 'string' }, null)).toEqual([
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ type: 'string' }, null, path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
+
+      // nullable: false
+      expect(validator.validate({ nullable: false, type: 'string' }, null)).toEqual([
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ nullable: false, type: 'string' }, null, path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
+
+      // nullable: true
       expect(validator.validate({ nullable: true, type: 'string' }, null)).toEqual([]);
       expect(validator.validate({ nullable: true, type: 'string' }, null, path)).toEqual([]);
     });
 
-    // 2) required
-    it('should return an error if the schema is marked as required and data is undefined', () => {
-      expect(validator.validate({ required: true, type: 'string' }, undefined)).toEqual([{ message: 'The value is required', path: '' }]);
-      expect(validator.validate({ required: true, type: 'string' }, undefined, path)).toEqual([{ message: 'The value is required', path: 'foo.bar' }]);
+    it('should validate the required condition correctly', () => {
+      // required: false (default)
+      expect(validator.validate({ type: 'string' }, undefined)).toEqual([]);
+      expect(validator.validate({ type: 'string' }, undefined, path)).toEqual([]);
+
+      // required: false
+      expect(validator.validate({ required: false, type: 'string' }, undefined)).toEqual([]);
+      expect(validator.validate({ required: false, type: 'string' }, undefined, path)).toEqual([]);
+
+      // required: true
+      expect(validator.validate({ required: true, type: 'string' }, undefined)).toEqual([
+        { message: 'The value is required', path: '' },
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ required: true, type: 'string' }, undefined, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar' },
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
     });
 
-    // 3) check correct type
-    it('should return an error if the data is not a string', () => {
-      const exampleErrors: ValidationError[] = [{ message: 'The value should be string', path: '' }];
-      const exampleErrorsWithPath: ValidationError[] = [{ message: 'The value should be string', path: 'foo.bar' }];
+    it('should validate the type condition correctly', () => {
+      // string
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, 'Hello World')).toEqual([]);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, 'Hello World', path)).toEqual([]);
 
       // string
-      expect(validator.validate({ type: 'string' }, 'Hello World')).toEqual([]);
-      expect(validator.validate({ type: 'string' }, 'Hello World', path)).toEqual([]);
-
-      // number
-      expect(validator.validate({ type: 'string' }, 1245)).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'string' }, 1245, path)).toEqual(exampleErrorsWithPath);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, 1245)).toEqual([
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, 1245, path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
 
       // true
-      expect(validator.validate({ type: 'string' }, true)).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'string' }, true, path)).toEqual(exampleErrorsWithPath);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, true)).toEqual([
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, true, path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
 
       // false
-      expect(validator.validate({ type: 'string' }, false)).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'string' }, false, path)).toEqual(exampleErrorsWithPath);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, false)).toEqual([
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, false, path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
 
       // undefined
-      expect(validator.validate({ type: 'string' }, undefined)).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'string' }, undefined, path)).toEqual(exampleErrorsWithPath);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, undefined)).toEqual([
+        { message: 'The value is required', path: '' },
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, undefined, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar' },
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
 
-      // Symbol
-      expect(validator.validate({ type: 'string' }, Symbol('Hello World'))).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'string' }, Symbol('Hello World'), path)).toEqual(exampleErrorsWithPath);
+      // symbol
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, Symbol('Hello World'))).toEqual([
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, Symbol('Hello World'), path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
 
       // null
-      expect(validator.validate({ type: 'string' }, null)).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'string' }, null, path)).toEqual(exampleErrorsWithPath);
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, null)).toEqual([
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ nullable: false, required: true, type: 'string' }, null, path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
 
       // NaN
-      expect(validator.validate({ type: 'string' }, NaN)).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'string' }, NaN, path)).toEqual(exampleErrorsWithPath);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, NaN)).toEqual([
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, NaN, path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
 
       // array
-      expect(validator.validate({ type: 'string' }, [])).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'string' }, [], path)).toEqual(exampleErrorsWithPath);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, [])).toEqual([
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, [], path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
 
       // object
-      expect(validator.validate({ type: 'string' }, {})).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'string' }, {}, path)).toEqual(exampleErrorsWithPath);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, {})).toEqual([
+        { message: 'The value should be string', path: '' },
+      ]);
+      expect(validator.validate({ required: true, nullable: false, type: 'string' }, {}, path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar' },
+      ]);
     });
   });
 });
