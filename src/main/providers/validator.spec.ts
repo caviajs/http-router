@@ -113,7 +113,7 @@ describe('Validator', () => {
         { message: 'The value should be boolean', path: 'foo.bar' },
       ]);
 
-      // string
+      // number
       expect(validator.validate(schema, 1245)).toEqual([
         { message: 'The value should be boolean', path: '' },
       ]);
@@ -241,7 +241,7 @@ describe('Validator', () => {
       expect(validator.validate(schema, 'Hello')).toEqual([]);
       expect(validator.validate(schema, 'Hello', path)).toEqual([]);
 
-      // string
+      // number
       expect(validator.validate(schema, 1245)).toEqual([
         { message: 'The value must be one of the following values: Hello, World', path: '' },
       ]);
@@ -606,7 +606,7 @@ describe('Validator', () => {
       expect(validator.validate(schema, 'Hello World')).toEqual([]);
       expect(validator.validate(schema, 'Hello World', path)).toEqual([]);
 
-      // string
+      // number
       expect(validator.validate(schema, 1245)).toEqual([
         { message: 'The value should be string', path: '' },
       ]);
