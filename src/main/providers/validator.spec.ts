@@ -1,5 +1,5 @@
 import { ValidationError, Validator } from './validator';
-import { SchemaEnum, SchemaNumber, SchemaString } from '../types/schema';
+import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from '../types/schema';
 
 describe('Validator', () => {
   const path: string[] = ['foo', 'bar'];
@@ -55,56 +55,92 @@ describe('Validator', () => {
       ]);
     });
 
+    it('should validate the type condition correctly', () => {
+      const schema: SchemaBoolean = {
+        nullable: false,
+        required: true,
+        type: 'boolean',
+      };
+
+      // string
+      expect(validator.validate(schema, 'Hello World')).toEqual([
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate(schema, 'Hello World', path)).toEqual([
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+
+      // string
+      expect(validator.validate(schema, 1245)).toEqual([
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate(schema, 1245, path)).toEqual([
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+
+      // true
+      expect(validator.validate(schema, true)).toEqual([]);
+      expect(validator.validate(schema, true, path)).toEqual([]);
+
+      // false
+      expect(validator.validate(schema, false)).toEqual([]);
+      expect(validator.validate(schema, false, path)).toEqual([]);
+
+      // undefined
+      expect(validator.validate(schema, undefined)).toEqual([
+        { message: 'The value is required', path: '' },
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate(schema, undefined, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar' },
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+
+      // symbol
+      expect(validator.validate(schema, Symbol('Hello World'))).toEqual([
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate(schema, Symbol('Hello World'), path)).toEqual([
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+
+      // null
+      expect(validator.validate(schema, null)).toEqual([
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate(schema, null, path)).toEqual([
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+
+      // NaN
+      expect(validator.validate(schema, NaN)).toEqual([
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate(schema, NaN, path)).toEqual([
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+
+      // array
+      expect(validator.validate(schema, [])).toEqual([
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate(schema, [], path)).toEqual([
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+
+      // object
+      expect(validator.validate(schema, {})).toEqual([
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate(schema, {}, path)).toEqual([
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+    });
 
     // SchemaBoolean END
     // 1) nullable
     // 2) required
     // 3) check correct type
-
-    it('should return an error if the data is not a string', () => {
-      const exampleErrors: ValidationError[] = [{ message: 'The value should be boolean', path: '' }];
-      const exampleErrorsWithPath: ValidationError[] = [{ message: 'The value should be boolean', path: 'foo.bar' }];
-
-      // string
-      expect(validator.validate({ type: 'boolean' }, 'Hello World')).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'boolean' }, 'Hello World', path)).toEqual(exampleErrorsWithPath);
-
-      // number
-      expect(validator.validate({ type: 'boolean' }, 1245)).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'boolean' }, 1245, path)).toEqual(exampleErrorsWithPath);
-
-      // true
-      expect(validator.validate({ type: 'boolean' }, true)).toEqual([]);
-      expect(validator.validate({ type: 'boolean' }, true, path)).toEqual([]);
-
-      // false
-      expect(validator.validate({ type: 'boolean' }, false)).toEqual([]);
-      expect(validator.validate({ type: 'boolean' }, false, path)).toEqual([]);
-
-      // undefined
-      expect(validator.validate({ type: 'boolean' }, undefined)).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'boolean' }, undefined, path)).toEqual(exampleErrorsWithPath);
-
-      // Symbol
-      expect(validator.validate({ type: 'boolean' }, Symbol('Hello World'))).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'boolean' }, Symbol('Hello World'), path)).toEqual(exampleErrorsWithPath);
-
-      // null
-      expect(validator.validate({ type: 'boolean' }, null)).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'boolean' }, null, path)).toEqual(exampleErrorsWithPath);
-
-      // NaN
-      expect(validator.validate({ type: 'boolean' }, NaN)).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'boolean' }, NaN, path)).toEqual(exampleErrorsWithPath);
-
-      // array
-      expect(validator.validate({ type: 'boolean' }, [])).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'boolean' }, [], path)).toEqual(exampleErrorsWithPath);
-
-      // object
-      expect(validator.validate({ type: 'boolean' }, {})).toEqual(exampleErrors);
-      expect(validator.validate({ type: 'boolean' }, {}, path)).toEqual(exampleErrorsWithPath);
-    });
   });
 
   describe('SchemaEnum', () => {
