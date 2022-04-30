@@ -80,11 +80,11 @@ export class CaviaFactory {
     if (options?.schemas?.env) {
       const env = await injector.find(Env);
       const validator = await injector.find(Validator);
-      const validateErrors = await validator.validate(
+      const validateErrors = validator.validate(
         {
-          members: options.schemas.env,
+          additionalProperties: true,
+          properties: options.schemas.env,
           required: true,
-          strict: false,
           type: 'object',
         },
         Object
