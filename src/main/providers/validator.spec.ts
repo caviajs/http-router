@@ -1,20 +1,8 @@
 import { ValidationError, Validator } from './validator';
 
 describe('Validator', () => {
+  const path: string[] = ['foo', 'bar'];
   const validator: Validator = new Validator();
-
-  const examples: any[] = [
-    'Hello World',
-    5,
-    true,
-    false,
-    undefined,
-    Symbol('Hello World'),
-    null,
-    NaN,
-    [],
-    {},
-  ];
 
   describe('SchemaArray', () => {
     // array
@@ -30,8 +18,6 @@ describe('Validator', () => {
     // 3) check correct type
 
     it('should return an error if the data is not a string', () => {
-      const path: string[] = ['foo', 'bar'];
-
       const exampleErrors: ValidationError[] = [{ message: 'The value should be boolean', path: '' }];
       const exampleErrorsWithPath: ValidationError[] = [{ message: 'The value should be boolean', path: 'foo.bar' }];
 
@@ -86,8 +72,6 @@ describe('Validator', () => {
 
   describe('SchemaNumber', () => {
     it('should validate the max condition correctly', () => {
-      const path: string[] = ['foo', 'bar'];
-
       // greater than max
       expect(validator.validate({ max: 10, type: 'number' }, 15)).toEqual([
         { message: 'The value should be less than or equal to 10', path: '' },
@@ -106,8 +90,6 @@ describe('Validator', () => {
     });
 
     it('should validate the min condition correctly', () => {
-      const path: string[] = ['foo', 'bar'];
-
       // less than min
       expect(validator.validate({ min: 10, type: 'number' }, 5)).toEqual([
         { message: 'The value should be greater than or equal to 10', path: '' },
@@ -126,8 +108,6 @@ describe('Validator', () => {
     });
 
     it('should validate the nullable condition correctly', () => {
-      const path: string[] = ['foo', 'bar'];
-
       // nullable: false (default)
       expect(validator.validate({ type: 'number' }, null)).toEqual([
         { message: 'The value should be number', path: '' },
@@ -150,8 +130,6 @@ describe('Validator', () => {
     });
 
     it('should validate the required condition correctly', () => {
-      const path: string[] = ['foo', 'bar'];
-
       // required: false (default)
       expect(validator.validate({ type: 'number' }, undefined)).toEqual([]);
       expect(validator.validate({ type: 'number' }, undefined, path)).toEqual([]);
@@ -172,8 +150,6 @@ describe('Validator', () => {
     });
 
     it('should validate the type condition correctly', () => {
-      const path: string[] = ['foo', 'bar'];
-
       // string
       expect(validator.validate({ required: true, nullable: false, type: 'number' }, 'Hello World')).toEqual([
         { message: 'The value should be number', path: '' },
@@ -265,24 +241,18 @@ describe('Validator', () => {
     // SchemaString
     // 1) nullable
     it('should not return an error if the schema is marked as nullable', () => {
-      const path: string[] = ['foo', 'bar'];
-
       expect(validator.validate({ nullable: true, type: 'string' }, null)).toEqual([]);
       expect(validator.validate({ nullable: true, type: 'string' }, null, path)).toEqual([]);
     });
 
     // 2) required
     it('should return an error if the schema is marked as required and data is undefined', () => {
-      const path: string[] = ['foo', 'bar'];
-
       expect(validator.validate({ required: true, type: 'string' }, undefined)).toEqual([{ message: 'The value is required', path: '' }]);
       expect(validator.validate({ required: true, type: 'string' }, undefined, path)).toEqual([{ message: 'The value is required', path: 'foo.bar' }]);
     });
 
     // 3) check correct type
     it('should return an error if the data is not a string', () => {
-      const path: string[] = ['foo', 'bar'];
-
       const exampleErrors: ValidationError[] = [{ message: 'The value should be string', path: '' }];
       const exampleErrorsWithPath: ValidationError[] = [{ message: 'The value should be string', path: 'foo.bar' }];
 
