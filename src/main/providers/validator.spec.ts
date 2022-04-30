@@ -1,5 +1,5 @@
 import { ValidationError, Validator } from './validator';
-import { SchemaEnum, SchemaString } from '../types/schema';
+import { SchemaEnum, SchemaNumber, SchemaString } from '../types/schema';
 
 describe('Validator', () => {
   const path: string[] = ['foo', 'bar'];
@@ -281,81 +281,87 @@ describe('Validator', () => {
     });
 
     it('should validate the type condition correctly', () => {
+      const schema: SchemaNumber = {
+        nullable: false,
+        required: true,
+        type: 'number',
+      };
+
       // string
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, 'Hello World')).toEqual([
+      expect(validator.validate(schema, 'Hello World')).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, 'Hello World', path)).toEqual([
+      expect(validator.validate(schema, 'Hello World', path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // number
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, 1245)).toEqual([]);
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, 1245, path)).toEqual([]);
+      expect(validator.validate(schema, 1245)).toEqual([]);
+      expect(validator.validate(schema, 1245, path)).toEqual([]);
 
       // true
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, true)).toEqual([
+      expect(validator.validate(schema, true)).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, true, path)).toEqual([
+      expect(validator.validate(schema, true, path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // false
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, false)).toEqual([
+      expect(validator.validate(schema, false)).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, false, path)).toEqual([
+      expect(validator.validate(schema, false, path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // undefined
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, undefined)).toEqual([
+      expect(validator.validate(schema, undefined)).toEqual([
         { message: 'The value is required', path: '' },
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, undefined, path)).toEqual([
+      expect(validator.validate(schema, undefined, path)).toEqual([
         { message: 'The value is required', path: 'foo.bar' },
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // symbol
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, Symbol('Hello World'))).toEqual([
+      expect(validator.validate(schema, Symbol('Hello World'))).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, Symbol('Hello World'), path)).toEqual([
+      expect(validator.validate(schema, Symbol('Hello World'), path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // null
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, null)).toEqual([
+      expect(validator.validate(schema, null)).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, null, path)).toEqual([
+      expect(validator.validate(schema, null, path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // NaN
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, NaN)).toEqual([
+      expect(validator.validate(schema, NaN)).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, NaN, path)).toEqual([
+      expect(validator.validate(schema, NaN, path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // array
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, [])).toEqual([
+      expect(validator.validate(schema, [])).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, [], path)).toEqual([
+      expect(validator.validate(schema, [], path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
 
       // object
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, {})).toEqual([
+      expect(validator.validate(schema, {})).toEqual([
         { message: 'The value should be number', path: '' },
       ]);
-      expect(validator.validate({ nullable: false, required: true, type: 'number' }, {}, path)).toEqual([
+      expect(validator.validate(schema, {}, path)).toEqual([
         { message: 'The value should be number', path: 'foo.bar' },
       ]);
     });
