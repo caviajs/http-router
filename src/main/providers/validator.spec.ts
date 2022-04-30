@@ -6,10 +6,34 @@ describe('Validator', () => {
   const validator: Validator = new Validator();
 
   describe('SchemaArray', () => {
-    // array
-    // 1) nullable
-    // 2) required
-    // 3) check correct type
+    // todo maxItems
+    // todo minItems
+
+    it('should validate the nullable condition correctly', () => {
+      // nullable: false (default)
+      expect(validator.validate({ type: 'array' }, null)).toEqual([
+        { message: 'The value should be array', path: '' },
+      ]);
+      expect(validator.validate({ type: 'array' }, null, path)).toEqual([
+        { message: 'The value should be array', path: 'foo.bar' },
+      ]);
+
+      // nullable: false
+      expect(validator.validate({ nullable: false, type: 'array' }, null)).toEqual([
+        { message: 'The value should be array', path: '' },
+      ]);
+      expect(validator.validate({ nullable: false, type: 'array' }, null, path)).toEqual([
+        { message: 'The value should be array', path: 'foo.bar' },
+      ]);
+
+      // nullable: true
+      expect(validator.validate({ nullable: true, type: 'array' }, null)).toEqual([]);
+      expect(validator.validate({ nullable: true, type: 'array' }, null, path)).toEqual([]);
+    });
+
+    // todo required
+    // todo schema
+    // todo type
   });
 
   describe('SchemaBoolean', () => {
