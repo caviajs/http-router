@@ -450,6 +450,14 @@ describe('Validator', () => {
     });
 
     it('should validate the min condition correctly', () => {
+      // greater than min
+      expect(validator.validate({ min: 10, type: 'number' }, 15)).toEqual([]);
+      expect(validator.validate({ min: 10, type: 'number' }, 15, path)).toEqual([]);
+
+      // equal to min
+      expect(validator.validate({ min: 10, type: 'number' }, 10)).toEqual([]);
+      expect(validator.validate({ min: 10, type: 'number' }, 10, path)).toEqual([]);
+
       // less than min
       expect(validator.validate({ min: 10, type: 'number' }, 5)).toEqual([
         { message: 'The value should be greater than or equal to 10', path: '' },
@@ -457,14 +465,6 @@ describe('Validator', () => {
       expect(validator.validate({ min: 10, type: 'number' }, 5, path)).toEqual([
         { message: 'The value should be greater than or equal to 10', path: 'foo.bar' },
       ]);
-
-      // equal to min
-      expect(validator.validate({ min: 10, type: 'number' }, 10)).toEqual([]);
-      expect(validator.validate({ min: 10, type: 'number' }, 10, path)).toEqual([]);
-
-      // greater than min
-      expect(validator.validate({ min: 10, type: 'number' }, 15)).toEqual([]);
-      expect(validator.validate({ min: 10, type: 'number' }, 15, path)).toEqual([]);
     });
 
     it('should validate the nullable condition correctly', () => {
