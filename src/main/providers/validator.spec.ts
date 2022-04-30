@@ -631,7 +631,7 @@ describe('Validator', () => {
     });
 
     it('should validate the maxLength condition correctly', () => {
-      // greater than maxLength
+      // longer than maxLength
       expect(validator.validate({ maxLength: 10, type: 'string' }, 'HelloHelloHello')).toEqual([
         { message: 'The value must be shorter than or equal to 10 characters', path: '' },
       ]);
@@ -649,21 +649,21 @@ describe('Validator', () => {
     });
 
     it('should validate the minLength condition correctly', () => {
-      // less than minLength
+      // longer than minLength
+      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHelloHello')).toEqual([]);
+      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHelloHello', path)).toEqual([]);
+
+      // equal to minLength
+      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHello')).toEqual([]);
+      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHello', path)).toEqual([]);
+
+      // shorter than minLength
       expect(validator.validate({ minLength: 10, type: 'string' }, 'Hello')).toEqual([
         { message: 'The value must be longer than or equal to 10 characters', path: '' },
       ]);
       expect(validator.validate({ minLength: 10, type: 'string' }, 'Hello', path)).toEqual([
         { message: 'The value must be longer than or equal to 10 characters', path: 'foo.bar' },
       ]);
-
-      // equal to minLength
-      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHello')).toEqual([]);
-      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHello', path)).toEqual([]);
-
-      // longer than minLength
-      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHelloHello')).toEqual([]);
-      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHelloHello', path)).toEqual([]);
     });
 
     it('should validate the nullable condition correctly', () => {
