@@ -264,11 +264,6 @@ describe('Validator', () => {
         { message: 'The value should be boolean', path: 'foo.bar' },
       ]);
     });
-
-    // SchemaBoolean END
-    // 1) nullable
-    // 2) required
-    // 3) check correct type
   });
 
   describe('SchemaEnum', () => {
