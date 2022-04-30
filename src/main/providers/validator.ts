@@ -83,7 +83,7 @@ export class Validator {
     }
 
     if (schema.hasOwnProperty('minItems') && (!Array.isArray(data) || data.length < schema.minItems)) {
-      errors.push({ message: `The value should contain minimum ${ schema.maxItems } items`, path: path.join('.') });
+      errors.push({ message: `The value should contain minimum ${ schema.minItems } items`, path: path.join('.') });
     }
 
     return errors;

@@ -6,8 +6,41 @@ describe('Validator', () => {
   const validator: Validator = new Validator();
 
   describe('SchemaArray', () => {
-    // todo maxItems
-    // todo minItems
+    it('should validate the maxItems condition correctly', () => {
+      // greater than maxLength
+      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello', 'Hello', 'Hello'])).toEqual([
+        { message: 'The value can contain maximum 2 items', path: '' },
+      ]);
+      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello', 'Hello', 'Hello'], path)).toEqual([
+        { message: 'The value can contain maximum 2 items', path: 'foo.bar' },
+      ]);
+
+      // equal to maxLength
+      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello', 'Hello'])).toEqual([]);
+      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello', 'Hello'], path)).toEqual([]);
+
+      // less than maxLength
+      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello'])).toEqual([]);
+      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello'], path)).toEqual([]);
+    });
+
+    it('should validate the minItems condition correctly', () => {
+      // greater than minItems
+      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello', 'Hello', 'Hello'])).toEqual([]);
+      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello', 'Hello', 'Hello'], path)).toEqual([]);
+
+      // equal to minItems
+      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello', 'Hello'])).toEqual([]);
+      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello', 'Hello'], path)).toEqual([]);
+
+      // less than minItems
+      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello'])).toEqual([
+        { message: 'The value should contain minimum 2 items', path: '' },
+      ]);
+      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello'], path)).toEqual([
+        { message: 'The value should contain minimum 2 items', path: 'foo.bar' },
+      ]);
+    });
 
     it('should validate the nullable condition correctly', () => {
       // nullable: false (default)
