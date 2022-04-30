@@ -1,9 +1,9 @@
 import { Injectable } from '../decorators/injectable';
 import { Schema, SchemaArray, SchemaBoolean, SchemaEnum, SchemaNumber, SchemaObject, SchemaString } from '../types/schema';
 
+const DEFAULT_ADDITIONAL_PROPERTIES: boolean = true;
 const DEFAULT_NULLABLE: boolean = false;
-const DEFAULT_REQUIRED: boolean = true;
-const DEFAULT_STRICT: boolean = false;
+const DEFAULT_REQUIRED: boolean = false;
 
 @Injectable()
 export class Validator {
@@ -25,6 +25,14 @@ export class Validator {
     }
 
     return errors;
+  }
+
+  protected isNullable(schema: Schema): boolean {
+    return schema.hasOwnProperty('nullable') ? schema.nullable : DEFAULT_NULLABLE;
+  }
+
+  protected isRequired(schema: Schema): boolean {
+    return schema.hasOwnProperty('required') ? schema.required : DEFAULT_REQUIRED;
   }
 
   protected isSchemaArray(schema: any): schema is SchemaArray {
@@ -52,13 +60,13 @@ export class Validator {
   }
 
   protected validateSchemaArray(schema: SchemaArray, data: any, path: string[]): ValidationError[] {
-    const errors: ValidationError[] = [];
-
-    if (schema.nullable === true && data === null) {
-      return errors;
+    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+      return [];
     }
 
-    if (schema.required === true && data === undefined) {
+    const errors: ValidationError[] = [];
+
+    if (this.isRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
@@ -82,13 +90,13 @@ export class Validator {
   }
 
   protected validateSchemaBoolean(schema: SchemaBoolean, data: any, path: string[]): ValidationError[] {
-    const errors: ValidationError[] = [];
-
-    if (schema.nullable === true && data === null) {
-      return errors;
+    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+      return [];
     }
 
-    if (schema.required === true && data === undefined) {
+    const errors: ValidationError[] = [];
+
+    if (this.isRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
@@ -100,13 +108,13 @@ export class Validator {
   }
 
   protected validateSchemaEnum(schema: SchemaEnum, data: any, path: string[]): ValidationError[] {
-    const errors: ValidationError[] = [];
-
-    if (schema.nullable === true && data === null) {
-      return errors;
+    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+      return [];
     }
 
-    if (schema.required === true && data === undefined) {
+    const errors: ValidationError[] = [];
+
+    if (this.isRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
@@ -118,13 +126,13 @@ export class Validator {
   }
 
   protected validateSchemaNumber(schema: SchemaNumber, data: any, path: string[]): ValidationError[] {
-    const errors: ValidationError[] = [];
-
-    if (schema.nullable === true && data === null) {
-      return errors;
+    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+      return [];
     }
 
-    if (schema.required === true && data === undefined) {
+    const errors: ValidationError[] = [];
+
+    if (this.isRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
@@ -144,14 +152,14 @@ export class Validator {
   }
 
   protected validateSchemaObject(schema: SchemaObject, data: any, path: string[]): ValidationError[] {
-    const errors: ValidationError[] = [];
-
-    if (schema.nullable === true && data === null) {
-      return errors;
+    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+      return [];
     }
 
-    if (schema.required === true && data === undefined) {
-      errors.push({ message: `The value is required at`, path: path.join('.') });
+    const errors: ValidationError[] = [];
+
+    if (this.isRequired(schema) === true && data === undefined) {
+      errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
     if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
@@ -166,13 +174,13 @@ export class Validator {
   }
 
   protected validateSchemaString(schema: SchemaString, data: any, path: string[]): ValidationError[] {
-    const errors: ValidationError[] = [];
-
-    if (schema.nullable === true && data === null) {
-      return errors;
+    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+      return [];
     }
 
-    if (schema.required === true && data === undefined) {
+    const errors: ValidationError[] = [];
+
+    if (this.isRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
