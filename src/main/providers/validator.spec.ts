@@ -13,7 +13,50 @@ describe('Validator', () => {
   });
 
   describe('SchemaBoolean', () => {
-    // SchemaBoolean
+    it('should validate the nullable condition correctly', () => {
+      // nullable: false (default)
+      expect(validator.validate({ type: 'boolean' }, null)).toEqual([
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate({ type: 'boolean' }, null, path)).toEqual([
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+
+      // nullable: false
+      expect(validator.validate({ nullable: false, type: 'boolean' }, null)).toEqual([
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate({ nullable: false, type: 'boolean' }, null, path)).toEqual([
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+
+      // nullable: true
+      expect(validator.validate({ nullable: true, type: 'boolean' }, null)).toEqual([]);
+      expect(validator.validate({ nullable: true, type: 'boolean' }, null, path)).toEqual([]);
+    });
+
+    it('should validate the required condition correctly', () => {
+      // required: false (default)
+      expect(validator.validate({ type: 'boolean' }, undefined)).toEqual([]);
+      expect(validator.validate({ type: 'boolean' }, undefined, path)).toEqual([]);
+
+      // required: false
+      expect(validator.validate({ required: false, type: 'boolean' }, undefined)).toEqual([]);
+      expect(validator.validate({ required: false, type: 'boolean' }, undefined, path)).toEqual([]);
+
+      // required: true
+      expect(validator.validate({ required: true, type: 'boolean' }, undefined)).toEqual([
+        { message: 'The value is required', path: '' },
+        { message: 'The value should be boolean', path: '' },
+      ]);
+      expect(validator.validate({ required: true, type: 'boolean' }, undefined, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar' },
+        { message: 'The value should be boolean', path: 'foo.bar' },
+      ]);
+    });
+
+
+    // SchemaBoolean END
     // 1) nullable
     // 2) required
     // 3) check correct type
