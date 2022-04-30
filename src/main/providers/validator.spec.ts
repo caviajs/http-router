@@ -239,7 +239,29 @@ describe('Validator', () => {
 
   describe('SchemaString', () => {
     it('should validate the expressions condition correctly', () => {
-      // todo
+      const firstLetterUppercase = /^[A-Z]/;
+      const lastLetterUppercase = /[A-Z]$/;
+
+      // valid
+      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'FoO')).toEqual([]);
+      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'FoO', path)).toEqual([]);
+
+      // invalid
+      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'Foo')).toEqual([
+        { message: 'The value should match a regular expression /[A-Z]$/', path: '' },
+      ]);
+      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'Foo', path)).toEqual([
+        { message: 'The value should match a regular expression /[A-Z]$/', path: 'foo.bar' },
+      ]);
+
+      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'foo')).toEqual([
+        { message: 'The value should match a regular expression /^[A-Z]/', path: '' },
+        { message: 'The value should match a regular expression /[A-Z]$/', path: '' },
+      ]);
+      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'foo', path)).toEqual([
+        { message: 'The value should match a regular expression /^[A-Z]/', path: 'foo.bar' },
+        { message: 'The value should match a regular expression /[A-Z]$/', path: 'foo.bar' },
+      ]);
     });
 
     it('should validate the maxLength condition correctly', () => {

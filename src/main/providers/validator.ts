@@ -190,7 +190,7 @@ export class Validator {
 
     if (schema.hasOwnProperty('expressions')) {
       for (const expression of schema.expressions) {
-        if (typeof data !== 'string' || expression.test(data)) {
+        if (typeof data !== 'string' || expression.test(data) === false) {
           errors.push({ message: `The value should match a regular expression ${ expression }`, path: path.join('.') });
         }
       }
