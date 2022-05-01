@@ -407,8 +407,12 @@ describe('Validator', () => {
       };
 
       // string
-      expect(validator.validate(schema, 'Hello')).toEqual([]);
-      expect(validator.validate(schema, 'Hello', path)).toEqual([]);
+      expect(validator.validate(schema, 'Hello World')).toEqual([
+        { message: 'The value must be one of the following values: Hello, World', path: '' },
+      ]);
+      expect(validator.validate(schema, 'Hello World', path)).toEqual([
+        { message: 'The value must be one of the following values: Hello, World', path: 'foo.bar' },
+      ]);
 
       // number
       expect(validator.validate(schema, 1245)).toEqual([
