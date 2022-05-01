@@ -667,7 +667,103 @@ describe('Validator', () => {
   });
 
   describe('SchemaObject', () => {
-    // todo additionalProperties
+    it('should validate the additionalProperties condition correctly', () => {
+      // additionalProperties: true (default)
+      {
+        const schema: SchemaObject = {
+          type: 'object',
+        };
+
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' })).toEqual([]);
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' }, path)).toEqual([]);
+      }
+
+      {
+        const schema: SchemaObject = {
+          properties: {
+            foo: { type: 'string' },
+          },
+          type: 'object',
+        };
+
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' })).toEqual([]);
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' }, path)).toEqual([]);
+      }
+
+      // additionalProperties: true
+      {
+        const schema: SchemaObject = {
+          additionalProperties: true,
+          type: 'object',
+        };
+
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' })).toEqual([]);
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' }, path)).toEqual([]);
+      }
+
+      {
+        const schema: SchemaObject = {
+          additionalProperties: true,
+          properties: {
+            foo: { type: 'string' },
+          },
+          type: 'object',
+        };
+
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' })).toEqual([]);
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' }, path)).toEqual([]);
+      }
+
+      // additionalProperties: false
+      {
+        const schema: SchemaObject = {
+          additionalProperties: false,
+          type: 'object',
+        };
+
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' })).toEqual([
+          { message: 'The following property is not allowed: foo', path: '' },
+          { message: 'The following property is not allowed: bar', path: '' },
+        ]);
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' }, path)).toEqual([
+          { message: 'The following property is not allowed: foo', path: 'foo.bar' },
+          { message: 'The following property is not allowed: bar', path: 'foo.bar' },
+        ]);
+
+        expect(validator.validate(schema, {})).toEqual([]);
+        expect(validator.validate(schema, {}, path)).toEqual([]);
+      }
+
+      {
+        const schema: SchemaObject = {
+          additionalProperties: false,
+          properties: {
+            foo: { type: 'string' },
+            bar: { type: 'string' },
+          },
+          type: 'object',
+        };
+
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello', baz: 'hello', bax: 'hello' })).toEqual([
+          { message: 'The following property is not allowed: baz', path: '' },
+          { message: 'The following property is not allowed: bax', path: '' },
+        ]);
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello', baz: 'hello', bax: 'hello' }, path)).toEqual([
+          { message: 'The following property is not allowed: baz', path: 'foo.bar' },
+          { message: 'The following property is not allowed: bax', path: 'foo.bar' },
+        ]);
+
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello', baz: 'hello' })).toEqual([
+          { message: 'The following property is not allowed: baz', path: '' },
+        ]);
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello', baz: 'hello' }, path)).toEqual([
+          { message: 'The following property is not allowed: baz', path: 'foo.bar' },
+        ]);
+
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' })).toEqual([]);
+        expect(validator.validate(schema, { foo: 'hello', bar: 'hello' }, path)).toEqual([]);
+      }
+    });
 
     it('should validate the nullable condition correctly', () => {
       // nullable: false (default)

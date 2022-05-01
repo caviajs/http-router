@@ -27,6 +27,10 @@ export class Validator {
     return errors;
   }
 
+  protected isAdditionalProperties(schema: SchemaObject): boolean {
+    return schema.hasOwnProperty('additionalProperties') ? schema.additionalProperties : DEFAULT_ADDITIONAL_PROPERTIES;
+  }
+
   protected isNullable(schema: Schema): boolean {
     return schema.hasOwnProperty('nullable') ? schema.nullable : DEFAULT_NULLABLE;
   }
@@ -164,7 +168,15 @@ export class Validator {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
-    if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+    if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
+      if (this.isAdditionalProperties(schema) === false) {
+        for (const propertyName of Object.keys(data)) {
+          if ((schema.properties || {}).hasOwnProperty(propertyName) === false) {
+            errors.push({ message: `The following property is not allowed: ${ propertyName }`, path: path.join('.') });
+          }
+        }
+      }
+    } else {
       errors.push({ message: `The value should be object`, path: path.join('.') });
     }
 
