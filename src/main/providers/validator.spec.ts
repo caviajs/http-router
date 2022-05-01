@@ -692,7 +692,66 @@ describe('Validator', () => {
     });
 
     it('should validate the properties condition correctly', () => {
-      // todo
+      const schema: SchemaObject = {
+        nullable: false,
+        properties: {
+          name: {
+            required: true,
+            type: 'string',
+          },
+          age: {
+            type: 'number',
+          },
+        },
+        required: true,
+        type: 'object',
+      };
+
+      expect(validator.validate(schema, undefined)).toEqual([
+        { message: 'The value is required', path: '' },
+        { message: 'The value should be object', path: '' },
+        { message: 'The value is required', path: 'name' },
+        { message: 'The value should be string', path: 'name' },
+      ]);
+      expect(validator.validate(schema, undefined, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar' },
+        { message: 'The value should be object', path: 'foo.bar' },
+        { message: 'The value is required', path: 'foo.bar.name' },
+        { message: 'The value should be string', path: 'foo.bar.name' },
+      ]);
+
+      expect(validator.validate(schema, {})).toEqual([
+        { message: 'The value is required', path: 'name' },
+        { message: 'The value should be string', path: 'name' },
+      ]);
+      expect(validator.validate(schema, {}, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar.name' },
+        { message: 'The value should be string', path: 'foo.bar.name' },
+      ]);
+
+      expect(validator.validate(schema, { age: '1245' })).toEqual([
+        { message: 'The value is required', path: 'name' },
+        { message: 'The value should be string', path: 'name' },
+        { message: 'The value should be number', path: 'age' },
+      ]);
+      expect(validator.validate(schema, { age: '1245' }, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar.name' },
+        { message: 'The value should be string', path: 'foo.bar.name' },
+        { message: 'The value should be number', path: 'foo.bar.age' },
+      ]);
+
+      expect(validator.validate(schema, { name: 'Hello', age: '1245' })).toEqual([
+        { message: 'The value should be number', path: 'age' },
+      ]);
+      expect(validator.validate(schema, { name: 'Hello', age: '1245' }, path)).toEqual([
+        { message: 'The value should be number', path: 'foo.bar.age' },
+      ]);
+
+      expect(validator.validate(schema, { name: 'Hello', age: 1245 })).toEqual([]);
+      expect(validator.validate(schema, { name: 'Hello', age: 1245 }, path)).toEqual([]);
+
+      expect(validator.validate(schema, { name: 'Hello' })).toEqual([]);
+      expect(validator.validate(schema, { name: 'Hello' }, path)).toEqual([]);
     });
 
     it('should validate the required condition correctly', () => {

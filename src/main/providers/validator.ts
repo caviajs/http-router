@@ -164,12 +164,12 @@ export class Validator {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
-    if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
-      for (const [propertyName, propertySchema] of Object.entries(schema.properties || {})) {
-        errors.push(...this.validate(propertySchema, data[propertyName], [...path, propertyName]));
-      }
-    } else {
+    if (typeof data !== 'object' || data === null || Array.isArray(data)) {
       errors.push({ message: `The value should be object`, path: path.join('.') });
+    }
+
+    for (const [propertyName, propertySchema] of Object.entries(schema.properties || {})) {
+      errors.push(...this.validate(propertySchema, data?.[propertyName], [...path, propertyName]));
     }
 
     return errors;
