@@ -1,5 +1,5 @@
 import { Validator } from './validator';
-import { SchemaArray, SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from '../types/schema';
+import { SchemaArray, SchemaBoolean, SchemaEnum, SchemaNumber, SchemaObject, SchemaString } from '../types/schema';
 
 describe('Validator', () => {
   const path: string[] = ['foo', 'bar'];
@@ -611,6 +611,92 @@ describe('Validator', () => {
   });
 
   describe('SchemaObject', () => {
+    it('should validate the type condition correctly', () => {
+      const schema: SchemaObject = {
+        nullable: false,
+        required: true,
+        type: 'object',
+      };
+
+      // string
+      expect(validator.validate(schema, 'Hello World')).toEqual([
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate(schema, 'Hello World', path)).toEqual([
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // number
+      expect(validator.validate(schema, 1245)).toEqual([
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate(schema, 1245, path)).toEqual([
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // true
+      expect(validator.validate(schema, true)).toEqual([
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate(schema, true, path)).toEqual([
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // false
+      expect(validator.validate(schema, false)).toEqual([
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate(schema, false, path)).toEqual([
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // undefined
+      expect(validator.validate(schema, undefined)).toEqual([
+        { message: 'The value is required', path: '' },
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate(schema, undefined, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar' },
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // symbol
+      expect(validator.validate(schema, Symbol('Hello World'))).toEqual([
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate(schema, Symbol('Hello World'), path)).toEqual([
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // null
+      expect(validator.validate(schema, null)).toEqual([
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate(schema, null, path)).toEqual([
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // NaN
+      expect(validator.validate(schema, NaN)).toEqual([
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate(schema, NaN, path)).toEqual([
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // array
+      expect(validator.validate(schema, [])).toEqual([
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate(schema, [], path)).toEqual([
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // object
+      expect(validator.validate(schema, {})).toEqual([]);
+      expect(validator.validate(schema, {}, path)).toEqual([]);
+    });
+
     // object
     // 1) nullable
     // 2) required
