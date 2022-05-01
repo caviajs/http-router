@@ -35,31 +35,31 @@ async function generate(options: { template: string, path: string }): Promise<vo
 yargs
   .command({
     command: 'make:endpoint <path>',
-    describe: 'Generate endpoint component',
+    describe: 'generate endpoint',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'endpoint', path: args.path as string }),
   })
   .command({
     command: 'make:exception <path>',
-    describe: 'Generate exception component',
+    describe: 'generate exception',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'exception', path: args.path as string }),
   })
   .command({
     command: 'make:interceptor <path>',
-    describe: 'Generate interceptor component',
+    describe: 'generate interceptor',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'interceptor', path: args.path as string }),
   })
   .command({
     command: 'make:provider <path>',
-    describe: 'Generate provider component',
+    describe: 'generate provider',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'provider', path: args.path as string }),
   })
   .command({
     command: 'make:worker <path>',
-    describe: 'Generate worker component',
+    describe: 'generate worker',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'worker', path: args.path as string }),
   })
