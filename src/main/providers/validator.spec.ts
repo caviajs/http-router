@@ -84,7 +84,21 @@ describe('Validator', () => {
       ]);
     });
 
-    // todo schema
+    it('should validate the schema condition correctly', () => {
+      // valid
+      expect(validator.validate({ schema: { type: 'string' }, type: 'array' }, ['Hello', 'World'])).toEqual([]);
+      expect(validator.validate({ schema: { type: 'string' }, type: 'array' }, ['Hello', 'World'], path)).toEqual([]);
+
+      // invalid
+      expect(validator.validate({ schema: { type: 'string' }, type: 'array' }, ['Hello', 12, 'World', 45])).toEqual([
+        { message: 'The value should be string', path: '1' },
+        { message: 'The value should be string', path: '3' },
+      ]);
+      expect(validator.validate({ schema: { type: 'string' }, type: 'array' }, ['Hello', 12, 'World', 45], path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar.1' },
+        { message: 'The value should be string', path: 'foo.bar.3' },
+      ]);
+    });
 
     it('should validate the type condition correctly', () => {
       const schema: SchemaArray = {
