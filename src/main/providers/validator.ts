@@ -71,8 +71,10 @@ export class Validator {
     }
 
     if (Array.isArray(data)) {
-      for (const [index, it] of Object.entries(data)) {
-        errors.push(...this.validate(schema.schema, it, [...path, index]));
+      if (schema.items) {
+        for (const [index, it] of Object.entries(data)) {
+          errors.push(...this.validate(schema.items, it, [...path, index]));
+        }
       }
     } else {
       errors.push({ message: `The value should be array`, path: path.join('.') });

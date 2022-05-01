@@ -7,11 +7,11 @@ export type Schema =
   | SchemaString;
 
 export type SchemaArray = {
+  items?: Schema;
   maxItems?: number;
   minItems?: number;
   nullable?: boolean;
   required?: boolean;
-  schema?: Schema;
   type: 'array';
 }
 

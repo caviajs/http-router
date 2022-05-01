@@ -6,6 +6,22 @@ describe('Validator', () => {
   const validator: Validator = new Validator();
 
   describe('SchemaArray', () => {
+    it('should validate the items condition correctly', () => {
+      // valid
+      expect(validator.validate({ items: { type: 'string' }, type: 'array' }, ['Hello', 'World'])).toEqual([]);
+      expect(validator.validate({ items: { type: 'string' }, type: 'array' }, ['Hello', 'World'], path)).toEqual([]);
+
+      // invalid
+      expect(validator.validate({ items: { type: 'string' }, type: 'array' }, ['Hello', 12, 'World', 45])).toEqual([
+        { message: 'The value should be string', path: '1' },
+        { message: 'The value should be string', path: '3' },
+      ]);
+      expect(validator.validate({ items: { type: 'string' }, type: 'array' }, ['Hello', 12, 'World', 45], path)).toEqual([
+        { message: 'The value should be string', path: 'foo.bar.1' },
+        { message: 'The value should be string', path: 'foo.bar.3' },
+      ]);
+    });
+
     it('should validate the maxItems condition correctly', () => {
       // greater than maxLength
       expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello', 'Hello', 'Hello'])).toEqual([
@@ -81,22 +97,6 @@ describe('Validator', () => {
       expect(validator.validate({ required: true, type: 'array' }, undefined, path)).toEqual([
         { message: 'The value is required', path: 'foo.bar' },
         { message: 'The value should be array', path: 'foo.bar' },
-      ]);
-    });
-
-    it('should validate the schema condition correctly', () => {
-      // valid
-      expect(validator.validate({ schema: { type: 'string' }, type: 'array' }, ['Hello', 'World'])).toEqual([]);
-      expect(validator.validate({ schema: { type: 'string' }, type: 'array' }, ['Hello', 'World'], path)).toEqual([]);
-
-      // invalid
-      expect(validator.validate({ schema: { type: 'string' }, type: 'array' }, ['Hello', 12, 'World', 45])).toEqual([
-        { message: 'The value should be string', path: '1' },
-        { message: 'The value should be string', path: '3' },
-      ]);
-      expect(validator.validate({ schema: { type: 'string' }, type: 'array' }, ['Hello', 12, 'World', 45], path)).toEqual([
-        { message: 'The value should be string', path: 'foo.bar.1' },
-        { message: 'The value should be string', path: 'foo.bar.3' },
       ]);
     });
 
