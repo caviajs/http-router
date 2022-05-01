@@ -7,53 +7,68 @@ describe('Validator', () => {
 
   describe('SchemaArray', () => {
     it('should validate the items condition correctly', () => {
+      const schema: SchemaArray = {
+        items: { type: 'string' },
+        type: 'array',
+      };
+
       // valid
-      expect(validator.validate({ items: { type: 'string' }, type: 'array' }, ['Hello', 'World'])).toEqual([]);
-      expect(validator.validate({ items: { type: 'string' }, type: 'array' }, ['Hello', 'World'], path)).toEqual([]);
+      expect(validator.validate(schema, ['Hello', 'World'])).toEqual([]);
+      expect(validator.validate(schema, ['Hello', 'World'], path)).toEqual([]);
 
       // invalid
-      expect(validator.validate({ items: { type: 'string' }, type: 'array' }, ['Hello', 12, 'World', 45])).toEqual([
+      expect(validator.validate(schema, ['Hello', 12, 'World', 45])).toEqual([
         { message: 'The value should be string', path: '1' },
         { message: 'The value should be string', path: '3' },
       ]);
-      expect(validator.validate({ items: { type: 'string' }, type: 'array' }, ['Hello', 12, 'World', 45], path)).toEqual([
+      expect(validator.validate(schema, ['Hello', 12, 'World', 45], path)).toEqual([
         { message: 'The value should be string', path: 'foo.bar.1' },
         { message: 'The value should be string', path: 'foo.bar.3' },
       ]);
     });
 
     it('should validate the maxItems condition correctly', () => {
+      const schema: SchemaArray = {
+        maxItems: 2,
+        type: 'array',
+      };
+
       // greater than maxLength
-      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello', 'Hello', 'Hello'])).toEqual([
+      expect(validator.validate(schema, ['Hello', 'Hello', 'Hello'])).toEqual([
         { message: 'The value can contain maximum 2 items', path: '' },
       ]);
-      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello', 'Hello', 'Hello'], path)).toEqual([
+      expect(validator.validate(schema, ['Hello', 'Hello', 'Hello'], path)).toEqual([
         { message: 'The value can contain maximum 2 items', path: 'foo.bar' },
       ]);
 
       // equal to maxLength
-      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello', 'Hello'])).toEqual([]);
-      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello', 'Hello'], path)).toEqual([]);
+      expect(validator.validate(schema, ['Hello', 'Hello'])).toEqual([]);
+      expect(validator.validate(schema, ['Hello', 'Hello'], path)).toEqual([]);
 
       // less than maxLength
-      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello'])).toEqual([]);
-      expect(validator.validate({ maxItems: 2, type: 'array' }, ['Hello'], path)).toEqual([]);
+      expect(validator.validate(schema, ['Hello'])).toEqual([]);
+      expect(validator.validate(schema, ['Hello'], path)).toEqual([]);
     });
 
     it('should validate the minItems condition correctly', () => {
+      const schema: SchemaArray = {
+        minItems: 2,
+        type: 'array',
+      };
+
       // greater than minItems
-      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello', 'Hello', 'Hello'])).toEqual([]);
-      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello', 'Hello', 'Hello'], path)).toEqual([]);
+      expect(validator.validate(schema, ['Hello', 'Hello', 'Hello'])).toEqual([]);
+      expect(validator.validate(schema, ['Hello', 'Hello', 'Hello'], path)).toEqual([]);
 
       // equal to minItems
-      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello', 'Hello'])).toEqual([]);
-      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello', 'Hello'], path)).toEqual([]);
+      expect(validator.validate(schema, ['Hello', 'Hello'])).toEqual([]);
+      expect(validator.validate(schema, ['Hello', 'Hello'], path)).toEqual([]);
 
       // less than minItems
-      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello'])).toEqual([
+      expect(validator.validate(schema, ['Hello'])).toEqual([
         { message: 'The value should contain minimum 2 items', path: '' },
       ]);
-      expect(validator.validate({ minItems: 2, type: 'array' }, ['Hello'], path)).toEqual([
+      expect(validator.validate(schema, ['Hello'], path)).toEqual([
         { message: 'The value should contain minimum 2 items', path: 'foo.bar' },
       ]);
     });
@@ -314,6 +329,33 @@ describe('Validator', () => {
   });
 
   describe('SchemaEnum', () => {
+    it('should validate the enum condition correctly', () => {
+      const schema: SchemaEnum = {
+        enum: ['Hello', 1245, 'World'],
+        nullable: false,
+        required: true,
+        type: 'enum',
+      };
+
+      // valid
+      expect(validator.validate(schema, 'Hello')).toEqual([]);
+      expect(validator.validate(schema, 'Hello', path)).toEqual([]);
+
+      expect(validator.validate(schema, 1245)).toEqual([]);
+      expect(validator.validate(schema, 1245, path)).toEqual([]);
+
+      expect(validator.validate(schema, 'World')).toEqual([]);
+      expect(validator.validate(schema, 'World', path)).toEqual([]);
+
+      // invalid
+      expect(validator.validate(schema, 'Foo')).toEqual([
+        { message: 'The value must be one of the following values: Hello, 1245, World', path: '' },
+      ]);
+      expect(validator.validate(schema, 'Foo', path)).toEqual([
+        { message: 'The value must be one of the following values: Hello, 1245, World', path: 'foo.bar' },
+      ]);
+    });
+
     it('should validate the nullable condition correctly', () => {
       // nullable: false (default)
       expect(validator.validate({ enum: ['Hello', 'World'], type: 'enum' }, null)).toEqual([
@@ -446,37 +488,47 @@ describe('Validator', () => {
 
   describe('SchemaNumber', () => {
     it('should validate the max condition correctly', () => {
+      const schema: SchemaNumber = {
+        max: 10,
+        type: 'number',
+      };
+
       // greater than max
-      expect(validator.validate({ max: 10, type: 'number' }, 15)).toEqual([
+      expect(validator.validate(schema, 15)).toEqual([
         { message: 'The value should be less than or equal to 10', path: '' },
       ]);
-      expect(validator.validate({ max: 10, type: 'number' }, 15, path)).toEqual([
+      expect(validator.validate(schema, 15, path)).toEqual([
         { message: 'The value should be less than or equal to 10', path: 'foo.bar' },
       ]);
 
       // equal to max
-      expect(validator.validate({ max: 10, type: 'number' }, 10)).toEqual([]);
-      expect(validator.validate({ max: 10, type: 'number' }, 10, path)).toEqual([]);
+      expect(validator.validate(schema, 10)).toEqual([]);
+      expect(validator.validate(schema, 10, path)).toEqual([]);
 
       // less than max
-      expect(validator.validate({ max: 10, type: 'number' }, 5)).toEqual([]);
-      expect(validator.validate({ max: 10, type: 'number' }, 5, path)).toEqual([]);
+      expect(validator.validate(schema, 5)).toEqual([]);
+      expect(validator.validate(schema, 5, path)).toEqual([]);
     });
 
     it('should validate the min condition correctly', () => {
+      const schema: SchemaNumber = {
+        min: 10,
+        type: 'number',
+      };
+
       // greater than min
-      expect(validator.validate({ min: 10, type: 'number' }, 15)).toEqual([]);
-      expect(validator.validate({ min: 10, type: 'number' }, 15, path)).toEqual([]);
+      expect(validator.validate(schema, 15)).toEqual([]);
+      expect(validator.validate(schema, 15, path)).toEqual([]);
 
       // equal to min
-      expect(validator.validate({ min: 10, type: 'number' }, 10)).toEqual([]);
-      expect(validator.validate({ min: 10, type: 'number' }, 10, path)).toEqual([]);
+      expect(validator.validate(schema, 10)).toEqual([]);
+      expect(validator.validate(schema, 10, path)).toEqual([]);
 
       // less than min
-      expect(validator.validate({ min: 10, type: 'number' }, 5)).toEqual([
+      expect(validator.validate(schema, 5)).toEqual([
         { message: 'The value should be greater than or equal to 10', path: '' },
       ]);
-      expect(validator.validate({ min: 10, type: 'number' }, 5, path)).toEqual([
+      expect(validator.validate(schema, 5, path)).toEqual([
         { message: 'The value should be greater than or equal to 10', path: 'foo.bar' },
       ]);
     });
@@ -635,7 +687,9 @@ describe('Validator', () => {
       expect(validator.validate({ nullable: true, type: 'object' }, null, path)).toEqual([]);
     });
 
-    // todo properties
+    it('should validate the properties condition correctly', () => {
+      // todo
+    });
 
     it('should validate the required condition correctly', () => {
       // required: false (default)
@@ -746,63 +800,78 @@ describe('Validator', () => {
 
   describe('SchemaString', () => {
     it('should validate the expressions condition correctly', () => {
-      const firstLetterUppercase = /^[A-Z]/;
-      const lastLetterUppercase = /[A-Z]$/;
+      const schema: SchemaString = {
+        expressions: [
+          /^[A-Z]/,
+          /[A-Z]$/,
+        ],
+        type: 'string',
+      };
 
       // valid
-      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'FoO')).toEqual([]);
-      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'FoO', path)).toEqual([]);
+      expect(validator.validate(schema, 'FoO')).toEqual([]);
+      expect(validator.validate(schema, 'FoO', path)).toEqual([]);
 
       // invalid
-      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'Foo')).toEqual([
+      expect(validator.validate(schema, 'Foo')).toEqual([
         { message: 'The value should match a regular expression /[A-Z]$/', path: '' },
       ]);
-      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'Foo', path)).toEqual([
+      expect(validator.validate(schema, 'Foo', path)).toEqual([
         { message: 'The value should match a regular expression /[A-Z]$/', path: 'foo.bar' },
       ]);
 
-      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'foo')).toEqual([
+      expect(validator.validate(schema, 'foo')).toEqual([
         { message: 'The value should match a regular expression /^[A-Z]/', path: '' },
         { message: 'The value should match a regular expression /[A-Z]$/', path: '' },
       ]);
-      expect(validator.validate({ expressions: [firstLetterUppercase, lastLetterUppercase], type: 'string' }, 'foo', path)).toEqual([
+      expect(validator.validate(schema, 'foo', path)).toEqual([
         { message: 'The value should match a regular expression /^[A-Z]/', path: 'foo.bar' },
         { message: 'The value should match a regular expression /[A-Z]$/', path: 'foo.bar' },
       ]);
     });
 
     it('should validate the maxLength condition correctly', () => {
+      const schema: SchemaString = {
+        maxLength: 10,
+        type: 'string',
+      };
+
       // longer than maxLength
-      expect(validator.validate({ maxLength: 10, type: 'string' }, 'HelloHelloHello')).toEqual([
+      expect(validator.validate(schema, 'HelloHelloHello')).toEqual([
         { message: 'The value must be shorter than or equal to 10 characters', path: '' },
       ]);
-      expect(validator.validate({ maxLength: 10, type: 'string' }, 'HelloHelloHello', path)).toEqual([
+      expect(validator.validate(schema, 'HelloHelloHello', path)).toEqual([
         { message: 'The value must be shorter than or equal to 10 characters', path: 'foo.bar' },
       ]);
 
       // equal to maxLength
-      expect(validator.validate({ maxLength: 10, type: 'string' }, 'HelloHello')).toEqual([]);
-      expect(validator.validate({ maxLength: 10, type: 'string' }, 'HelloHello', path)).toEqual([]);
+      expect(validator.validate(schema, 'HelloHello')).toEqual([]);
+      expect(validator.validate(schema, 'HelloHello', path)).toEqual([]);
 
       // shorter than maxLength
-      expect(validator.validate({ maxLength: 10, type: 'string' }, 'Hello')).toEqual([]);
-      expect(validator.validate({ maxLength: 10, type: 'string' }, 'Hello', path)).toEqual([]);
+      expect(validator.validate(schema, 'Hello')).toEqual([]);
+      expect(validator.validate(schema, 'Hello', path)).toEqual([]);
     });
 
     it('should validate the minLength condition correctly', () => {
+      const schema: SchemaString = {
+        minLength: 10,
+        type: 'string',
+      };
+
       // longer than minLength
-      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHelloHello')).toEqual([]);
-      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHelloHello', path)).toEqual([]);
+      expect(validator.validate(schema, 'HelloHelloHello')).toEqual([]);
+      expect(validator.validate(schema, 'HelloHelloHello', path)).toEqual([]);
 
       // equal to minLength
-      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHello')).toEqual([]);
-      expect(validator.validate({ minLength: 10, type: 'string' }, 'HelloHello', path)).toEqual([]);
+      expect(validator.validate(schema, 'HelloHello')).toEqual([]);
+      expect(validator.validate(schema, 'HelloHello', path)).toEqual([]);
 
       // shorter than minLength
-      expect(validator.validate({ minLength: 10, type: 'string' }, 'Hello')).toEqual([
+      expect(validator.validate(schema, 'Hello')).toEqual([
         { message: 'The value must be longer than or equal to 10 characters', path: '' },
       ]);
-      expect(validator.validate({ minLength: 10, type: 'string' }, 'Hello', path)).toEqual([
+      expect(validator.validate(schema, 'Hello', path)).toEqual([
         { message: 'The value must be longer than or equal to 10 characters', path: 'foo.bar' },
       ]);
     });
