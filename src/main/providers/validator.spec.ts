@@ -611,6 +611,52 @@ describe('Validator', () => {
   });
 
   describe('SchemaObject', () => {
+    // todo additionalProperties
+
+    it('should validate the nullable condition correctly', () => {
+      // nullable: false (default)
+      expect(validator.validate({ type: 'object' }, null)).toEqual([
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate({ type: 'object' }, null, path)).toEqual([
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // nullable: false
+      expect(validator.validate({ nullable: false, type: 'object' }, null)).toEqual([
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate({ nullable: false, type: 'object' }, null, path)).toEqual([
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+
+      // nullable: true
+      expect(validator.validate({ nullable: true, type: 'object' }, null)).toEqual([]);
+      expect(validator.validate({ nullable: true, type: 'object' }, null, path)).toEqual([]);
+    });
+
+    // todo properties
+
+    it('should validate the required condition correctly', () => {
+      // required: false (default)
+      expect(validator.validate({ type: 'object' }, undefined)).toEqual([]);
+      expect(validator.validate({ type: 'object' }, undefined, path)).toEqual([]);
+
+      // required: false
+      expect(validator.validate({ required: false, type: 'object' }, undefined)).toEqual([]);
+      expect(validator.validate({ required: false, type: 'object' }, undefined, path)).toEqual([]);
+
+      // required: true
+      expect(validator.validate({ required: true, type: 'object' }, undefined)).toEqual([
+        { message: 'The value is required', path: '' },
+        { message: 'The value should be object', path: '' },
+      ]);
+      expect(validator.validate({ required: true, type: 'object' }, undefined, path)).toEqual([
+        { message: 'The value is required', path: 'foo.bar' },
+        { message: 'The value should be object', path: 'foo.bar' },
+      ]);
+    });
+
     it('should validate the type condition correctly', () => {
       const schema: SchemaObject = {
         nullable: false,
@@ -696,11 +742,6 @@ describe('Validator', () => {
       expect(validator.validate(schema, {})).toEqual([]);
       expect(validator.validate(schema, {}, path)).toEqual([]);
     });
-
-    // object
-    // 1) nullable
-    // 2) required
-    // 3) check correct type
   });
 
   describe('SchemaString', () => {
