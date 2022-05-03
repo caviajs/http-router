@@ -302,33 +302,38 @@ describe('HttpServerHandler', () => {
   describe('handle', () => {
     describe('not existing route', () => {
       // not existing route - should throw HttpException(404)
-      // it('should throw HttpException with 404', async () => {
-      //   request.url = '/not-existing-route';
-      //
-      //   const exception = new HttpException(404, 'Route not found');
-      //   const exceptionStatus = exception.getStatus();
-      //   const exceptionResponse = exception.getResponse();
-      //
-      //   await httpServerHandler.handle(request as any, response as any);
-      //
-      //   expect(request.metadata).toBeUndefined();
-      //   expect(request.params).toEqual({});
-      //   expect(responseWriteHeadSpy).toHaveBeenNthCalledWith(1, exceptionStatus, {
-      //     'Content-Length': Buffer.byteLength(JSON.stringify(exceptionResponse)),
-      //     'Content-Type': 'application/json; charset=utf-8',
-      //   });
-      //   expect(responseEndSpy).toHaveBeenNthCalledWith(1, JSON.stringify(exceptionResponse));
-      // });
+      it('should throw HttpException with 404', async () => {
+        const exception = new HttpException(404, 'Route not found');
 
-      // not existing route - Error handling (should throw HttpException(500))
-      // not existing route - HttpException handling (should throw HttpException(500))
+        request.url = '/not-existing-endpoint';
+
+        expect(response.end).not.toHaveBeenCalled();
+        expect(response.writeHead).not.toHaveBeenCalled();
+
+        await httpServerHandler.handle(request as any, response as any);
+
+        const exceptionStatus = exception.getStatus();
+        const exceptionResponse = exception.getResponse();
+
+        expect(response.end).toHaveBeenNthCalledWith(1, JSON.stringify(exceptionResponse));
+        expect(response.writeHead).toHaveBeenNthCalledWith(1, exceptionStatus, { // Inferred status code (200 OK)
+          'Content-Length': Buffer.byteLength(JSON.stringify(exceptionResponse)), // Inferred Content-Length
+          'Content-Type': 'application/json; charset=utf-8', // Inferred Content-Type
+        });
+      });
+
       // not existing route - interceptors (global req interceptors -> {throw HttpException(404)} -> global res interceptors)
+      // not existing route - interceptors + HttpException handling (should throw HttpException)
+      // not existing route - interceptors + Error handling (should throw HttpException(500))
     });
 
     describe('existing route', () => {
       // existing route - handling correctly routes (methods/urls)
+      // existing route - handling + metadata
       // existing route - handling + params parsing
       // existing route - handling + interceptors sequence (global req interceptors -> handler -> global res interceptors)
+      // existing route - handling + interceptors + HttpException handling (should throw HttpException)
+      // existing route - handling + interceptors + Error handling (should throw HttpException(500))
 
       describe('should handle errors correctly', () => {
         // existing route - HttpException handling (should throw HttpException(500))
