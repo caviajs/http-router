@@ -10,9 +10,7 @@ import { Interceptor, Next } from '../types/interceptor';
 import { Observable } from 'rxjs';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
-import http from 'http';
 import { HttpException } from '../exceptions/http-exception';
-import { HttpServerSerializer } from './http-server-serializer';
 
 const EXAMPLE_UNDEFINED: undefined = undefined;
 const EXAMPLE_BUFFER: Buffer = Buffer.from('Hello World');
@@ -21,8 +19,12 @@ const EXAMPLE_STRING: string = 'Hello World';
 const EXAMPLE_TRUE: boolean = true;
 const EXAMPLE_FALSE: boolean = false;
 const EXAMPLE_NUMBER: number = 1245;
-const EXAMPLE_OBJECT: object = { foo: 'bar' };
+const EXAMPLE_NULL: null = null;
 const EXAMPLE_ARRAY: number[] = [1, 2, 4, 5];
+const EXAMPLE_OBJECT: object = { foo: 'bar' };
+
+const EXAMPLE_HTTP_EXCEPTION: HttpException = new HttpException(418);
+const EXAMPLE_ERROR: Error = new Error('Hello World');
 
 @Injectable()
 class UndefinedEndpoint extends Endpoint {
@@ -109,14 +111,14 @@ class NumberEndpoint extends Endpoint {
 }
 
 @Injectable()
-class ObjectEndpoint extends Endpoint {
+class NullEndpoint extends Endpoint {
   readonly metadata: EndpointMetadata = {
     method: 'GET',
-    path: '/object',
+    path: '/null',
   };
 
-  handle(): object {
-    return EXAMPLE_OBJECT;
+  handle(): number {
+    return EXAMPLE_NULL;
   }
 }
 
@@ -129,6 +131,42 @@ class ArrayEndpoint extends Endpoint {
 
   handle(): number[] {
     return EXAMPLE_ARRAY;
+  }
+}
+
+@Injectable()
+class ObjectEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/object',
+  };
+
+  handle(): object {
+    return EXAMPLE_OBJECT;
+  }
+}
+
+@Injectable()
+class HttpExceptionEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/http-exception',
+  };
+
+  handle(): never {
+    throw EXAMPLE_HTTP_EXCEPTION;
+  }
+}
+
+@Injectable()
+class ErrorEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/error',
+  };
+
+  handle(): never {
+    throw EXAMPLE_ERROR;
   }
 }
 
@@ -168,8 +206,12 @@ describe('HttpServerHandler', () => {
   let trueEndpoint: TrueEndpoint;
   let falseEndpoint: FalseEndpoint;
   let numberEndpoint: NumberEndpoint;
-  let objectEndpoint: ObjectEndpoint;
+  let nullEndpoint: NullEndpoint;
   let arrayEndpoint: ArrayEndpoint;
+  let objectEndpoint: ObjectEndpoint;
+  let httpExceptionEndpoint: HttpExceptionEndpoint;
+  let errorEndpoint: ErrorEndpoint;
+
   let firstInterceptor: FirstInterceptor;
   let secondInterceptor: SecondInterceptor;
 
@@ -197,15 +239,18 @@ describe('HttpServerHandler', () => {
       TrueEndpoint,
       FalseEndpoint,
       NumberEndpoint,
-      ObjectEndpoint,
+      NullEndpoint,
       ArrayEndpoint,
+      ObjectEndpoint,
+      HttpExceptionEndpoint,
+      ErrorEndpoint,
 
       FirstInterceptor,
       SecondInterceptor,
     ]);
 
     httpServerRegistry = new HttpServerRegistry(new Logger(LoggerLevel.OFF, () => ''));
-    httpServerHandler = new HttpServerHandlerTest(httpServerRegistry, new HttpServerSerializer(), injector);
+    httpServerHandler = new HttpServerHandlerTest(httpServerRegistry, injector);
 
     undefinedEndpoint = await injector.find(UndefinedEndpoint);
     bufferEndpoint = await injector.find(BufferEndpoint);
@@ -214,8 +259,12 @@ describe('HttpServerHandler', () => {
     trueEndpoint = await injector.find(TrueEndpoint);
     falseEndpoint = await injector.find(FalseEndpoint);
     numberEndpoint = await injector.find(NumberEndpoint);
-    objectEndpoint = await injector.find(ObjectEndpoint);
+    nullEndpoint = await injector.find(NullEndpoint);
     arrayEndpoint = await injector.find(ArrayEndpoint);
+    objectEndpoint = await injector.find(ObjectEndpoint);
+    httpExceptionEndpoint = await injector.find(HttpExceptionEndpoint);
+    errorEndpoint = await injector.find(ErrorEndpoint);
+
     firstInterceptor = await injector.find(FirstInterceptor);
     secondInterceptor = await injector.find(SecondInterceptor);
 
@@ -226,8 +275,11 @@ describe('HttpServerHandler', () => {
     httpServerRegistry.add(trueEndpoint);
     httpServerRegistry.add(falseEndpoint);
     httpServerRegistry.add(numberEndpoint);
-    httpServerRegistry.add(objectEndpoint);
+    httpServerRegistry.add(nullEndpoint);
     httpServerRegistry.add(arrayEndpoint);
+    httpServerRegistry.add(objectEndpoint);
+    httpServerRegistry.add(httpExceptionEndpoint);
+    httpServerRegistry.add(errorEndpoint);
   });
 
   afterEach(() => {
@@ -274,25 +326,62 @@ describe('HttpServerHandler', () => {
     });
 
     describe('existing route', () => {
-      // existing route - HttpException handling (should throw HttpException(500))
-      // existing route - Error handling (should throw HttpException(500))
-      // existing route - handling
+      // existing route - handling correctly routes (methods/urls)
       // existing route - handling + params parsing
-      // existing route - handling + serializing, Content-Type and Content-Length inference for response body
+      // existing route - handling + interceptors sequence (global req interceptors -> handler -> global res interceptors)
 
-      describe('should correctly serialize and inference headers', () => {
-        it('should correctly serialize undefined', async () => {
-          request.url = '/undefined';
+      describe('should handle errors correctly', () => {
+        // existing route - HttpException handling (should throw HttpException(500))
+        it('should correctly handling HttpException', async () => {
+          request.url = '/http-exception';
 
-          expect(request.metadata).toBeUndefined();
-          expect(request.params).toBeUndefined();
           expect(response.end).not.toHaveBeenCalled();
           expect(response.writeHead).not.toHaveBeenCalled();
 
           await httpServerHandler.handle(request as any, response as any);
 
-          expect(request.metadata).toEqual(undefinedEndpoint.metadata);
-          expect(request.params).toEqual({});
+          const exceptionStatus = EXAMPLE_HTTP_EXCEPTION.getStatus();
+          const exceptionResponse = EXAMPLE_HTTP_EXCEPTION.getResponse();
+
+          expect(response.end).toHaveBeenNthCalledWith(1, JSON.stringify(exceptionResponse));
+          expect(response.writeHead).toHaveBeenNthCalledWith(1, exceptionStatus, { // Inferred status code (200 OK)
+            'Content-Length': Buffer.byteLength(JSON.stringify(exceptionResponse)), // Inferred Content-Length
+            'Content-Type': 'application/json; charset=utf-8', // Inferred Content-Type
+          });
+        });
+
+        // existing route - Error handling (should throw HttpException(500))
+        it('should correctly handling Error', async () => {
+          const exception = new HttpException(500);
+
+          request.url = '/error';
+
+          expect(response.end).not.toHaveBeenCalled();
+          expect(response.writeHead).not.toHaveBeenCalled();
+
+          await httpServerHandler.handle(request as any, response as any);
+
+          const exceptionStatus = exception.getStatus();
+          const exceptionResponse = exception.getResponse();
+
+          expect(response.end).toHaveBeenNthCalledWith(1, JSON.stringify(exceptionResponse));
+          expect(response.writeHead).toHaveBeenNthCalledWith(1, exceptionStatus, { // Inferred status code (200 OK)
+            'Content-Length': Buffer.byteLength(JSON.stringify(exceptionResponse)), // Inferred Content-Length
+            'Content-Type': 'application/json; charset=utf-8', // Inferred Content-Type
+          });
+        });
+      });
+
+      // existing route - handling response body - serializing, Content-Type and Content-Length inference
+      describe('should correctly serialize and inference headers', () => {
+        it('should correctly serialize undefined', async () => {
+          request.url = '/undefined';
+
+          expect(response.end).not.toHaveBeenCalled();
+          expect(response.writeHead).not.toHaveBeenCalled();
+
+          await httpServerHandler.handle(request as any, response as any);
+
           expect(response.end).toHaveBeenNthCalledWith(1);
           expect(response.writeHead).toHaveBeenNthCalledWith(1, 204); // Inferred status code (204 No Content)
         });
@@ -301,15 +390,11 @@ describe('HttpServerHandler', () => {
           request.url = '/undefined';
           response.statusCode = 402;
 
-          expect(request.metadata).toBeUndefined();
-          expect(request.params).toBeUndefined();
           expect(response.end).not.toHaveBeenCalled();
           expect(response.writeHead).not.toHaveBeenCalled();
 
           await httpServerHandler.handle(request as any, response as any);
 
-          expect(request.metadata).toEqual(undefinedEndpoint.metadata);
-          expect(request.params).toEqual({});
           expect(response.end).toHaveBeenNthCalledWith(1);
           expect(response.writeHead).toHaveBeenNthCalledWith(1, 402); // Overwritten status code
         });
@@ -317,15 +402,11 @@ describe('HttpServerHandler', () => {
         it('should correctly serialize Buffer', async () => {
           request.url = '/buffer';
 
-          expect(request.metadata).toBeUndefined();
-          expect(request.params).toBeUndefined();
           expect(response.end).not.toHaveBeenCalled();
           expect(response.writeHead).not.toHaveBeenCalled();
 
           await httpServerHandler.handle(request as any, response as any);
 
-          expect(request.metadata).toEqual(bufferEndpoint.metadata);
-          expect(request.params).toEqual({});
           expect(response.end).toHaveBeenNthCalledWith(1, EXAMPLE_BUFFER);
           expect(response.writeHead).toHaveBeenNthCalledWith(1, 200, { // Inferred status code (200 OK)
             'Content-Length': EXAMPLE_BUFFER.length, // Inferred Content-Length
@@ -339,15 +420,11 @@ describe('HttpServerHandler', () => {
           request.url = '/buffer';
           response.statusCode = 402;
 
-          expect(request.metadata).toBeUndefined();
-          expect(request.params).toBeUndefined();
           expect(response.end).not.toHaveBeenCalled();
           expect(response.writeHead).not.toHaveBeenCalled();
 
           await httpServerHandler.handle(request as any, response as any);
 
-          expect(request.metadata).toEqual(bufferEndpoint.metadata);
-          expect(request.params).toEqual({});
           expect(response.end).toHaveBeenNthCalledWith(1, EXAMPLE_BUFFER);
           expect(response.writeHead).toHaveBeenNthCalledWith(1, 402, { // Overwritten status code
             'Content-Length': 'Popcorn', // Overwritten Content-Length
@@ -360,16 +437,12 @@ describe('HttpServerHandler', () => {
 
           request.url = '/stream';
 
-          expect(request.metadata).toBeUndefined();
-          expect(request.params).toBeUndefined();
           expect(EXAMPLE_STREAM.pipe).not.toHaveBeenCalled();
           expect(response.end).not.toHaveBeenCalled();
           expect(response.writeHead).not.toHaveBeenCalled();
 
           await httpServerHandler.handle(request as any, response as any);
 
-          expect(request.metadata).toEqual(streamEndpoint.metadata);
-          expect(request.params).toEqual({});
           expect(EXAMPLE_STREAM.pipe).toHaveBeenNthCalledWith(1, response);
           expect(response.end).not.toHaveBeenCalled();
           expect(response.writeHead).toHaveBeenNthCalledWith(1, 200, { // Inferred status code (200 OK)
@@ -384,16 +457,12 @@ describe('HttpServerHandler', () => {
           request.url = '/stream';
           response.statusCode = 402;
 
-          expect(request.metadata).toBeUndefined();
-          expect(request.params).toBeUndefined();
           expect(EXAMPLE_STREAM.pipe).not.toHaveBeenCalled();
           expect(response.end).not.toHaveBeenCalled();
           expect(response.writeHead).not.toHaveBeenCalled();
 
           await httpServerHandler.handle(request as any, response as any);
 
-          expect(request.metadata).toEqual(streamEndpoint.metadata);
-          expect(request.params).toEqual({});
           expect(EXAMPLE_STREAM.pipe).toHaveBeenNthCalledWith(1, response);
           expect(response.end).not.toHaveBeenCalled();
           expect(response.writeHead).toHaveBeenNthCalledWith(1, 402, { // Overwritten status code
@@ -402,16 +471,97 @@ describe('HttpServerHandler', () => {
         });
 
         it('should correctly serialize String', async () => {
+          request.url = '/string';
+
+          expect(response.end).not.toHaveBeenCalled();
+          expect(response.writeHead).not.toHaveBeenCalled();
+
+          await httpServerHandler.handle(request as any, response as any);
+
+          expect(response.end).toHaveBeenNthCalledWith(1, EXAMPLE_STRING);
+          expect(response.writeHead).toHaveBeenNthCalledWith(1, 200, { // Inferred status code (200 OK)
+            'Content-Length': Buffer.byteLength(EXAMPLE_STRING), // Inferred Content-Length
+            'Content-Type': 'text/plain', // Inferred Content-Type
+          });
         });
+
         it('should correctly serialize String with predefined response properties', async () => {
+          jest.spyOn(response, 'getHeader').mockImplementation(() => 'Popcorn');
+
+          request.url = '/string';
+          response.statusCode = 402;
+
+          expect(response.end).not.toHaveBeenCalled();
+          expect(response.writeHead).not.toHaveBeenCalled();
+
+          await httpServerHandler.handle(request as any, response as any);
+
+          expect(response.end).toHaveBeenNthCalledWith(1, EXAMPLE_STRING);
+          expect(response.writeHead).toHaveBeenNthCalledWith(1, 402, { // Overwritten status code
+            'Content-Length': 'Popcorn', // Overwritten Content-Length
+            'Content-Type': 'Popcorn', // Overwritten Content-Type
+          });
         });
+
         it('should correctly serialize JSON', async () => {
+          // JSON (true, false, number, null, array, object) but without string
+          const examples = new Map()
+            .set('/true', EXAMPLE_TRUE)
+            .set('/false', EXAMPLE_FALSE)
+            .set('/number', EXAMPLE_NUMBER)
+            .set('/null', EXAMPLE_NULL)
+            .set('/array', EXAMPLE_ARRAY)
+            .set('/object', EXAMPLE_OBJECT);
+
+          for (const [url, data] of [...examples.entries()]) {
+            request.url = url;
+
+            expect(response.end).not.toHaveBeenCalled();
+            expect(response.writeHead).not.toHaveBeenCalled();
+
+            await httpServerHandler.handle(request as any, response as any);
+
+            expect(response.end).toHaveBeenNthCalledWith(1, JSON.stringify(data));
+            expect(response.writeHead).toHaveBeenNthCalledWith(1, 200, { // Inferred status code (200 OK)
+              'Content-Length': Buffer.byteLength(JSON.stringify(data)), // Inferred Content-Length
+              'Content-Type': 'application/json; charset=utf-8', // Inferred Content-Type
+            });
+
+            jest.clearAllMocks();
+          }
         });
+
         it('should correctly serialize JSON with predefined response properties', async () => {
+          // JSON (true, false, number, null, array, object) but without string
+          const examples = new Map()
+            .set('/true', EXAMPLE_TRUE)
+            .set('/false', EXAMPLE_FALSE)
+            .set('/number', EXAMPLE_NUMBER)
+            .set('/null', EXAMPLE_NULL)
+            .set('/array', EXAMPLE_ARRAY)
+            .set('/object', EXAMPLE_OBJECT);
+
+          for (const [url, data] of [...examples.entries()]) {
+            jest.spyOn(response, 'getHeader').mockImplementation(() => 'Popcorn');
+
+            request.url = url;
+            response.statusCode = 402;
+
+            expect(response.end).not.toHaveBeenCalled();
+            expect(response.writeHead).not.toHaveBeenCalled();
+
+            await httpServerHandler.handle(request as any, response as any);
+
+            expect(response.end).toHaveBeenNthCalledWith(1, JSON.stringify(data));
+            expect(response.writeHead).toHaveBeenNthCalledWith(1, 402, { // Overwritten status code
+              'Content-Length': 'Popcorn', // Overwritten Content-Length
+              'Content-Type': 'Popcorn', // Overwritten Content-Type
+            });
+
+            jest.clearAllMocks();
+          }
         });
       });
-
-      // existing route - handling + interceptors (global req interceptors -> handler -> global res interceptors)
     });
   });
 });
