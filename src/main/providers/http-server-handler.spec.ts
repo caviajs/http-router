@@ -131,13 +131,30 @@ class SecondInterceptor extends Interceptor {
   }
 }
 
+class HttpServerHandlerTest extends HttpServerHandler {
+  public getInterceptors(): Interceptor[] {
+    return this.interceptors;
+  }
+}
+
 describe('HttpServerHandler', () => {
   let httpServerRegistry: HttpServerRegistry;
-  let httpServerHandler: HttpServerHandler;
+  let httpServerHandler: HttpServerHandlerTest;
+
+  let firstInterceptor: FirstInterceptor;
+  let secondInterceptor: SecondInterceptor;
 
   beforeEach(async () => {
+    const injector: Injector = await Injector.create([
+      FirstInterceptor,
+      SecondInterceptor,
+    ]);
+
     httpServerRegistry = new HttpServerRegistry(new Logger(LoggerLevel.ALL, () => ''));
-    httpServerHandler = new HttpServerHandler(httpServerRegistry, await Injector.create([]));
+    httpServerHandler = new HttpServerHandlerTest(httpServerRegistry, injector);
+
+    firstInterceptor = await injector.find(FirstInterceptor);
+    secondInterceptor = await injector.find(SecondInterceptor);
   });
 
   afterEach(() => {
@@ -145,8 +162,16 @@ describe('HttpServerHandler', () => {
   });
 
   describe('onApplicationBoot', () => {
-    // global interceptors
-    // global interceptors - throws error if not existing in Injector
+    it('should add interceptors', async () => {
+      expect(httpServerHandler.getInterceptors()).toEqual([]);
+
+      await httpServerHandler.onApplicationBoot();
+
+      expect(httpServerHandler.getInterceptors()).toEqual([
+        firstInterceptor,
+        secondInterceptor,
+      ]);
+    });
   });
 
   describe('handle', () => {

@@ -16,7 +16,7 @@ import { Endpoint } from '../types/endpoint';
 
 @Injectable()
 export class HttpServerHandler implements OnApplicationBoot {
-  public readonly interceptors: Interceptor[] = [];
+  protected readonly interceptors: Interceptor[] = [];
 
   constructor(
     protected readonly httpServerRegistry: HttpServerRegistry,
