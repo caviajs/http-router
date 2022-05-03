@@ -7,7 +7,7 @@ export class {{ name }}Endpoint extends Endpoint {
     path: '/',
   };
 
-  public async handle(request: Request, response: Response): Promise<string> {
+  public async handle(request: Request, response: Response): Promise<any> {
     throw new HttpException(501);
   }
 }
