@@ -17,7 +17,7 @@ export * from './main/decorators/optional';
 export * from './main/exceptions/http-exception';
 
 export * from './main/providers/body';
-export * from './main/providers/body-manager';
+export * from './main/providers/body-explorer';
 export * from './main/providers/cookies';
 export * from './main/providers/env';
 export * from './main/providers/http-client';

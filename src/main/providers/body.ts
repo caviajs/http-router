@@ -3,8 +3,10 @@ import stream from 'stream';
 import { HttpException } from '../exceptions/http-exception';
 import { Request } from '../types/request';
 import { Injectable } from '../decorators/injectable';
-import http from 'http';
 import { Headers } from './headers';
+import { Parser } from '../types/parser';
+import { HTTP_CONTEXT } from '../constants';
+import { Logger } from './logger';
 
 const DEFAULT_PARSE_BODY_OPTIONS: ParseBodyOptions = {
   limit: 1048576, // 10 Mbits
@@ -12,11 +14,21 @@ const DEFAULT_PARSE_BODY_OPTIONS: ParseBodyOptions = {
 
 @Injectable()
 export class Body {
-  public readonly mimeTypeParsers: Map<string, MimeTypeParser> = new Map();
+  protected readonly parsers: Parser[] = [];
 
   constructor(
     protected readonly headers: Headers,
+    protected readonly logger: Logger,
   ) {
+  }
+
+  public addParser(parser: Parser): void {
+    if (this.parsers.some(it => it.metadata.mimeType.toLowerCase() === parser.metadata.mimeType.toLowerCase())) {
+      throw new Error(`Duplicated {${ parser.metadata.mimeType }} mime type parser`);
+    }
+
+    this.parsers.push(parser);
+    this.logger.trace(`Mapped {${ parser.metadata.mimeType }} mime type parser`, HTTP_CONTEXT);
   }
 
   public async parseBody<T = any>(request: Request, options?: ParseBodyOptions): Promise<T> {
@@ -77,12 +89,13 @@ export class Body {
         }
 
         const mimeType = this.headers.contentType.getMime(request.headers['content-type']);
+        const mimeTypeParser: Parser | undefined = this.parsers.find(it => it.metadata.mimeType === mimeType);
 
-        if (!this.mimeTypeParsers.has(mimeType)) {
+        if (!mimeTypeParser) {
           return reject(new HttpException(415, `Unsupported Media Type: ${ mimeType }`));
         }
 
-        return resolve(this.mimeTypeParsers.get(mimeType)(data, request.headers));
+        return resolve(mimeTypeParser.parse(data, request.headers));
       });
 
       requestStream.on('error', error => {
@@ -94,8 +107,4 @@ export class Body {
 
 export interface ParseBodyOptions {
   limit?: number;
-}
-
-export interface MimeTypeParser {
-  (buffer: Buffer, headers: http.IncomingHttpHeaders): any;
 }

@@ -52,6 +52,12 @@ yargs
     handler: args => generate({ template: 'interceptor', path: args.path as string }),
   })
   .command({
+    command: 'make:parser <path>',
+    describe: 'generate parser',
+    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
+    handler: args => generate({ template: 'parser', path: args.path as string }),
+  })
+  .command({
     command: 'make:provider <path>',
     describe: 'generate provider',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),

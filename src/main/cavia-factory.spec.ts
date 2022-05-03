@@ -12,7 +12,7 @@ import { CaviaFactory } from './cavia-factory';
 import { CORE_CONTEXT } from './constants';
 import { Injector } from './injector';
 import { Body } from './providers/body';
-import { BodyManager } from './providers/body-manager';
+import { BodyExplorer } from './providers/body-explorer';
 import { Cookies } from './providers/cookies';
 import { Headers } from './providers/headers';
 import { HttpClient } from './providers/http-client';
@@ -41,7 +41,7 @@ describe('CaviaFactory', () => {
       const application = await CaviaFactory.create({});
 
       expect(await application.injector.find(Body)).toBeInstanceOf(Body);
-      expect(await application.injector.find(BodyManager)).toBeInstanceOf(BodyManager);
+      expect(await application.injector.find(BodyExplorer)).toBeInstanceOf(BodyExplorer);
       expect(await application.injector.find(Cookies)).toBeInstanceOf(Cookies);
       expect(await application.injector.find(Env)).toBeInstanceOf(Env);
       expect(await application.injector.find(Headers)).toBeInstanceOf(Headers);

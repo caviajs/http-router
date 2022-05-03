@@ -13,7 +13,7 @@ import { CaviaApplication } from './cavia-application';
 import { CORE_CONTEXT } from './constants';
 import { Injector } from './injector';
 import { Body } from './providers/body';
-import { BodyManager } from './providers/body-manager';
+import { BodyExplorer } from './providers/body-explorer';
 import { Headers } from './providers/headers';
 import { Cookies } from './providers/cookies';
 import { HttpServerRegistry } from './providers/http-server-registry';
@@ -30,7 +30,7 @@ import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from './types/s
 
 const BUILT_IN_PROVIDERS: Provider[] = [
   Body,
-  BodyManager,
+  BodyExplorer,
   Cookies,
   Env,
   Headers,
