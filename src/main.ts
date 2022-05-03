@@ -16,6 +16,10 @@ export * from './main/decorators/optional';
 
 export * from './main/exceptions/http-exception';
 
+export * from './main/providers/parsers/application-json.parser';
+export * from './main/providers/parsers/application-x-www-form-urlencoded.parser';
+export * from './main/providers/parsers/multipart-form-data.parser';
+export * from './main/providers/parsers/text-plain.parser';
 export * from './main/providers/body';
 export * from './main/providers/body-explorer';
 export * from './main/providers/cookies';
@@ -43,6 +47,7 @@ export * from './main/types/file';
 export * from './main/types/hooks';
 export * from './main/types/interceptor';
 export * from './main/types/method';
+export * from './main/types/parser';
 export * from './main/types/path';
 export * from './main/types/provider';
 export * from './main/types/request';
