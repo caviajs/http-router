@@ -4,52 +4,140 @@ import { HttpServerHandler } from './http-server-handler';
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
 import { Injector } from '../injector';
+import { Endpoint, EndpointMetadata } from '../types/endpoint';
+import { Injectable } from '../decorators/injectable';
+import { Interceptor, Next } from '../types/interceptor';
+import { Observable } from 'rxjs';
 
-class FooEndpoint {
-  public getUndefined(): undefined {
+@Injectable()
+class UndefinedEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/undefined',
+  };
+
+  handle(): undefined {
     return undefined;
   }
+}
 
-  public getBuffer(): Buffer {
+@Injectable()
+class BufferEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/buffer',
+  };
+
+  handle(): Buffer {
     return Buffer.from('Hello World');
   }
+}
 
-  public getStream(): Stream {
+@Injectable()
+class StreamEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/stream',
+  };
+
+  handle(): Stream {
     return Readable.from('Hello World');
   }
+}
 
-  public getString(): string {
+@Injectable()
+class StringEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/string',
+  };
+
+  handle(): string {
     return 'Hello World';
   }
+}
 
-  public getTrue(): boolean {
+@Injectable()
+class TrueEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/true',
+  };
+
+  handle(): boolean {
     return true;
   }
+}
 
-  public getFalse(): boolean {
+@Injectable()
+class FalseEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/false',
+  };
+
+  handle(): boolean {
     return false;
   }
+}
 
-  public getNumber(): number {
+@Injectable()
+class NumberEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/number',
+  };
+
+  handle(): number {
     return 1245;
   }
+}
 
-  public getObject(): object {
+@Injectable()
+class ObjectEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/object',
+  };
+
+  handle(): object {
     return { foo: 'bar' };
   }
+}
 
-  public getArray(): object {
+@Injectable()
+class ArrayEndpoint extends Endpoint {
+  readonly metadata: EndpointMetadata = {
+    method: 'GET',
+    path: '/array',
+  };
+
+  handle(): number[] {
     return [1, 2, 4, 5];
   }
 }
 
+@Injectable()
+class FirstInterceptor extends Interceptor {
+  intercept(request, response, next: Next): Observable<any> {
+    return next.handle();
+  }
+}
+
+@Injectable()
+class SecondInterceptor extends Interceptor {
+  intercept(request, response, next: Next): Observable<any> {
+    return next.handle();
+  }
+}
+
 describe('HttpServerHandler', () => {
-  let httpRouter: HttpServerRegistry;
+  let httpServerRegistry: HttpServerRegistry;
   let httpServerHandler: HttpServerHandler;
 
   beforeEach(async () => {
-    httpRouter = new HttpServerRegistry(new Logger(LoggerLevel.ALL, () => ''));
-    httpServerHandler = new HttpServerHandler(httpRouter, await Injector.create([]));
+    httpServerRegistry = new HttpServerRegistry(new Logger(LoggerLevel.ALL, () => ''));
+    httpServerHandler = new HttpServerHandler(httpServerRegistry, await Injector.create([]));
   });
 
   afterEach(() => {
@@ -62,13 +150,16 @@ describe('HttpServerHandler', () => {
   });
 
   describe('handle', () => {
-    // not existing route - exception handling
-    // not existing route - interceptors (global req -> {throw ...} -> global res)
+    // not existing route - HttpException handling (should throw HttpException(500))
+    // not existing route - Error handling (should throw HttpException(500))
+    // not existing route - should throw HttpException(404)
+    // not existing route - interceptors (global req interceptors -> {throw HttpException(404)} -> global res interceptors)
 
+    // existing route - HttpException handling (should throw HttpException(500))
+    // existing route - Error handling (should throw HttpException(500))
     // existing route - handling
     // existing route - serializing, Content-Type and Content-Length inference for response body
-    // existing route - exception handling
-    // existing route - interceptors (global req -> controller req -> route req -> handler -> route res -> controller res -> global res)
+    // existing route - interceptors (global req interceptors -> handler -> global res interceptors)
 
     it('should', () => {
       expect(1).toBe(1);
