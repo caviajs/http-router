@@ -7,7 +7,7 @@ import { Schema } from './schema';
 export abstract class Endpoint {
   public abstract readonly metadata: EndpointMetadata;
 
-  public abstract handle(request: Request, response: Response): unknown;
+  public abstract handle(request: Request, response: Response): any;
 }
 
 export interface EndpointMetadata {
