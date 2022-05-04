@@ -55,6 +55,7 @@ export * from './main/types/token';
 export * from './main/types/type';
 export * from './main/types/worker';
 
+export * from './main/utils/camel-case';
 export * from './main/utils/forward-ref';
 export * from './main/utils/get-content-type-mime';
 export * from './main/utils/get-content-type-parameter';
@@ -66,7 +67,10 @@ export * from './main/utils/is-factory-provider';
 export * from './main/utils/is-token';
 export * from './main/utils/is-type-provider';
 export * from './main/utils/is-value-provider';
+export * from './main/utils/kebab-case';
+export * from './main/utils/pascal-case';
 export * from './main/utils/serialize-cookie';
+export * from './main/utils/snake-case';
 
 export * from './main/cavia-application';
 export * from './main/cavia-factory';

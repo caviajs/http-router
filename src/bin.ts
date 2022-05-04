@@ -4,20 +4,16 @@ import { Edge } from 'edge.js';
 import { join, sep } from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
-import { noCase } from 'no-case';
+import { pascalCase } from './main/utils/pascal-case';
+import { kebabCase } from './main/utils/kebab-case';
 
 const edge: Edge = new Edge().mount(join(__dirname, 'bin', 'templates'));
 
 async function generate(options: { template: string, path: string }): Promise<void> {
   const paths: string[] = options.path.replace(/(\/|\\)/g, sep).split(sep);
   const componentDir: string = join(process.cwd(), ...paths.slice(0, -1));
-  const componentNameAsKebabCase: string = noCase(paths[paths.length - 1])
-    .split(' ')
-    .join('-');
-  const componentNameAsPascalCase: string = noCase(paths[paths.length - 1])
-    .split(' ')
-    .map((it: string) => it.charAt(0).toUpperCase() + it.slice(1).toLowerCase())
-    .join('');
+  const componentNameAsKebabCase: string = kebabCase(paths[paths.length - 1]);
+  const componentNameAsPascalCase: string = pascalCase(paths[paths.length - 1]);
 
   const dist: string = join(componentDir, `${ componentNameAsKebabCase }.${ options.template }.ts`);
 
