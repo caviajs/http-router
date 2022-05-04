@@ -1,9 +1,9 @@
-import { HttpServerRegistry } from './http-server-registry';
+import { HttpServerRouter } from './http-server-router';
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
 import { Endpoint } from '../types/endpoint';
 
-class HttpRouterTest extends HttpServerRegistry {
+class HttpRouterTest extends HttpServerRouter {
   public readonly routes: Endpoint[] = [];
 }
 
@@ -15,7 +15,7 @@ class FooController {
   }
 }
 
-describe('HttpRouter', () => {
+describe('xyz', () => {
   it('example', () => {
     expect(1).toBe(1);
   });

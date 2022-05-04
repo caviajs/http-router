@@ -4,7 +4,7 @@ import { Injectable } from '../../decorators/injectable';
 import { HttpException } from '../../exceptions/http-exception';
 import { File } from '../../types/file';
 import { Parser, ParserMetadata } from '../../types/parser';
-import { Headers } from '../headers';
+import { getContentTypeParameter } from '../../utils/get-content-type-parameter';
 
 @Injectable()
 export class MultipartFormDataParser extends Parser {
@@ -12,12 +12,8 @@ export class MultipartFormDataParser extends Parser {
     mimeType: 'multipart/form-data',
   };
 
-  constructor(protected readonly headers: Headers) {
-    super();
-  }
-
   public parse(buffer: Buffer, headers: http.IncomingHttpHeaders): unknown {
-    const boundary: string | undefined = this.headers.contentType.getParameter(headers['content-type'], 'boundary');
+    const boundary: string | undefined = getContentTypeParameter(headers['content-type'], 'boundary');
 
     if (!boundary) {
       throw new HttpException(415, 'Unsupported Media Type: no boundary');

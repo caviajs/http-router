@@ -1,5 +1,4 @@
 import { Method } from './method';
-import { Path } from './path';
 import { Request } from './request';
 import { Response } from './response';
 import { Schema } from './schema';
@@ -13,7 +12,7 @@ export abstract class Endpoint {
 export interface EndpointMetadata {
   readonly data?: any;
   readonly method: Method;
-  readonly path: Path;
+  readonly path: string;
   readonly schema?: {
     readonly request?: {
       readonly body?: Schema;

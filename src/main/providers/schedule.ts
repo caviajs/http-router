@@ -15,9 +15,11 @@ export class Schedule {
   ) {
   }
 
-  public add(worker: Worker): void {
+  public declareWorker(worker: Worker): void {
     if (!cron.validate(worker.metadata.expression)) {
-      throw new Error(`Invalid {${ worker.metadata.expression }} worker expression`);
+      this.logger.fatal(`Invalid {${ worker.metadata.expression }} schedule worker expression`, SCHEDULE_CONTEXT);
+
+      return process.exit(0);
     }
 
     this.workers.push(worker);

@@ -31,7 +31,7 @@ class NoWorker {
 }
 
 describe('ScheduleExplorer', () => {
-  const scheduleAdd = jest.fn();
+  const scheduleDeclareWorker = jest.fn();
 
   let scheduleExplorer: ScheduleExplorer;
   let fooWorker: FooWorker;
@@ -41,7 +41,7 @@ describe('ScheduleExplorer', () => {
   beforeEach(async () => {
     const injector: Injector = await Injector.create([FooWorker, BarWorker, NoWorker]);
     const schedule: Partial<Schedule> = {
-      add: scheduleAdd,
+      declareWorker: scheduleDeclareWorker,
     };
 
     scheduleExplorer = new ScheduleExplorer(injector, schedule as any);
@@ -52,13 +52,13 @@ describe('ScheduleExplorer', () => {
 
   describe('onApplicationBoot', () => {
     it('should add workers', async () => {
-      expect(scheduleAdd).toHaveBeenCalledTimes(0);
+      expect(scheduleDeclareWorker).toHaveBeenCalledTimes(0);
 
       await scheduleExplorer.onApplicationBoot();
 
-      expect(scheduleAdd).toHaveBeenCalledTimes(2);
-      expect(scheduleAdd).toHaveBeenCalledWith(fooWorker);
-      expect(scheduleAdd).toHaveBeenCalledWith(barWorker);
+      expect(scheduleDeclareWorker).toHaveBeenCalledTimes(2);
+      expect(scheduleDeclareWorker).toHaveBeenCalledWith(fooWorker);
+      expect(scheduleDeclareWorker).toHaveBeenCalledWith(barWorker);
     });
   });
 });

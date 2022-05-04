@@ -1,12 +1,6 @@
-import http from 'http';
-import { EndpointMetadata } from './main/types/endpoint';
-
-declare module 'http' {
-  export interface IncomingMessage {
-    metadata: EndpointMetadata | undefined;
-    params: Record<string, string>;
-  }
-}
-
-http.IncomingMessage.prototype.metadata = undefined;
-http.IncomingMessage.prototype.params = {};
+import './main/polyfills/http-request-cookies';
+import './main/polyfills/http-request-metadata';
+import './main/polyfills/http-request-params';
+import './main/polyfills/http-request-query';
+import './main/polyfills/http-response-remove-cookie';
+import './main/polyfills/http-response-set-cookie';

@@ -2,7 +2,7 @@ import { HttpServerExplorer } from './http-server-explorer';
 import { Injector } from '../injector';
 import { Injectable } from '../decorators/injectable';
 import { Endpoint, EndpointMetadata } from '../types/endpoint';
-import { HttpServerRegistry } from './http-server-registry';
+import { HttpServerRouter } from './http-server-router';
 
 @Injectable()
 class FooEndpoint extends Endpoint {
@@ -42,8 +42,8 @@ describe('HttpServerExplorer', () => {
 
   beforeEach(async () => {
     const injector: Injector = await Injector.create([FooEndpoint, BarEndpoint, NoEndpoint]);
-    const httpServerRegistry: Partial<HttpServerRegistry> = {
-      add: httpServerRegistryAdd,
+    const httpServerRegistry: Partial<HttpServerRouter> = {
+      declareEndpoint: httpServerRegistryAdd,
     };
 
     httpServerExplorer = new HttpServerExplorer(httpServerRegistry as any, injector);

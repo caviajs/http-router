@@ -14,9 +14,7 @@ import { CORE_CONTEXT } from './constants';
 import { Injector } from './injector';
 import { Body } from './providers/body';
 import { BodyExplorer } from './providers/body-explorer';
-import { Headers } from './providers/headers';
-import { Cookies } from './providers/cookies';
-import { HttpServerRegistry } from './providers/http-server-registry';
+import { HttpServerRouter } from './providers/http-server-router';
 import { HttpServerExplorer } from './providers/http-server-explorer';
 import { HttpServerProvider } from './providers/http-server';
 import { HttpServerHandler } from './providers/http-server-handler';
@@ -31,16 +29,14 @@ import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from './types/s
 const BUILT_IN_PROVIDERS: Provider[] = [
   Body,
   BodyExplorer,
-  Cookies,
   Env,
-  Headers,
   HttpClient,
   HttpServerProvider,
   HttpServerExplorer,
   HttpServerHandler,
   HttpServerManager,
   HttpServerPortProvider,
-  HttpServerRegistry,
+  HttpServerRouter,
   Logger,
   LoggerLevelProvider,
   LoggerMessageFactoryProvider,

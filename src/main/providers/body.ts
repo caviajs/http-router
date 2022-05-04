@@ -3,10 +3,10 @@ import stream from 'stream';
 import { HttpException } from '../exceptions/http-exception';
 import { Request } from '../types/request';
 import { Injectable } from '../decorators/injectable';
-import { Headers } from './headers';
 import { Parser } from '../types/parser';
 import { HTTP_CONTEXT } from '../constants';
 import { Logger } from './logger';
+import { getContentTypeMime } from '../utils/get-content-type-mime';
 
 const DEFAULT_PARSE_BODY_OPTIONS: ParseBodyOptions = {
   limit: 1048576, // 10 Mbits
@@ -17,7 +17,6 @@ export class Body {
   protected readonly parsers: Parser[] = [];
 
   constructor(
-    protected readonly headers: Headers,
     protected readonly logger: Logger,
   ) {
   }
@@ -88,7 +87,7 @@ export class Body {
           return reject(new HttpException(400, 'Request size did not match Content-Length'));
         }
 
-        const mimeType = this.headers.contentType.getMime(request.headers['content-type']);
+        const mimeType = getContentTypeMime(request.headers['content-type']);
         const mimeTypeParser: Parser | undefined = this.parsers.find(it => it.metadata.mimeType === mimeType);
 
         if (!mimeTypeParser) {

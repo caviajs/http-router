@@ -1,6 +1,5 @@
 import { HttpException } from '../../exceptions/http-exception';
 import { ApplicationJsonParser } from './application-json.parser';
-import { Headers } from '../headers';
 
 describe('ApplicationJsonParser', () => {
   const data: object = { foo: 'bar' };
@@ -9,7 +8,7 @@ describe('ApplicationJsonParser', () => {
   let applicationJsonParser: ApplicationJsonParser;
 
   beforeEach(() => {
-    applicationJsonParser = new ApplicationJsonParser(new Headers());
+    applicationJsonParser = new ApplicationJsonParser();
   });
 
   it('should return valid data for a payload without a charset', () => {

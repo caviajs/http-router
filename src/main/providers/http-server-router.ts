@@ -7,12 +7,15 @@ import { HTTP_CONTEXT } from '../constants';
 import { Endpoint, EndpointMetadata } from '../types/endpoint';
 
 @Injectable()
-export class HttpServerRegistry {
+export class HttpServerRouter {
   protected readonly endpoints: Endpoint[] = [];
 
-  public get metadata(): EndpointMetadata[] {
-    // TODO: brakuje nazwa metody
-    return this.endpoints.map(endpoint => endpoint.metadata);
+  public get apiSpec(): ApiSpec {
+    return {
+      endpoints: this.endpoints.map(endpoint => {
+        return { name: endpoint.constructor.name, ...endpoint.metadata };
+      }),
+    };
   }
 
   constructor(
@@ -20,9 +23,11 @@ export class HttpServerRegistry {
   ) {
   }
 
-  public add(endpoint: Endpoint): void {
+  public declareEndpoint(endpoint: Endpoint): void {
     if (!endpoint.metadata.path.startsWith('/')) {
-      throw new Error(`The path in '${ endpoint.constructor.name }' should start with '/'`);
+      this.logger.fatal(`The path in '${ endpoint.constructor.name }' should start with '/'`, HTTP_CONTEXT);
+
+      return process.exit(0);
     }
 
     // todo endpoint.metadata.schema validation
@@ -30,14 +35,16 @@ export class HttpServerRegistry {
     const matcher = match(endpoint.metadata.path);
 
     if (this.endpoints.some(it => it.metadata.method === endpoint.metadata.method && matcher(it.metadata.path))) {
-      throw new Error(`Duplicated {${ endpoint.metadata.method } ${ endpoint.metadata.path }} http endpoint`);
+      this.logger.fatal(`Duplicated {${ endpoint.metadata.method } ${ endpoint.metadata.path }} http endpoint`, HTTP_CONTEXT);
+
+      return process.exit(0);
     }
 
     this.endpoints.push(endpoint);
     this.logger.trace(`Mapped {${ endpoint.metadata.method } ${ endpoint.metadata.path }} http endpoint`, HTTP_CONTEXT);
   }
 
-  public find(method: Method, url: string): Endpoint | undefined {
+  public resolveEndpoint(method: Method, url: string): Endpoint | undefined {
     let endpoint: Endpoint | undefined;
 
     const pathname: string = parse(url).pathname;
@@ -51,4 +58,8 @@ export class HttpServerRegistry {
 
     return endpoint;
   }
+}
+
+export interface ApiSpec {
+  endpoints: ({ name: string } & EndpointMetadata)[];
 }

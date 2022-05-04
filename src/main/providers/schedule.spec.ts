@@ -34,7 +34,7 @@ describe('Schedule', () => {
     fooWorker = new FooWorker();
   });
 
-  describe('add', () => {
+  describe('declareWorker', () => {
     it('should throw an exception if the worker expression is invalid', () => {
       class InvalidWorker extends Worker {
         public readonly metadata: WorkerMetadata = {
@@ -49,7 +49,7 @@ describe('Schedule', () => {
       const invalidWorker = new InvalidWorker();
 
       try {
-        schedule.add(invalidWorker);
+        schedule.declareWorker(invalidWorker);
       } catch (e) {
         expect(e.message).toBe(`Invalid {${ invalidWorker.metadata.expression }} worker expression`);
       }
@@ -59,7 +59,7 @@ describe('Schedule', () => {
       expect(schedule.workers).toEqual([]);
       expect(loggerTrace).toHaveBeenCalledTimes(0);
 
-      schedule.add(fooWorker);
+      schedule.declareWorker(fooWorker);
 
       expect(schedule.workers).toEqual([fooWorker]);
       expect(loggerTrace).toHaveBeenCalledTimes(1);

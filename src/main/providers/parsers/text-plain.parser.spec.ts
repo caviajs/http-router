@@ -1,5 +1,4 @@
 import { TextPlainParser } from './text-plain.parser';
-import { Headers } from '../headers';
 import { HttpException } from '../../exceptions/http-exception';
 
 describe('TextPlainParser', () => {
@@ -9,7 +8,7 @@ describe('TextPlainParser', () => {
   let textPlainParser: TextPlainParser;
 
   beforeEach(() => {
-    textPlainParser = new TextPlainParser(new Headers());
+    textPlainParser = new TextPlainParser();
   });
 
   it('should return valid data for a payload without a charset', () => {

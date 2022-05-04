@@ -1,5 +1,5 @@
 import http from 'http';
-import { HttpServerRegistry } from './http-server-registry';
+import { HttpServerRouter } from './http-server-router';
 import { HttpServer } from './http-server';
 import { HttpServerHandler } from './http-server-handler';
 import { HttpServerManager } from './http-server-manager';
@@ -11,7 +11,7 @@ import { HTTP_CONTEXT } from '../constants';
 
 describe('HttpServerManager', () => {
   let logger: Logger;
-  let httpRouter: HttpServerRegistry;
+  let httpRouter: HttpServerRouter;
   let httpServerHandler: HttpServerHandler;
   let httpServer: HttpServer;
   let httpServerPort: HttpServerPort;
@@ -19,7 +19,7 @@ describe('HttpServerManager', () => {
 
   beforeEach(async () => {
     logger = new Logger(LoggerLevel.OFF, () => '');
-    httpRouter = new HttpServerRegistry(logger);
+    httpRouter = new HttpServerRouter(logger);
     httpServerHandler = new HttpServerHandler(httpRouter, await Injector.create([]));
     httpServer = http.createServer();
     httpServerPort = 3000;

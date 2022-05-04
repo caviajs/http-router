@@ -3,7 +3,6 @@ import { Injectable } from '../decorators/injectable';
 import { Parser, ParserMetadata } from '../types/parser';
 import { BodyExplorer } from './body-explorer';
 import { Body } from './body';
-import { Headers } from './headers';
 import { LoggerLevel } from './logger-level';
 import { Logger } from './logger';
 
@@ -43,7 +42,7 @@ describe('BodyExplorer', () => {
   beforeEach(async () => {
     const injector: Injector = await Injector.create([FooParser, BarParser, NoParser]);
 
-    body = new Body(new Headers(), new Logger(LoggerLevel.OFF, () => ''));
+    body = new Body(new Logger(LoggerLevel.OFF, () => ''));
     bodyExplorer = new BodyExplorer(body, injector);
     fooParser = await injector.find(FooParser);
     barParser = await injector.find(BarParser);

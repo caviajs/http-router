@@ -1,6 +1,5 @@
 import { HttpException } from '../../exceptions/http-exception';
 import { File } from '../../types/file';
-import { Headers } from '../headers';
 import { MultipartFormDataParser } from './multipart-form-data.parser';
 
 describe('MultipartFormDataParser', () => {
@@ -48,7 +47,7 @@ describe('MultipartFormDataParser', () => {
   let multipartFormDataParser: MultipartFormDataParser;
 
   beforeEach(() => {
-    multipartFormDataParser = new MultipartFormDataParser(new Headers());
+    multipartFormDataParser = new MultipartFormDataParser();
   });
 
   it('should return valid data for a payload', () => {

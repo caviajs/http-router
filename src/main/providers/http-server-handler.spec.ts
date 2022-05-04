@@ -1,5 +1,5 @@
 import { Readable, Stream } from 'stream';
-import { HttpServerRegistry } from './http-server-registry';
+import { HttpServerRouter } from './http-server-router';
 import { HttpServerHandler } from './http-server-handler';
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
@@ -196,7 +196,7 @@ describe('HttpServerHandler', () => {
   let request: Partial<Request>;
   let response: Partial<Response>;
 
-  let httpServerRegistry: HttpServerRegistry;
+  let httpServerRegistry: HttpServerRouter;
   let httpServerHandler: HttpServerHandlerTest;
 
   let undefinedEndpoint: UndefinedEndpoint;
@@ -249,7 +249,7 @@ describe('HttpServerHandler', () => {
       SecondInterceptor,
     ]);
 
-    httpServerRegistry = new HttpServerRegistry(new Logger(LoggerLevel.OFF, () => ''));
+    httpServerRegistry = new HttpServerRouter(new Logger(LoggerLevel.OFF, () => ''));
     httpServerHandler = new HttpServerHandlerTest(httpServerRegistry, injector);
 
     undefinedEndpoint = await injector.find(UndefinedEndpoint);
@@ -268,18 +268,18 @@ describe('HttpServerHandler', () => {
     firstInterceptor = await injector.find(FirstInterceptor);
     secondInterceptor = await injector.find(SecondInterceptor);
 
-    httpServerRegistry.add(undefinedEndpoint);
-    httpServerRegistry.add(bufferEndpoint);
-    httpServerRegistry.add(streamEndpoint);
-    httpServerRegistry.add(stringEndpoint);
-    httpServerRegistry.add(trueEndpoint);
-    httpServerRegistry.add(falseEndpoint);
-    httpServerRegistry.add(numberEndpoint);
-    httpServerRegistry.add(nullEndpoint);
-    httpServerRegistry.add(arrayEndpoint);
-    httpServerRegistry.add(objectEndpoint);
-    httpServerRegistry.add(httpExceptionEndpoint);
-    httpServerRegistry.add(errorEndpoint);
+    httpServerRegistry.declareEndpoint(undefinedEndpoint);
+    httpServerRegistry.declareEndpoint(bufferEndpoint);
+    httpServerRegistry.declareEndpoint(streamEndpoint);
+    httpServerRegistry.declareEndpoint(stringEndpoint);
+    httpServerRegistry.declareEndpoint(trueEndpoint);
+    httpServerRegistry.declareEndpoint(falseEndpoint);
+    httpServerRegistry.declareEndpoint(numberEndpoint);
+    httpServerRegistry.declareEndpoint(nullEndpoint);
+    httpServerRegistry.declareEndpoint(arrayEndpoint);
+    httpServerRegistry.declareEndpoint(objectEndpoint);
+    httpServerRegistry.declareEndpoint(httpExceptionEndpoint);
+    httpServerRegistry.declareEndpoint(errorEndpoint);
   });
 
   afterEach(() => {

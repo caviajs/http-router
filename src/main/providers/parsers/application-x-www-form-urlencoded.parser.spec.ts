@@ -1,6 +1,5 @@
 import { HttpException } from '../../exceptions/http-exception';
 import { ApplicationXWwwFormUrlencodedParser } from './application-x-www-form-urlencoded.parser';
-import { Headers } from '../headers';
 
 describe('ApplicationXWwwFormUrlencodedParser', () => {
   const data: object = { foo: 'bar', foz: 'baz' };
@@ -9,7 +8,7 @@ describe('ApplicationXWwwFormUrlencodedParser', () => {
   let applicationXWwwFormUrlencodedParser: ApplicationXWwwFormUrlencodedParser;
 
   beforeEach(() => {
-    applicationXWwwFormUrlencodedParser = new ApplicationXWwwFormUrlencodedParser(new Headers());
+    applicationXWwwFormUrlencodedParser = new ApplicationXWwwFormUrlencodedParser();
   });
 
   it('should return valid data for a payload without a charset', () => {

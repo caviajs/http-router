@@ -1,14 +1,12 @@
-import { catchError, defer, EMPTY, empty, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
 import { Stream } from 'stream';
 import { readable } from 'is-stream';
-import { parse as urlParse } from 'url';
-import { match, MatchResult } from 'path-to-regexp';
 import { Interceptor } from '../types/interceptor';
 import { Method } from '../types/method';
 import { Request } from '../types/request';
 import { Response } from '../types/response';
 import { HttpException } from '../exceptions/http-exception';
-import { HttpServerRegistry } from './http-server-registry';
+import { HttpServerRouter } from './http-server-router';
 import { OnApplicationBoot } from '../types/hooks';
 import { Injector } from '../injector';
 import { Injectable } from '../decorators/injectable';
@@ -19,7 +17,7 @@ export class HttpServerHandler implements OnApplicationBoot {
   protected readonly interceptors: Interceptor[] = [];
 
   constructor(
-    protected readonly httpServerRegistry: HttpServerRegistry,
+    protected readonly httpServerRegistry: HttpServerRouter,
     protected readonly injector: Injector,
   ) {
   }
@@ -31,10 +29,9 @@ export class HttpServerHandler implements OnApplicationBoot {
   }
 
   public async handle(request: Request, response: Response): Promise<void> {
-    const endpoint: Endpoint | undefined = this.httpServerRegistry.find(request.method as Method, request.url);
+    const endpoint: Endpoint | undefined = this.httpServerRegistry.resolveEndpoint(request.method as Method, request.url);
 
     request.metadata = endpoint?.metadata;
-    request.params = endpoint?.metadata.path ? (match(endpoint?.metadata.path)(urlParse(request.url).pathname) as MatchResult)?.params as any : {};
 
     const handler: Promise<unknown> = this.composeInterceptors(request, response, this.interceptors, (): Promise<unknown> => {
       if (!endpoint) {

@@ -1,4 +1,4 @@
-import { HttpServerRegistry } from './http-server-registry';
+import { HttpServerRouter } from './http-server-router';
 import { Injectable } from '../decorators/injectable';
 import { OnApplicationBoot } from '../types/hooks';
 import { Injector } from '../injector';
@@ -7,7 +7,7 @@ import { Endpoint } from '../types/endpoint';
 @Injectable()
 export class HttpServerExplorer implements OnApplicationBoot {
   constructor(
-    protected readonly httpServerRegistry: HttpServerRegistry,
+    protected readonly httpServerRegistry: HttpServerRouter,
     protected readonly injector: Injector,
   ) {
   }
@@ -19,7 +19,7 @@ export class HttpServerExplorer implements OnApplicationBoot {
 
     endpoints
       .map((endpoint: Endpoint) => {
-        this.httpServerRegistry.add(endpoint);
+        this.httpServerRegistry.declareEndpoint(endpoint);
       });
   }
 }
