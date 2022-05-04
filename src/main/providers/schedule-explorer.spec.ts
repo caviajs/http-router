@@ -1,5 +1,5 @@
 import { ScheduleExplorer } from './schedule-explorer';
-import { Injector } from '../injector';
+import { Container } from '../container';
 import { Schedule } from './schedule';
 import { Worker, WorkerMetadata } from '../types/worker';
 import { Injectable } from '../decorators/injectable';
@@ -39,15 +39,15 @@ describe('ScheduleExplorer', () => {
   let noWorker: NoWorker;
 
   beforeEach(async () => {
-    const injector: Injector = await Injector.create([FooWorker, BarWorker, NoWorker]);
+    const container: Container = await Container.create([FooWorker, BarWorker, NoWorker]);
     const schedule: Partial<Schedule> = {
       declareWorker: scheduleDeclareWorker,
     };
 
-    scheduleExplorer = new ScheduleExplorer(injector, schedule as any);
-    fooWorker = await injector.find(FooWorker);
-    barWorker = await injector.find(BarWorker);
-    noWorker = await injector.find(NoWorker);
+    scheduleExplorer = new ScheduleExplorer(container, schedule as any);
+    fooWorker = await container.find(FooWorker);
+    barWorker = await container.find(BarWorker);
+    noWorker = await container.find(NoWorker);
   });
 
   describe('onApplicationBoot', () => {

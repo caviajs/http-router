@@ -1,4 +1,4 @@
-import { Injector } from '../injector';
+import { Container } from '../container';
 import { Injectable } from '../decorators/injectable';
 import { Parser, ParserMetadata } from '../types/parser';
 import { BodyExplorer } from './body-explorer';
@@ -40,13 +40,13 @@ describe('BodyExplorer', () => {
   let noParser: NoParser;
 
   beforeEach(async () => {
-    const injector: Injector = await Injector.create([FooParser, BarParser, NoParser]);
+    const container: Container = await Container.create([FooParser, BarParser, NoParser]);
 
     body = new Body(new Logger(LoggerLevel.OFF, () => ''));
-    bodyExplorer = new BodyExplorer(body, injector);
-    fooParser = await injector.find(FooParser);
-    barParser = await injector.find(BarParser);
-    noParser = await injector.find(NoParser);
+    bodyExplorer = new BodyExplorer(body, container);
+    fooParser = await container.find(FooParser);
+    barParser = await container.find(BarParser);
+    noParser = await container.find(NoParser);
 
     jest.spyOn(body, 'addParser').mockImplementation(jest.fn());
   });

@@ -11,7 +11,7 @@ import { Token } from './types/token';
 import { getProviderToken } from './utils/get-provider-token';
 import { CaviaApplication } from './cavia-application';
 import { CORE_CONTEXT } from './constants';
-import { Injector } from './injector';
+import { Container } from './container';
 import { Body } from './providers/body';
 import { BodyExplorer } from './providers/body-explorer';
 import { HttpServerRouter } from './providers/http-server-router';
@@ -51,31 +51,31 @@ const BUILT_IN_PROVIDERS: Provider[] = [
 
 export class CaviaFactory {
   public static async create(options: CaviaFactoryOptions): Promise<CaviaApplication> {
-    const injector: Injector = await this.createInjector(options);
-    const caviaApplication: CaviaApplication = new CaviaApplication(injector);
+    const container: Container = await this.createInjector(options);
+    const caviaApplication: CaviaApplication = new CaviaApplication(container);
 
-    (await injector.find(Logger)).trace('Starting application...', CORE_CONTEXT);
+    (await container.find(Logger)).trace('Starting application...', CORE_CONTEXT);
 
-    await this.validateEnv(injector, options);
+    await this.validateEnv(container, options);
     await caviaApplication.boot();
 
     return caviaApplication;
   }
 
-  protected static async createInjector(options: CaviaFactoryOptions): Promise<Injector> {
+  protected static async createInjector(options: CaviaFactoryOptions): Promise<Container> {
     const providers: Map<Token, Provider> = new Map();
 
     for (const provider of [...BUILT_IN_PROVIDERS, ...options?.providers || []]) {
       providers.set(getProviderToken(provider), provider);
     }
 
-    return await Injector.create([...providers.values()]);
+    return await Container.create([...providers.values()]);
   }
 
-  protected static async validateEnv(injector: Injector, options: CaviaFactoryOptions): Promise<void | never> {
+  protected static async validateEnv(container: Container, options: CaviaFactoryOptions): Promise<void | never> {
     if (options?.schemas?.env) {
-      const env = await injector.find(Env);
-      const validator = await injector.find(Validator);
+      const env = await container.find(Env);
+      const validator = await container.find(Validator);
       const validateErrors = validator.validate(
         {
           additionalProperties: true,

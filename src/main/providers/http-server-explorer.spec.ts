@@ -1,5 +1,5 @@
 import { HttpServerExplorer } from './http-server-explorer';
-import { Injector } from '../injector';
+import { Container } from '../container';
 import { Injectable } from '../decorators/injectable';
 import { Endpoint, EndpointMetadata } from '../types/endpoint';
 import { HttpServerRouter } from './http-server-router';
@@ -41,15 +41,15 @@ describe('HttpServerExplorer', () => {
   let noEndpoint: NoEndpoint;
 
   beforeEach(async () => {
-    const injector: Injector = await Injector.create([FooEndpoint, BarEndpoint, NoEndpoint]);
+    const container: Container = await Container.create([FooEndpoint, BarEndpoint, NoEndpoint]);
     const httpServerRegistry: Partial<HttpServerRouter> = {
       declareEndpoint: httpServerRegistryAdd,
     };
 
-    httpServerExplorer = new HttpServerExplorer(httpServerRegistry as any, injector);
-    fooEndpoint = await injector.find(FooEndpoint);
-    barEndpoint = await injector.find(BarEndpoint);
-    noEndpoint = await injector.find(NoEndpoint);
+    httpServerExplorer = new HttpServerExplorer(container, httpServerRegistry as any);
+    fooEndpoint = await container.find(FooEndpoint);
+    barEndpoint = await container.find(BarEndpoint);
+    noEndpoint = await container.find(NoEndpoint);
   });
 
   describe('onApplicationBoot', () => {

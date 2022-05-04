@@ -5,7 +5,7 @@ import { HttpServerHandler } from './http-server-handler';
 import { HttpServerManager } from './http-server-manager';
 import { HttpServerPort } from './http-server-port';
 import { Logger } from './logger';
-import { Injector } from '../injector';
+import { Container } from '../container';
 import { LoggerLevel } from './logger-level';
 import { HTTP_CONTEXT } from '../constants';
 
@@ -20,7 +20,7 @@ describe('HttpServerManager', () => {
   beforeEach(async () => {
     logger = new Logger(LoggerLevel.OFF, () => '');
     httpRouter = new HttpServerRouter(logger);
-    httpServerHandler = new HttpServerHandler(httpRouter, await Injector.create([]));
+    httpServerHandler = new HttpServerHandler(httpRouter, await Container.create([]));
     httpServer = http.createServer();
     httpServerPort = 3000;
     httpServerManager = new HttpServerManager(logger, httpServer, httpServerHandler, httpServerPort);

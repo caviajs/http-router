@@ -3,7 +3,7 @@ import { HttpServerRouter } from './http-server-router';
 import { HttpServerHandler } from './http-server-handler';
 import { Logger } from './logger';
 import { LoggerLevel } from './logger-level';
-import { Injector } from '../injector';
+import { Container } from '../container';
 import { Endpoint, EndpointMetadata } from '../types/endpoint';
 import { Injectable } from '../decorators/injectable';
 import { Interceptor, Next } from '../types/interceptor';
@@ -231,7 +231,7 @@ describe('HttpServerHandler', () => {
       end: responseEndSpy as any,
     };
 
-    const injector: Injector = await Injector.create([
+    const container: Container = await Container.create([
       UndefinedEndpoint,
       BufferEndpoint,
       StreamEndpoint,
@@ -250,23 +250,23 @@ describe('HttpServerHandler', () => {
     ]);
 
     httpServerRegistry = new HttpServerRouter(new Logger(LoggerLevel.OFF, () => ''));
-    httpServerHandler = new HttpServerHandlerTest(httpServerRegistry, injector);
+    httpServerHandler = new HttpServerHandlerTest(container, httpServerRegistry);
 
-    undefinedEndpoint = await injector.find(UndefinedEndpoint);
-    bufferEndpoint = await injector.find(BufferEndpoint);
-    streamEndpoint = await injector.find(StreamEndpoint);
-    stringEndpoint = await injector.find(StringEndpoint);
-    trueEndpoint = await injector.find(TrueEndpoint);
-    falseEndpoint = await injector.find(FalseEndpoint);
-    numberEndpoint = await injector.find(NumberEndpoint);
-    nullEndpoint = await injector.find(NullEndpoint);
-    arrayEndpoint = await injector.find(ArrayEndpoint);
-    objectEndpoint = await injector.find(ObjectEndpoint);
-    httpExceptionEndpoint = await injector.find(HttpExceptionEndpoint);
-    errorEndpoint = await injector.find(ErrorEndpoint);
+    undefinedEndpoint = await container.find(UndefinedEndpoint);
+    bufferEndpoint = await container.find(BufferEndpoint);
+    streamEndpoint = await container.find(StreamEndpoint);
+    stringEndpoint = await container.find(StringEndpoint);
+    trueEndpoint = await container.find(TrueEndpoint);
+    falseEndpoint = await container.find(FalseEndpoint);
+    numberEndpoint = await container.find(NumberEndpoint);
+    nullEndpoint = await container.find(NullEndpoint);
+    arrayEndpoint = await container.find(ArrayEndpoint);
+    objectEndpoint = await container.find(ObjectEndpoint);
+    httpExceptionEndpoint = await container.find(HttpExceptionEndpoint);
+    errorEndpoint = await container.find(ErrorEndpoint);
 
-    firstInterceptor = await injector.find(FirstInterceptor);
-    secondInterceptor = await injector.find(SecondInterceptor);
+    firstInterceptor = await container.find(FirstInterceptor);
+    secondInterceptor = await container.find(SecondInterceptor);
 
     httpServerRegistry.declareEndpoint(undefinedEndpoint);
     httpServerRegistry.declareEndpoint(bufferEndpoint);

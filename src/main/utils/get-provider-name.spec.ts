@@ -17,18 +17,6 @@ describe('getProviderName', () => {
     expect(getProviderName({ provide: baz, useClass: Lorem })).toBe(baz.toString());
   });
 
-  it('should return correct provider name for an existing provider', () => {
-    class Foo {
-    }
-
-    const bar: Token = 'bar';
-    const baz: Token = Symbol('baz');
-
-    expect(getProviderName({ provide: Foo, useExisting: 'lorem' })).toBe(Foo.name);
-    expect(getProviderName({ provide: bar, useExisting: 'lorem' })).toBe(bar.toString());
-    expect(getProviderName({ provide: baz, useExisting: 'lorem' })).toBe(baz.toString());
-  });
-
   it('should return correct provider name for a factory provider', () => {
     class Foo {
     }

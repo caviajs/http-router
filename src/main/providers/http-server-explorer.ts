@@ -1,20 +1,20 @@
 import { HttpServerRouter } from './http-server-router';
 import { Injectable } from '../decorators/injectable';
 import { OnApplicationBoot } from '../types/hooks';
-import { Injector } from '../injector';
+import { Container } from '../container';
 import { Endpoint } from '../types/endpoint';
 
 @Injectable()
 export class HttpServerExplorer implements OnApplicationBoot {
   constructor(
+    protected readonly container: Container,
     protected readonly httpServerRegistry: HttpServerRouter,
-    protected readonly injector: Injector,
   ) {
   }
 
   public async onApplicationBoot(): Promise<void> {
     const endpoints: Endpoint[] = await this
-      .injector
+      .container
       .filter(provider => typeof provider === 'function' && provider.prototype instanceof Endpoint);
 
     endpoints

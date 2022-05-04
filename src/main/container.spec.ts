@@ -1,7 +1,7 @@
 import { Inject } from './decorators/inject';
 import { Injectable } from './decorators/injectable';
 import { Optional } from './decorators/optional';
-import { Injector } from './injector';
+import { Container } from './container';
 import { Token } from './types/token';
 import { forwardRef } from './utils/forward-ref';
 import { getProviderToken } from './utils/get-provider-token';
@@ -56,31 +56,31 @@ class CarWithOptionalInjectEngineByForwardRef {
   }
 }
 
-describe('Injector', () => {
-  it('should contain built-in Injector dependency', async () => {
-    const injector = await Injector.create([]);
+describe('Container', () => {
+  it('should contain built-in Container dependency', async () => {
+    const container = await Container.create([]);
 
-    expect(await injector.find(Injector)).toBe(injector);
+    expect(await container.find(Container)).toBe(container);
   });
 
   it('should correctly resolve the same provider by priority', async () => {
-    const injector = await Injector.create([
+    const container = await Container.create([
       { provide: 'foo', useValue: 1 },
       { provide: 'foo', useValue: 2 },
     ]);
 
-    expect(await injector.find('foo')).toEqual(1);
+    expect(await container.find('foo')).toEqual(1);
   });
 
   describe('filter', () => {
     it('should return properly filtered providers using predicate', async () => {
-      const injector = await Injector.create([
+      const container = await Container.create([
         { provide: 'foo', useValue: 1 },
         { provide: 'bar', useValue: 2 },
         { provide: 'baz', useValue: 3 },
       ]);
 
-      const result: any[] = await injector.filter(provider => {
+      const result: any[] = await container.filter(provider => {
         const tokens: Token[] = ['foo', 'bar'];
 
         return tokens.includes(getProviderToken(provider));
@@ -93,13 +93,13 @@ describe('Injector', () => {
     });
 
     it('should return properly filtered providers using tokens', async () => {
-      const injector = await Injector.create([
+      const container = await Container.create([
         { provide: 'foo', useValue: 1 },
         { provide: 'bar', useValue: 2 },
         { provide: 'baz', useValue: 3 },
       ]);
 
-      const result: any[] = await injector.filter(['foo', 'bar']);
+      const result: any[] = await container.filter(['foo', 'bar']);
 
       expect(result.length).toEqual(2);
       expect(result).toContain(1);
@@ -110,224 +110,200 @@ describe('Injector', () => {
 
   describe('find', () => {
     it('should return the found provider using token', async () => {
-      const injector = await Injector.create([
+      const container = await Container.create([
         { provide: 'foo', useValue: 1 },
       ]);
 
-      expect(await injector.find('foo')).toBe(1);
+      expect(await container.find('foo')).toBe(1);
     });
 
     it('should return undefined if the provider is not found using token', async () => {
-      const injector = await Injector.create([]);
+      const container = await Container.create([]);
 
-      expect(await injector.find('foo')).toBeUndefined();
+      expect(await container.find('foo')).toBeUndefined();
     });
 
     it('should return the found provider using predicate', async () => {
-      const injector = await Injector.create([
+      const container = await Container.create([
         { provide: 'foo', useValue: 1 },
       ]);
 
-      expect(await injector.find(provider => getProviderToken(provider) === 'foo')).toBe(1);
+      expect(await container.find(provider => getProviderToken(provider) === 'foo')).toBe(1);
     });
 
     it('should return undefined if the provider is not found using predicate', async () => {
-      const injector = await Injector.create([]);
+      const container = await Container.create([]);
 
-      expect(await injector.find(provider => getProviderToken(provider) === 'foo')).toBeUndefined();
+      expect(await container.find(provider => getProviderToken(provider) === 'foo')).toBeUndefined();
     });
   });
 
   describe('using class providers', () => {
     it('should throw an exception if the class does not have the Injection annotation', () => {
-      expect(Injector.create([{ provide: 'car', useClass: CarWithoutInjectableAnnotation }]))
+      expect(Container.create([{ provide: 'car', useClass: CarWithoutInjectableAnnotation }]))
         .rejects
         .toThrowError(`The '${ getTokenName(CarWithoutInjectableAnnotation) }' should be annotated as a injectable`);
     });
 
     it('should correctly resolve class without dependencies', async () => {
-      const injector = await Injector.create([{ provide: 'engine', useClass: Engine }]);
+      const container = await Container.create([{ provide: 'engine', useClass: Engine }]);
 
-      expect(await injector.find('engine')).toBeInstanceOf(Engine);
+      expect(await container.find('engine')).toBeInstanceOf(Engine);
     });
 
     it('should correctly resolve class with reference dependency', async () => {
-      const injector = await Injector.create([Engine, { provide: 'car', useClass: Car }]);
-      const car = await injector.find<Car>('car');
+      const container = await Container.create([Engine, { provide: 'car', useClass: Car }]);
+      const car = await container.find<Car>('car');
 
       expect(car).toBeInstanceOf(Car);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should throw an exception if the class injects a nonexistent reference dependency', () => {
-      expect(Injector.create([{ provide: 'car', useClass: Car }]))
+      expect(Container.create([{ provide: 'car', useClass: Car }]))
         .rejects
         .toThrowError(`Cavia can't resolve dependency at index [0] in ${ getTokenName(Car) }`);
     });
 
     it('should throw an exception if the class injects an unknown reference dependency', () => {
-      expect(Injector.create([{ provide: 'car', useClass: CarWithUnknownEngine }]))
+      expect(Container.create([{ provide: 'car', useClass: CarWithUnknownEngine }]))
         .rejects
         .toThrowError(`Cavia can't resolve dependency at index [0] in ${ getTokenName(CarWithUnknownEngine) }`);
     });
 
     it('should correctly resolve class with reference optional dependency', async () => {
-      const injector = await Injector.create([Engine, { provide: 'car', useClass: CarWithOptionalEngine }]);
-      const car = await injector.find<CarWithOptionalEngine>('car');
+      const container = await Container.create([Engine, { provide: 'car', useClass: CarWithOptionalEngine }]);
+      const car = await container.find<CarWithOptionalEngine>('car');
 
       expect(car).toBeInstanceOf(CarWithOptionalEngine);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should correctly resolve class with reference optional nonexistent dependency', async () => {
-      const injector = await Injector.create([{ provide: 'car', useClass: CarWithOptionalEngine }]);
-      const car = await injector.find<CarWithOptionalEngine>('car');
+      const container = await Container.create([{ provide: 'car', useClass: CarWithOptionalEngine }]);
+      const car = await container.find<CarWithOptionalEngine>('car');
 
       expect(car).toBeInstanceOf(CarWithOptionalEngine);
       expect(car.engine).toBeUndefined();
     });
 
     it('should correctly resolve class with dependency by Inject annotation', async () => {
-      const injector = await Injector.create([Engine, { provide: 'car', useClass: CarWithInjectEngine }]);
-      const car = await injector.find<CarWithInjectEngine>('car');
+      const container = await Container.create([Engine, { provide: 'car', useClass: CarWithInjectEngine }]);
+      const car = await container.find<CarWithInjectEngine>('car');
 
       expect(car).toBeInstanceOf(CarWithInjectEngine);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should throw an exception if the class inject nonexistent dependency by Inject annotation', () => {
-      expect(Injector.create([{ provide: 'car', useClass: CarWithInjectEngine }]))
+      expect(Container.create([{ provide: 'car', useClass: CarWithInjectEngine }]))
         .rejects
         .toThrowError(`Cavia can't resolve dependency at index [0] in ${ getTokenName(CarWithInjectEngine) }`);
     });
 
     it('should correctly resolve class with dependency by Inject annotation and forwardRef', async () => {
-      const injector = await Injector.create([Engine, { provide: 'car', useClass: CarWithInjectEngineByForwardRef }]);
-      const car = await injector.find<CarWithInjectEngineByForwardRef>('car');
+      const container = await Container.create([Engine, { provide: 'car', useClass: CarWithInjectEngineByForwardRef }]);
+      const car = await container.find<CarWithInjectEngineByForwardRef>('car');
 
       expect(car).toBeInstanceOf(CarWithInjectEngineByForwardRef);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should throw an exception if the class inject nonexistent dependency by Inject annotation and forwardRef', () => {
-      expect(Injector.create([{ provide: 'car', useClass: CarWithInjectEngineByForwardRef }]))
+      expect(Container.create([{ provide: 'car', useClass: CarWithInjectEngineByForwardRef }]))
         .rejects
         .toThrowError(`Cavia can't resolve dependency at index [0] in ${ getTokenName(CarWithInjectEngineByForwardRef) }`);
     });
 
     it('should correctly resolve class with optional dependency by Inject annotation', async () => {
-      const injector = await Injector.create([Engine, { provide: 'car', useClass: CarWithOptionalInjectEngine }]);
-      const car = await injector.find<CarWithOptionalInjectEngine>('car');
+      const container = await Container.create([Engine, { provide: 'car', useClass: CarWithOptionalInjectEngine }]);
+      const car = await container.find<CarWithOptionalInjectEngine>('car');
 
       expect(car).toBeInstanceOf(CarWithOptionalInjectEngine);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should correctly resolve class with optional nonexistent dependency by Inject annotation', async () => {
-      const injector = await Injector.create([{ provide: 'car', useClass: CarWithOptionalInjectEngine }]);
-      const car = await injector.find<CarWithOptionalInjectEngine>('car');
+      const container = await Container.create([{ provide: 'car', useClass: CarWithOptionalInjectEngine }]);
+      const car = await container.find<CarWithOptionalInjectEngine>('car');
 
       expect(car).toBeInstanceOf(CarWithOptionalInjectEngine);
       expect(car.engine).toBeUndefined();
     });
 
     it('should correctly resolve class with optional dependency by Inject annotation and forwardRef', async () => {
-      const injector = await Injector.create([Engine, { provide: 'car', useClass: CarWithOptionalInjectEngineByForwardRef }]);
-      const car = await injector.find<CarWithOptionalInjectEngineByForwardRef>('car');
+      const container = await Container.create([Engine, { provide: 'car', useClass: CarWithOptionalInjectEngineByForwardRef }]);
+      const car = await container.find<CarWithOptionalInjectEngineByForwardRef>('car');
 
       expect(car).toBeInstanceOf(CarWithOptionalInjectEngineByForwardRef);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should correctly resolve class with optional nonexistent dependency by Inject annotation and forwardRef', async () => {
-      const injector = await Injector.create([{ provide: 'car', useClass: CarWithOptionalInjectEngineByForwardRef }]);
-      const car = await injector.find<CarWithOptionalInjectEngineByForwardRef>('car');
+      const container = await Container.create([{ provide: 'car', useClass: CarWithOptionalInjectEngineByForwardRef }]);
+      const car = await container.find<CarWithOptionalInjectEngineByForwardRef>('car');
 
       expect(car).toBeInstanceOf(CarWithOptionalInjectEngineByForwardRef);
       expect(car.engine).toBeUndefined();
     });
   });
 
-  describe('using existing providers', () => {
-    it('should correctly resolve provider', async () => {
-      const injector = await Injector.create([
-        Engine,
-        { provide: 'alias', useExisting: Engine },
-      ]);
-
-      expect(await injector.find('alias'))
-        .toBe(await injector.find(Engine));
-    });
-
-    it('should throw an exception if a non provider is passed', () => {
-      expect(Injector.create([{ provide: 'engine', useExisting: Engine }]))
-        .rejects
-        .toThrowError(`No provider for ${ getTokenName(Engine) }!`);
-    });
-
-    it('should throw an exception if an provider points to itself', () => {
-      expect(Injector.create([{ provide: Engine, useExisting: Engine }]))
-        .rejects
-        .toThrowError(`Cannot instantiate cyclic dependency for token ${ getTokenName(Engine) }!`);
-    });
-  });
-
   describe('using factory providers', () => {
     it('should correctly resolve provider without dependencies', async () => {
-      const injector = await Injector.create([
+      const container = await Container.create([
         { provide: 'car', useFactory: () => 'foo' },
       ]);
 
-      expect(await injector.find('car')).toEqual('foo');
+      expect(await container.find('car')).toEqual('foo');
     });
 
     it('should correctly resolve async provider without dependencies', async () => {
-      const injector = await Injector.create([
+      const container = await Container.create([
         { provide: 'car', useFactory: () => new Promise(resolve => setTimeout(() => resolve('foo'), 10)) },
       ]);
 
-      expect(await injector.find('car')).toEqual('foo');
+      expect(await container.find('car')).toEqual('foo');
     });
 
     it('should correctly resolve provider with dependency', async () => {
-      const injector = await Injector.create([
+      const container = await Container.create([
         Engine,
         { provide: 'car1', useFactory: engine => ({ engine }), dependencies: [Engine] },
         { provide: 'car2', useFactory: engine => ({ engine }), dependencies: [{ dependency: Engine, optional: false }] },
       ]);
 
-      const car1 = await injector.find<{ engine: Engine }>('car1');
-      const car2 = await injector.find<{ engine: Engine }>('car2');
+      const car1 = await container.find<{ engine: Engine }>('car1');
+      const car2 = await container.find<{ engine: Engine }>('car2');
 
       expect(car1.engine).toBeInstanceOf(Engine);
       expect(car2.engine).toBeInstanceOf(Engine);
     });
 
     it('should correctly resolve provider with optional dependency', async () => {
-      const injector = await Injector.create([
+      const container = await Container.create([
         Engine,
         { provide: 'car', useFactory: engine => ({ engine }), dependencies: [{ dependency: Engine, optional: true }] },
       ]);
-      const car = await injector.find<{ engine: Engine }>('car');
+      const car = await container.find<{ engine: Engine }>('car');
 
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should correctly resolve provider with nonexistent optional dependency', async () => {
-      const injector = await Injector.create([
+      const container = await Container.create([
         { provide: 'car', useFactory: engine => ({ engine }), dependencies: [{ dependency: Engine, optional: true }] },
       ]);
-      const car = await injector.find<{ engine: Engine }>('car');
+      const car = await container.find<{ engine: Engine }>('car');
 
       expect(car.engine).toBeUndefined();
     });
 
     it('should throw an exception if the provider injects a nonexistent dependency', () => {
-      expect(Injector.create([{ provide: 'car', useFactory: engine => ({ engine }), dependencies: [Engine] }]))
+      expect(Container.create([{ provide: 'car', useFactory: engine => ({ engine }), dependencies: [Engine] }]))
         .rejects
         .toThrowError(`Cavia can't resolve dependency at index [0] in ${ getTokenName('car') }`);
 
-      expect(Injector.create([{ provide: 'car', useFactory: engine => ({ engine }), dependencies: [{ dependency: Engine, optional: false }] }]))
+      expect(Container.create([{ provide: 'car', useFactory: engine => ({ engine }), dependencies: [{ dependency: Engine, optional: false }] }]))
         .rejects
         .toThrowError(`Cavia can't resolve dependency at index [0] in ${ getTokenName('car') }`);
     });
@@ -335,108 +311,108 @@ describe('Injector', () => {
 
   describe('using type providers', () => {
     it('should throw an exception if the class does not have the Injection annotation', () => {
-      expect(Injector.create([CarWithoutInjectableAnnotation]))
+      expect(Container.create([CarWithoutInjectableAnnotation]))
         .rejects
         .toThrowError(`The '${ getTokenName(CarWithoutInjectableAnnotation) }' should be annotated as a injectable`);
     });
 
     it('should correctly resolve class without dependencies', async () => {
-      const injector = await Injector.create([Engine]);
+      const container = await Container.create([Engine]);
 
-      expect(await injector.find(Engine)).toBeInstanceOf(Engine);
+      expect(await container.find(Engine)).toBeInstanceOf(Engine);
     });
 
     it('should correctly resolve class with reference dependency', async () => {
-      const injector = await Injector.create([Engine, Car]);
-      const car = await injector.find<Car>(Car);
+      const container = await Container.create([Engine, Car]);
+      const car = await container.find<Car>(Car);
 
       expect(car).toBeInstanceOf(Car);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should throw an exception if the class injects a nonexistent reference dependency', () => {
-      expect(Injector.create([Car]))
+      expect(Container.create([Car]))
         .rejects
         .toThrowError(`Cavia can't resolve dependency at index [0] in ${ getTokenName(Car) }`);
     });
 
     it('should throw an exception if the class injects an unknown reference dependency', () => {
-      expect(Injector.create([CarWithUnknownEngine]))
+      expect(Container.create([CarWithUnknownEngine]))
         .rejects
         .toThrowError(`Cavia can't resolve dependency at index [0] in ${ getTokenName(CarWithUnknownEngine) }`);
     });
 
     it('should correctly resolve class with reference optional dependency', async () => {
-      const injector = await Injector.create([Engine, CarWithOptionalEngine]);
-      const car = await injector.find<CarWithOptionalEngine>(CarWithOptionalEngine);
+      const container = await Container.create([Engine, CarWithOptionalEngine]);
+      const car = await container.find<CarWithOptionalEngine>(CarWithOptionalEngine);
 
       expect(car).toBeInstanceOf(CarWithOptionalEngine);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should correctly resolve class with reference optional nonexistent dependency', async () => {
-      const injector = await Injector.create([CarWithOptionalEngine]);
-      const car = await injector.find<CarWithOptionalEngine>(CarWithOptionalEngine);
+      const container = await Container.create([CarWithOptionalEngine]);
+      const car = await container.find<CarWithOptionalEngine>(CarWithOptionalEngine);
 
       expect(car).toBeInstanceOf(CarWithOptionalEngine);
       expect(car.engine).toBeUndefined();
     });
 
     it('should correctly resolve class with dependency by Inject annotation', async () => {
-      const injector = await Injector.create([Engine, CarWithInjectEngine]);
-      const car = await injector.find<CarWithInjectEngine>(CarWithInjectEngine);
+      const container = await Container.create([Engine, CarWithInjectEngine]);
+      const car = await container.find<CarWithInjectEngine>(CarWithInjectEngine);
 
       expect(car).toBeInstanceOf(CarWithInjectEngine);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should throw an exception if the class inject nonexistent dependency by Inject annotation', () => {
-      expect(Injector.create([CarWithInjectEngine]))
+      expect(Container.create([CarWithInjectEngine]))
         .rejects
         .toThrowError(`Cavia can't resolve dependency at index [0] in ${ getTokenName(CarWithInjectEngine) }`);
     });
 
     it('should correctly resolve class with dependency by Inject annotation and forwardRef', async () => {
-      const injector = await Injector.create([Engine, CarWithInjectEngineByForwardRef]);
-      const car = await injector.find<CarWithInjectEngineByForwardRef>(CarWithInjectEngineByForwardRef);
+      const container = await Container.create([Engine, CarWithInjectEngineByForwardRef]);
+      const car = await container.find<CarWithInjectEngineByForwardRef>(CarWithInjectEngineByForwardRef);
 
       expect(car).toBeInstanceOf(CarWithInjectEngineByForwardRef);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should throw an exception if the class inject nonexistent dependency by Inject annotation and forwardRef', () => {
-      expect(Injector.create([CarWithInjectEngineByForwardRef]))
+      expect(Container.create([CarWithInjectEngineByForwardRef]))
         .rejects
         .toThrowError(`Cavia can't resolve dependency at index [0] in ${ getTokenName(CarWithInjectEngineByForwardRef) }`);
     });
 
     it('should correctly resolve class with optional dependency by Inject annotation', async () => {
-      const injector = await Injector.create([Engine, CarWithOptionalInjectEngine]);
-      const car = await injector.find<CarWithOptionalInjectEngine>(CarWithOptionalInjectEngine);
+      const container = await Container.create([Engine, CarWithOptionalInjectEngine]);
+      const car = await container.find<CarWithOptionalInjectEngine>(CarWithOptionalInjectEngine);
 
       expect(car).toBeInstanceOf(CarWithOptionalInjectEngine);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should correctly resolve class with optional nonexistent dependency by Inject annotation', async () => {
-      const injector = await Injector.create([CarWithOptionalInjectEngine]);
-      const car = await injector.find<CarWithOptionalInjectEngine>(CarWithOptionalInjectEngine);
+      const container = await Container.create([CarWithOptionalInjectEngine]);
+      const car = await container.find<CarWithOptionalInjectEngine>(CarWithOptionalInjectEngine);
 
       expect(car).toBeInstanceOf(CarWithOptionalInjectEngine);
       expect(car.engine).toBeUndefined();
     });
 
     it('should correctly resolve class with optional dependency by Inject annotation and forwardRef', async () => {
-      const injector = await Injector.create([Engine, CarWithOptionalInjectEngineByForwardRef]);
-      const car = await injector.find<CarWithOptionalInjectEngineByForwardRef>(CarWithOptionalInjectEngineByForwardRef);
+      const container = await Container.create([Engine, CarWithOptionalInjectEngineByForwardRef]);
+      const car = await container.find<CarWithOptionalInjectEngineByForwardRef>(CarWithOptionalInjectEngineByForwardRef);
 
       expect(car).toBeInstanceOf(CarWithOptionalInjectEngineByForwardRef);
       expect(car.engine).toBeInstanceOf(Engine);
     });
 
     it('should correctly resolve class with optional nonexistent dependency by Inject annotation and forwardRef', async () => {
-      const injector = await Injector.create([CarWithOptionalInjectEngineByForwardRef]);
-      const car = await injector.find<CarWithOptionalInjectEngineByForwardRef>(CarWithOptionalInjectEngineByForwardRef);
+      const container = await Container.create([CarWithOptionalInjectEngineByForwardRef]);
+      const car = await container.find<CarWithOptionalInjectEngineByForwardRef>(CarWithOptionalInjectEngineByForwardRef);
 
       expect(car).toBeInstanceOf(CarWithOptionalInjectEngineByForwardRef);
       expect(car.engine).toBeUndefined();
@@ -445,11 +421,11 @@ describe('Injector', () => {
 
   describe('using value providers', () => {
     it('should correctly resolve provider', async () => {
-      const injector = await Injector.create([
+      const container = await Container.create([
         { provide: 'engine', useValue: 'v8' },
       ]);
 
-      expect(await injector.find('engine')).toEqual('v8');
+      expect(await container.find('engine')).toEqual('v8');
     });
   });
 
@@ -457,7 +433,7 @@ describe('Injector', () => {
     it('should throw an exception if invalid provider passed', () => {
       const provider: any = {};
 
-      expect(Injector.create([provider])).rejects.toThrowError(`Invalid provider '${ provider }'`);
+      expect(Container.create([provider])).rejects.toThrowError(`Invalid provider '${ provider }'`);
     });
   });
 });

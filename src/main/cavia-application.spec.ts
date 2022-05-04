@@ -1,7 +1,7 @@
 import { Injectable } from './decorators/injectable';
 import { OnApplicationBoot, OnApplicationListen, OnApplicationShutdown } from './types/hooks';
 import { CaviaApplication } from './cavia-application';
-import { Injector } from './injector';
+import { Container } from './container';
 
 @Injectable()
 class Foo implements OnApplicationBoot, OnApplicationListen, OnApplicationShutdown {
@@ -31,7 +31,7 @@ describe('CaviaApplication', () => {
   let caviaApplication: CaviaApplication;
 
   beforeEach(async () => {
-    caviaApplication = new CaviaApplication(await Injector.create([Foo, Bar]));
+    caviaApplication = new CaviaApplication(await Container.create([Foo, Bar]));
   });
 
   afterEach(() => {

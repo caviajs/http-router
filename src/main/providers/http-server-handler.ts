@@ -8,7 +8,7 @@ import { Response } from '../types/response';
 import { HttpException } from '../exceptions/http-exception';
 import { HttpServerRouter } from './http-server-router';
 import { OnApplicationBoot } from '../types/hooks';
-import { Injector } from '../injector';
+import { Container } from '../container';
 import { Injectable } from '../decorators/injectable';
 import { Endpoint } from '../types/endpoint';
 
@@ -17,13 +17,13 @@ export class HttpServerHandler implements OnApplicationBoot {
   protected readonly interceptors: Interceptor[] = [];
 
   constructor(
+    protected readonly container: Container,
     protected readonly httpServerRegistry: HttpServerRouter,
-    protected readonly injector: Injector,
   ) {
   }
 
   public async onApplicationBoot(): Promise<void> {
-    this.interceptors.push(...await this.injector.filter(provider => {
+    this.interceptors.push(...await this.container.filter(provider => {
       return typeof provider === 'function' && provider.prototype instanceof Interceptor;
     }));
   }

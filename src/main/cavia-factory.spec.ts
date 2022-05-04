@@ -10,7 +10,7 @@ import { VIEW_DIRECTORY_PATH } from './providers/view-directory-path';
 import { CaviaApplication } from './cavia-application';
 import { CaviaFactory } from './cavia-factory';
 import { CORE_CONTEXT } from './constants';
-import { Injector } from './injector';
+import { Container } from './container';
 import { Body } from './providers/body';
 import { BodyExplorer } from './providers/body-explorer';
 import { HttpClient } from './providers/http-client';
@@ -38,27 +38,27 @@ describe('CaviaFactory', () => {
     it('should contain built-in providers', async () => {
       const application = await CaviaFactory.create({});
 
-      expect(await application.injector.find(Body)).toBeInstanceOf(Body);
-      expect(await application.injector.find(BodyExplorer)).toBeInstanceOf(BodyExplorer);
-      expect(await application.injector.find(Env)).toBeInstanceOf(Env);
-      expect(await application.injector.find(Injector)).toBeInstanceOf(Injector);
-      expect(await application.injector.find(HttpClient)).toBeInstanceOf(HttpClient);
-      expect(await application.injector.find(HTTP_SERVER)).toBeInstanceOf(http.Server);
-      expect(await application.injector.find(HttpServerExplorer)).toBeInstanceOf(HttpServerExplorer);
-      expect(await application.injector.find(HttpServerHandler)).toBeInstanceOf(HttpServerHandler);
-      expect(await application.injector.find(HttpServerManager)).toBeInstanceOf(HttpServerManager);
-      expect(await application.injector.find(HTTP_SERVER_PORT)).toEqual(3000);
-      expect(await application.injector.find(HttpServerRouter)).toBeInstanceOf(HttpServerRouter);
-      expect(await application.injector.find(Logger)).toBeInstanceOf(Logger);
-      expect(await application.injector.find(LOGGER_LEVEL)).toEqual(LoggerLevel.ALL);
-      expect(await application.injector.find(LOGGER_MESSAGE_FACTORY)).toEqual(expect.any(Function));
-      expect(await application.injector.find(Schedule)).toBeInstanceOf(Schedule);
-      expect(await application.injector.find(ScheduleExplorer)).toBeInstanceOf(ScheduleExplorer);
-      expect(await application.injector.find(ScheduleManager)).toBeInstanceOf(ScheduleManager);
-      expect(await application.injector.find(Storage)).toBeInstanceOf(Storage);
-      expect(await application.injector.find(Validator)).toBeInstanceOf(Validator);
-      expect(await application.injector.find(View)).toBeInstanceOf(View);
-      expect(await application.injector.find(VIEW_DIRECTORY_PATH)).toEqual(path.join(process.cwd(), 'resources', 'views'));
+      expect(await application.container.find(Body)).toBeInstanceOf(Body);
+      expect(await application.container.find(BodyExplorer)).toBeInstanceOf(BodyExplorer);
+      expect(await application.container.find(Env)).toBeInstanceOf(Env);
+      expect(await application.container.find(Container)).toBeInstanceOf(Container);
+      expect(await application.container.find(HttpClient)).toBeInstanceOf(HttpClient);
+      expect(await application.container.find(HTTP_SERVER)).toBeInstanceOf(http.Server);
+      expect(await application.container.find(HttpServerExplorer)).toBeInstanceOf(HttpServerExplorer);
+      expect(await application.container.find(HttpServerHandler)).toBeInstanceOf(HttpServerHandler);
+      expect(await application.container.find(HttpServerManager)).toBeInstanceOf(HttpServerManager);
+      expect(await application.container.find(HTTP_SERVER_PORT)).toEqual(3000);
+      expect(await application.container.find(HttpServerRouter)).toBeInstanceOf(HttpServerRouter);
+      expect(await application.container.find(Logger)).toBeInstanceOf(Logger);
+      expect(await application.container.find(LOGGER_LEVEL)).toEqual(LoggerLevel.ALL);
+      expect(await application.container.find(LOGGER_MESSAGE_FACTORY)).toEqual(expect.any(Function));
+      expect(await application.container.find(Schedule)).toBeInstanceOf(Schedule);
+      expect(await application.container.find(ScheduleExplorer)).toBeInstanceOf(ScheduleExplorer);
+      expect(await application.container.find(ScheduleManager)).toBeInstanceOf(ScheduleManager);
+      expect(await application.container.find(Storage)).toBeInstanceOf(Storage);
+      expect(await application.container.find(Validator)).toBeInstanceOf(Validator);
+      expect(await application.container.find(View)).toBeInstanceOf(View);
+      expect(await application.container.find(VIEW_DIRECTORY_PATH)).toEqual(path.join(process.cwd(), 'resources', 'views'));
     });
 
     it('should collect application providers', async () => {
@@ -71,10 +71,10 @@ describe('CaviaFactory', () => {
         ],
       });
 
-      expect(await application.injector.find('foo-1')).toEqual(10);
-      expect(await application.injector.find('foo-2')).toEqual(20);
-      expect(await application.injector.find('bar-1')).toEqual(30);
-      expect(await application.injector.find('bar-2')).toEqual(40);
+      expect(await application.container.find('foo-1')).toEqual(10);
+      expect(await application.container.find('foo-2')).toEqual(20);
+      expect(await application.container.find('bar-1')).toEqual(30);
+      expect(await application.container.find('bar-2')).toEqual(40);
     });
 
     it('should determine the appropriate weighting of providers', async () => {
@@ -86,7 +86,7 @@ describe('CaviaFactory', () => {
         ],
       });
 
-      expect(await application.injector.find('foo')).toEqual(3);
+      expect(await application.container.find('foo')).toEqual(3);
     });
 
     it('should use Logger', async () => {
