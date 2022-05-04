@@ -19,9 +19,7 @@ declare module 'http' {
   }
 }
 
-http.ServerResponse.prototype.setCookie = setCookie;
-
-function setCookie(this: Response, name: string, value: string, options?: http.SetCookieOptions): void {
+http.ServerResponse.prototype.setCookie = function (this: Response, name: string, value: string, options?: http.SetCookieOptions): void {
   let setCookieHeader = this.getHeader('Set-Cookie') || [];
 
   if (typeof setCookieHeader === 'number') {
@@ -35,4 +33,4 @@ function setCookie(this: Response, name: string, value: string, options?: http.S
   setCookieHeader.push(serializeCookie(name, value, options));
 
   this.setHeader('Set-Cookie', setCookieHeader);
-}
+};

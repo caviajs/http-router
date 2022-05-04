@@ -15,17 +15,15 @@ declare module 'http' {
 }
 
 Object.defineProperty(http.IncomingMessage.prototype, 'params', {
-  get: params,
-});
+  get: function (this: Request): http.Params {
+    if (this.metadata?.path) {
+      if (!this['_params']) {
+        this['_params'] = ((match(this.metadata.path)(url.parse(this.url).pathname) as MatchResult)?.params || {}) as any;
+      }
 
-function params(this: Request): http.Params {
-  if (this.metadata?.path) {
-    if (!this['_params']) {
-      this['_params'] = ((match(this.metadata.path)(url.parse(this.url).pathname) as MatchResult)?.params || {}) as any;
+      return this['_params'];
     }
 
-    return this['_params'];
-  }
-
-  return {};
-}
+    return {};
+  },
+});

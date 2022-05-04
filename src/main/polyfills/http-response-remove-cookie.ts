@@ -8,8 +8,6 @@ declare module 'http' {
   }
 }
 
-http.ServerResponse.prototype.removeCookie = removeCookie;
-
-function removeCookie(this: Response, name: string): void {
+http.ServerResponse.prototype.removeCookie = function (this: Response, name: string): void {
   this.setCookie(name, '', { maxAge: 0, expires: new Date(0) });
-}
+};

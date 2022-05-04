@@ -15,13 +15,11 @@ declare module 'http' {
 }
 
 Object.defineProperty(http.IncomingMessage.prototype, 'query', {
-  get: query,
+  get: function (this: Request): http.Query {
+    if (!this['_query']) {
+      this['_query'] = qsParse(urlParse(this.url || '').query) as http.Query;
+    }
+
+    return this['_query'];
+  },
 });
-
-function query(this: Request): http.Query {
-  if (!this['_query']) {
-    this['_query'] = qsParse(urlParse(this.url || '').query) as http.Query;
-  }
-
-  return this['_query'];
-}
