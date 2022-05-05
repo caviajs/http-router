@@ -13,52 +13,12 @@ const DEFAULT_HTTP_OPTIONS: Partial<HttpOptions> = {
 
 @Injectable()
 export class HttpClient {
-  public delete(url: string, options?: DeleteOptions & { responseType?: 'buffer'; }): Promise<HttpResponse<Buffer>>;
-  public delete<T = any>(url: string, options?: DeleteOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
-  public delete(url: string, options?: DeleteOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
-  public delete(url: string, options?: DeleteOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public delete(url: string, options?: DeleteOptions & { responseType?: any; }): Promise<HttpResponse<any>>;
-  public delete(url: string, options?: any): Promise<HttpResponse<any>> {
-    return this.request({ ...options, method: 'DELETE', url: url });
-  }
-
-  public get(url: string, options?: GetOptions & { responseType?: 'buffer'; }): Promise<HttpResponse<Buffer>>;
-  public get<T = any>(url: string, options?: GetOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
-  public get(url: string, options?: GetOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
-  public get(url: string, options?: GetOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public get(url: string, options?: GetOptions & { responseType?: any; }): Promise<HttpResponse<any>>;
-  public get(url: string, options?: any): Promise<HttpResponse<any>> {
-    return this.request({ ...options, method: 'GET', url: url });
-  }
-
-  public patch(url: string, body?: any, options?: PatchOptions & { responseType?: 'buffer'; }): Promise<HttpResponse<Buffer>>;
-  public patch<T = any>(url: string, body?: any, options?: PatchOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
-  public patch(url: string, body?: any, options?: PatchOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
-  public patch(url: string, body?: any, options?: PatchOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public patch(url: string, body?: any, options?: PatchOptions & { responseType?: any; }): Promise<HttpResponse<any>>;
-  public patch(url: string, body?: any, options?: any): Promise<HttpResponse<any>> {
-    return this.request({ ...options, body: body, method: 'PATCH', url: url });
-  }
-
-  public post(url: string, body?: any, options?: PostOptions & { responseType?: 'buffer'; }): Promise<HttpResponse<Buffer>>;
-  public post<T = any>(url: string, body?: any, options?: PostOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
-  public post(url: string, body?: any, options?: PostOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
-  public post(url: string, body?: any, options?: PostOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public post(url: string, body?: any, options?: PostOptions & { responseType?: any; }): Promise<HttpResponse<any>>;
-  public post(url: string, body?: any, options?: any): Promise<HttpResponse<any>> {
-    return this.request({ ...options, body: body, method: 'POST', url: url });
-  }
-
-  public put(url: string, body?: any, options?: PutOptions & { responseType?: 'buffer'; }): Promise<HttpResponse<Buffer>>;
-  public put<T = any>(url: string, body?: any, options?: PutOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
-  public put(url: string, body?: any, options?: PutOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
-  public put(url: string, body?: any, options?: PutOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public put(url: string, body?: any, options?: PutOptions & { responseType?: any; }): Promise<HttpResponse<any>>;
-  public put(url: string, body?: any, options?: any): Promise<HttpResponse<any>> {
-    return this.request({ ...options, body: body, method: 'PUT', url: url });
-  }
-
-  protected request(options: HttpOptions): Promise<HttpResponse<any>> {
+  public request(options: HttpOptions & { responseType?: 'buffer'; }): Promise<HttpResponse<Buffer>>;
+  public request<T = any>(options: HttpOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
+  public request(options: HttpOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
+  public request(options: HttpOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
+  public request(options: HttpOptions & { responseType?: any; }): Promise<HttpResponse<any>>;
+  public request(options: HttpOptions): Promise<HttpResponse<any>> {
     return new Promise<HttpResponse<any>>((resolve, reject) => {
       options = {
         body: options.body,
@@ -205,13 +165,3 @@ export interface HttpResponse<T> {
   readonly statusCode: number;
   readonly statusMessage: string;
 }
-
-export type DeleteOptions = Pick<HttpOptions, 'headers' | 'params' | 'timeout'>;
-
-export type GetOptions = Pick<HttpOptions, 'headers' | 'params' | 'timeout'>;
-
-export type PatchOptions = Pick<HttpOptions, 'headers' | 'params' | 'timeout'>;
-
-export type PostOptions = Pick<HttpOptions, 'headers' | 'params' | 'timeout'>;
-
-export type PutOptions = Pick<HttpOptions, 'headers' | 'params' | 'timeout'>;
