@@ -3,6 +3,7 @@ import { getProviderToken } from './utils/get-provider-token';
 import { getProviderName } from './utils/get-provider-name';
 import { Token } from './types/token';
 import { isClassProvider } from './utils/is-class-provider';
+import { isExistingProvider } from './utils/is-existing-provider';
 import { isFactoryProvider } from './utils/is-factory-provider';
 import { isTypeProvider } from './utils/is-type-provider';
 import { isValueProvider } from './utils/is-value-provider';
@@ -11,6 +12,7 @@ import { INJECTABLE_METADATA } from './decorators/injectable';
 import { INJECT_METADATA, InjectMetadata } from './decorators/inject';
 import { OPTIONAL_METADATA, OptionalMetadata } from './decorators/optional';
 import { isForwardRef } from './utils/forward-ref';
+import { getTokenName } from './utils/get-token-name';
 import { isToken } from './utils/is-token';
 
 export class Container {
@@ -94,6 +96,20 @@ export class Container {
       const dependencies: any[] = await this.resolveDependencies(provider.useClass);
 
       instance = new provider.useClass(...dependencies);
+    } else if (isExistingProvider(provider)) {
+      if (provider.provide === provider.useExisting) {
+        throw new Error(`Cannot instantiate cyclic dependency for token ${ getProviderName(provider) }!`);
+      }
+
+      const existingProvider: Provider | undefined = this.providers.find(it => {
+        return getProviderToken(it) === provider.useExisting;
+      });
+
+      if (existingProvider === undefined) {
+        throw new Error(`No provider for ${ getTokenName(provider.useExisting) }!`);
+      }
+
+      instance = (await this.resolveProvider(existingProvider)).value;
     } else if (isFactoryProvider(provider)) {
       const dependencies: any[] = await this.resolveDependencies(provider);
 

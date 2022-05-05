@@ -11,6 +11,11 @@ export interface Dependency {
   optional: boolean;
 }
 
+export interface ExistingProvider<T = any> {
+  provide: Token;
+  useExisting: Token<T>;
+}
+
 export interface FactoryProvider<T = any> {
   dependencies?: (Token | Dependency)[];
   provide: Token;
@@ -28,6 +33,7 @@ export interface ValueProvider<T = any> {
 
 export type Provider<T = any> =
   | ClassProvider<T>
+  | ExistingProvider<T>
   | FactoryProvider<T>
   | TypeProvider<T>
   | ValueProvider<T>;

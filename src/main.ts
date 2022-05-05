@@ -63,6 +63,7 @@ export * from './main/utils/get-provider-name';
 export * from './main/utils/get-provider-token';
 export * from './main/utils/get-token-name';
 export * from './main/utils/is-class-provider';
+export * from './main/utils/is-existing-provider';
 export * from './main/utils/is-factory-provider';
 export * from './main/utils/is-token';
 export * from './main/utils/is-type-provider';

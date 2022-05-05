@@ -17,6 +17,18 @@ describe('getProviderToken', () => {
     expect(getProviderToken({ provide: baz, useClass: Lorem })).toBe(baz);
   });
 
+  it('should return correct provider token for an existing provider', () => {
+    class Foo {
+    }
+
+    const bar: Token = 'bar';
+    const baz: Token = Symbol('baz');
+
+    expect(getProviderToken({ provide: Foo, useExisting: 'lorem' })).toBe(Foo);
+    expect(getProviderToken({ provide: bar, useExisting: 'lorem' })).toBe(bar);
+    expect(getProviderToken({ provide: baz, useExisting: 'lorem' })).toBe(baz);
+  });
+
   it('should return correct provider token for a factory provider', () => {
     class Foo {
     }

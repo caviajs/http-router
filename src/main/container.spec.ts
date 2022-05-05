@@ -248,6 +248,30 @@ describe('Container', () => {
     });
   });
 
+  describe('using existing providers', () => {
+    it('should correctly resolve provider', async () => {
+      const container = await Container.create([
+        Engine,
+        { provide: 'alias', useExisting: Engine },
+      ]);
+
+      expect(await container.find('alias'))
+        .toBe(await container.find(Engine));
+    });
+
+    it('should throw an exception if a non provider is passed', () => {
+      expect(Container.create([{ provide: 'engine', useExisting: Engine }]))
+        .rejects
+        .toThrowError(`No provider for ${ getTokenName(Engine) }!`);
+    });
+
+    it('should throw an exception if an provider points to itself', () => {
+      expect(Container.create([{ provide: Engine, useExisting: Engine }]))
+        .rejects
+        .toThrowError(`Cannot instantiate cyclic dependency for token ${ getTokenName(Engine) }!`);
+    });
+  });
+
   describe('using factory providers', () => {
     it('should correctly resolve provider without dependencies', async () => {
       const container = await Container.create([
