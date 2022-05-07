@@ -23,18 +23,13 @@ export class HttpClient {
       options = {
         body: options.body,
         headers: options.headers,
-        params: options.params,
         method: options.method || DEFAULT_HTTP_OPTIONS.method,
         responseType: options.responseType || DEFAULT_HTTP_OPTIONS.responseType,
         timeout: options.timeout,
         url: options.url,
       };
 
-      const url = new URL(options.url);
-
-      Object.entries(options?.params || {}).forEach(([key, value]) => {
-        url.searchParams.set(key, value);
-      });
+      const url: URL = options.url instanceof URL ? options.url : new URL(options.url);
 
       let requestBody;
 
@@ -152,11 +147,10 @@ export class HttpClient {
 export interface HttpOptions {
   body?: any;
   headers?: { [key: string]: string | number };
-  params?: { [key: string]: string };
   method?: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT';
   responseType?: 'buffer' | 'json' | 'stream' | 'text';
   timeout?: number;
-  url: string;
+  url: string | URL;
 }
 
 export interface HttpResponse<T> {
