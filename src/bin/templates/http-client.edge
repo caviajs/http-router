@@ -55,21 +55,53 @@ export class {{ name }}HttpClient {
   @end
 }
 @each(endpoint in endpoints)
+
 @if(endpoint.schema.request.body)
-export interface {{ pascalCase(endpoint.name) }}Body {
-}
+
+@if(endpoint.schema.request.body.type === 'array')
+export type {{ pascalCase(endpoint.name) }}Body = unknown[];
+@elseif(endpoint.schema.request.body.type === 'boolean')
+export type {{ pascalCase(endpoint.name) }}Body = boolean;
+@elseif(endpoint.schema.request.body.type === 'enum')
+export type {{ pascalCase(endpoint.name) }}Body =
+@each(value in endpoint.schema.request.body.enum)
+@if(typeof value === 'string')~
+  | '{{ value }}'
+@elseif(typeof value === 'number')~
+  | {{ value }}
+@else~
+  | unknown
+@end~
 @end
+@elseif(endpoint.schema.request.body.type === 'number')
+export type {{ pascalCase(endpoint.name) }}Body = number;
+@elseif(endpoint.schema.request.body.type === 'object')
+export type {{ pascalCase(endpoint.name) }}Body = object;
+@elseif(endpoint.schema.request.body.type === 'string')
+export type {{ pascalCase(endpoint.name) }}Body = string;
+@else
+export type {{ pascalCase(endpoint.name) }}Body = unknown;
+@end
+
+@end~
+
 @if(endpoint.schema.request.headers)
 export interface {{ pascalCase(endpoint.name) }}Headers {
+  @each((schema, name) in endpoint.schema.request.headers.properties)
+  '{{ name }}': {{ schema.type }},
+  @end
 }
-@end
+@end~
+
 @if(endpoint.schema.request.params)
 export interface {{ pascalCase(endpoint.name) }}Params {
 }
-@end
+@end~
+
 @if(endpoint.schema.request.query)
 export interface {{ pascalCase(endpoint.name) }}Query {
 }
-@end
+@end~
+
 export type {{ pascalCase(endpoint.name) }}Response = HttpResponse<any>;
 @end
