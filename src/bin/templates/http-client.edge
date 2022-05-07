@@ -25,6 +25,12 @@ export class {{ name }}HttpClient {
   ): Promise<{{ pascalCase(endpoint.name) }}Response> {
     const url: URL = new URL('{{ endpoint.path }}', this.baseUrl);
 
+    @if(endpoint.schema.request.params)
+    Object.entries(params || {}).forEach(([key, value]) => {
+      url.pathname = url.pathname.replace(`:${ key }`, value);
+    });
+    @end
+
     @if(endpoint.schema.request.query)
     Object.entries(query || {}).forEach(([key, value]) => {
       url.searchParams.set(key, value);
