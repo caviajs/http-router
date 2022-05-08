@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import 'reflect-metadata';
+
 import yargs from 'yargs';
 import { Edge } from 'edge.js';
 import { join, sep } from 'path';
@@ -9,6 +11,8 @@ import { kebabCase } from './main/utils/kebab-case';
 import { ApiSpec } from './main/providers/http-server-router';
 import { camelCase } from './main/utils/camel-case';
 import { snakeCase } from './main/utils/snake-case';
+import { generateHttpClient } from './bin/generate-http-client';
+import { HttpClient, HttpResponse } from './main/providers/http-client';
 
 const edge: Edge = new Edge().mount(join(__dirname, 'bin', 'templates'));
 
@@ -36,66 +40,9 @@ async function generate(options: { template: string, path: string }): Promise<vo
   process.stdout.write(`File '${ chalk.blueBright(dist) }' has been generated\n`);
 }
 
-async function generateHttpClient(options: { path: string, spec: string }): Promise<void> {
-  const apiSpec: ApiSpec = {
-    endpoints: [
-      {
-        'name': 'UpdateUserEndpoint',
-        'data': {
-          'permissions': 'users:update'
-        },
-        'method': 'PUT',
-        'path': '/users/:id',
-        'schema': {
-          'request': {
-            'body': {
-              'type': 'string',
-              'required': true
-            },
-            'headers': {
-              'properties': {
-                'x-test': {
-                  'type': 'string',
-                  'required': true
-                }
-              },
-              'type': 'object'
-            },
-            'query': {
-              'properties': {
-                'lorem': {
-                  'type': 'string',
-                  'required': true
-                }
-              },
-              'type': 'object'
-            }
-          }
-        }
-      },
-    ],
-  };
-
-  const paths: string[] = options.path.replace(/(\/|\\)/g, sep).split(sep);
-  const distDir: string = join(process.cwd(), ...paths.slice(0, -1));
-  const componentNameAsKebabCase: string = kebabCase(paths[paths.length - 1]);
-  const componentNameAsPascalCase: string = pascalCase(paths[paths.length - 1]);
-  const dist: string = join(distDir, `${ componentNameAsKebabCase }.http-client.ts`);
-
-  if (!fs.existsSync(distDir)) {
-    fs.mkdirSync(distDir);
-  }
-
-  fs.writeFileSync(dist, await edge.render('http-client', {
-    endpoints: apiSpec.endpoints,
-    name: componentNameAsPascalCase,
-  }));
-
-  process.stdout.write(`File '${ chalk.blueBright(dist) }' has been generated\n`);
-}
-
 yargs
   .command({
+    aliases: ['ghc'],
     command: 'generate-http-client <path>',
     describe: 'generate http client',
     builder: args => {
@@ -103,39 +50,70 @@ yargs
         .positional('path', { demandOption: false, type: 'string' })
         .positional('spec', { demandOption: false, type: 'string' });
     },
-    handler: args => generateHttpClient({ path: args.path as string, spec: args.path as string }),
+    handler: async args => {
+      const httpClient: HttpClient = new HttpClient();
+
+      const apiSpecResponse: HttpResponse<ApiSpec> = await httpClient.request({
+        method: 'GET',
+        responseType: 'json',
+        url: args.spec as string,
+      });
+
+      if (apiSpecResponse.statusCode >= 400) {
+        throw new Error(apiSpecResponse.statusMessage);
+      }
+
+      const paths: string[] = (args.path as string).replace(/(\/|\\)/g, sep).split(sep);
+      const distDir: string = join(process.cwd(), ...paths.slice(0, -1));
+
+      if (!fs.existsSync(distDir)) {
+        fs.mkdirSync(distDir);
+      }
+
+      const dist: string = join(distDir, `${ kebabCase(paths[paths.length - 1]) }.http-client.ts`);
+
+      fs.writeFileSync(dist, await generateHttpClient(apiSpecResponse.body));
+
+      process.stdout.write(`File '${ chalk.blueBright(dist) }' has been generated\n`);
+    },
   })
   .command({
+    aliases: ['m:en'],
     command: 'make:endpoint <path>',
     describe: 'generate endpoint',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'endpoint', path: args.path as string }),
   })
   .command({
+    aliases: ['m:ex'],
     command: 'make:exception <path>',
     describe: 'generate exception',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'exception', path: args.path as string }),
   })
   .command({
+    aliases: ['m:i'],
     command: 'make:interceptor <path>',
     describe: 'generate interceptor',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'interceptor', path: args.path as string }),
   })
   .command({
+    aliases: ['m:pa'],
     command: 'make:parser <path>',
     describe: 'generate parser',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'parser', path: args.path as string }),
   })
   .command({
+    aliases: ['m:pr'],
     command: 'make:provider <path>',
     describe: 'generate provider',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'provider', path: args.path as string }),
   })
   .command({
+    aliases: ['m:w'],
     command: 'make:worker <path>',
     describe: 'generate worker',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
