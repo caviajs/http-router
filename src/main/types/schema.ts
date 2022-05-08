@@ -22,7 +22,7 @@ export type SchemaBoolean = {
 }
 
 export type SchemaEnum = {
-  enum: unknown[];
+  enum: (string | number)[];
   nullable?: boolean;
   required?: boolean;
   type: 'enum';
