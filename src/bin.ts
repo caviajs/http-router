@@ -2,7 +2,6 @@
 import 'reflect-metadata';
 
 import yargs from 'yargs';
-import { Edge } from 'edge.js';
 import { join, sep } from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
@@ -11,15 +10,14 @@ import { kebabCase } from './main/utils/kebab-case';
 import { ApiSpec } from './main/providers/http-server-router';
 import { camelCase } from './main/utils/camel-case';
 import { snakeCase } from './main/utils/snake-case';
-import { generateHttpClient } from './bin/generate-http-client';
+import { composeHttpClientTemplate } from './bin/compose-http-client-template';
 import { HttpClient, HttpResponse } from './main/providers/http-client';
-
-const edge: Edge = new Edge().mount(join(__dirname, 'bin', 'templates'));
-
-edge.global('camelCase', (data: string) => camelCase(data));
-edge.global('kebabCase', (data: string) => kebabCase(data));
-edge.global('pascalCase', (data: string) => pascalCase(data));
-edge.global('snakeCase', (data: string) => snakeCase(data));
+import { composeEndpointTemplate } from './bin/compose-endpoint-template';
+import { composeExceptionTemplate } from './bin/compose-exception-template';
+import { composeWorkerTemplate } from './bin/compose-worker-template';
+import { composeProviderTemplate } from './bin/compose-provider-template';
+import { composeParserTemplate } from './bin/compose-parser-template';
+import { composeInterceptorTemplate } from './bin/compose-interceptor-template';
 
 async function generate(options: { template: string, path: string }): Promise<void> {
   const paths: string[] = options.path.replace(/(\/|\\)/g, sep).split(sep);
@@ -33,9 +31,30 @@ async function generate(options: { template: string, path: string }): Promise<vo
     fs.mkdirSync(componentDir);
   }
 
-  fs.writeFileSync(dist, await edge.render(options.template, {
-    name: componentNameAsPascalCase,
-  }));
+  let content: string = '';
+
+  switch (options.template) {
+    case 'endpoint':
+      content = composeEndpointTemplate(`${ componentNameAsPascalCase }Endpoint`);
+      break;
+    case 'exception':
+      content = composeExceptionTemplate(`${ componentNameAsPascalCase }Exception`);
+      break;
+    case 'interceptor':
+      content = composeInterceptorTemplate(`${ componentNameAsPascalCase }Interceptor`);
+      break;
+    case 'parser':
+      content = composeParserTemplate(`${ componentNameAsPascalCase }Parser`);
+      break;
+    case 'provider':
+      content = composeProviderTemplate(`${ componentNameAsPascalCase }Provider`);
+      break;
+    case 'worker':
+      content = composeWorkerTemplate(`${ componentNameAsPascalCase }Worker`);
+      break;
+  }
+
+  fs.writeFileSync(dist, content);
 
   process.stdout.write(`File '${ chalk.blueBright(dist) }' has been generated\n`);
 }
@@ -72,7 +91,7 @@ yargs
 
       const dist: string = join(distDir, `${ kebabCase(paths[paths.length - 1]) }.http-client.ts`);
 
-      fs.writeFileSync(dist, await generateHttpClient(apiSpecResponse.body));
+      fs.writeFileSync(dist, await composeHttpClientTemplate(`${ pascalCase(paths[paths.length - 1]) }HttpClient`, apiSpecResponse.body));
 
       process.stdout.write(`File '${ chalk.blueBright(dist) }' has been generated\n`);
     },
