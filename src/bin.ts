@@ -8,8 +8,6 @@ import chalk from 'chalk';
 import { pascalCase } from './main/utils/pascal-case';
 import { kebabCase } from './main/utils/kebab-case';
 import { ApiSpec } from './main/providers/http-server-router';
-import { camelCase } from './main/utils/camel-case';
-import { snakeCase } from './main/utils/snake-case';
 import { composeHttpClientTemplate } from './bin/compose-http-client-template';
 import { HttpClient, HttpResponse } from './main/providers/http-client';
 import { composeEndpointTemplate } from './bin/compose-endpoint-template';
