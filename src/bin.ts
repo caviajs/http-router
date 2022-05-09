@@ -25,7 +25,7 @@ async function generate(options: { template: string, path: string }): Promise<vo
   const componentNameAsKebabCase: string = kebabCase(paths[paths.length - 1]);
   const componentNameAsPascalCase: string = pascalCase(paths[paths.length - 1]);
 
-  const dist: string = join(componentDir, `${ componentNameAsKebabCase }.${ options.template }.ts`);
+  const dist: string = join(componentDir, `${ componentNameAsKebabCase }-${ options.template }.ts`);
 
   if (!fs.existsSync(componentDir)) {
     fs.mkdirSync(componentDir);
@@ -89,7 +89,7 @@ yargs
         fs.mkdirSync(distDir);
       }
 
-      const dist: string = join(distDir, `${ kebabCase(paths[paths.length - 1]) }.http-client.ts`);
+      const dist: string = join(distDir, `${ kebabCase(paths[paths.length - 1]) }-http-client.ts`);
 
       fs.writeFileSync(dist, await composeHttpClientTemplate(`${ pascalCase(paths[paths.length - 1]) }HttpClient`, apiSpecResponse.body));
 
