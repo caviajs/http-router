@@ -78,9 +78,9 @@ export class CaviaFactory {
       const validator = await container.find(Validator);
       const validateErrors = validator.validate(
         {
-          additionalProperties: true,
           properties: options.schemas.env,
           required: true,
+          strict: false,
           type: 'object',
         },
         Object
