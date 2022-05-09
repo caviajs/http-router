@@ -21,9 +21,6 @@ import { HttpServerHandler } from './providers/http-server-handler';
 import { HttpServerManager } from './providers/http-server-manager';
 import { HttpServerPortProvider } from './providers/http-server-port';
 import { HttpClient } from './providers/http-client';
-import { ScheduleExplorer } from './providers/schedule-explorer';
-import { Schedule } from './providers/schedule';
-import { ScheduleManager } from './providers/schedule-manager';
 import { SchemaBoolean, SchemaEnum, SchemaNumber, SchemaString } from './types/schema';
 
 const BUILT_IN_PROVIDERS: Provider[] = [
@@ -40,9 +37,6 @@ const BUILT_IN_PROVIDERS: Provider[] = [
   Logger,
   LoggerLevelProvider,
   LoggerMessageFactoryProvider,
-  Schedule,
-  ScheduleExplorer,
-  ScheduleManager,
   Storage,
   Validator,
   View,

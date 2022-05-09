@@ -33,9 +33,6 @@ export * from './main/providers/http-server-router';
 export * from './main/providers/logger';
 export * from './main/providers/logger-level';
 export * from './main/providers/logger-message-factory';
-export * from './main/providers/schedule';
-export * from './main/providers/schedule-explorer';
-export * from './main/providers/schedule-manager';
 export * from './main/providers/storage';
 export * from './main/providers/validator';
 export * from './main/providers/view';
@@ -53,7 +50,6 @@ export * from './main/types/response';
 export * from './main/types/schema';
 export * from './main/types/token';
 export * from './main/types/type';
-export * from './main/types/worker';
 
 export * from './main/utils/camel-case';
 export * from './main/utils/forward-ref';

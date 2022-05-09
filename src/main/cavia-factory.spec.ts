@@ -21,9 +21,6 @@ import http from 'http';
 import { HttpServerHandler } from './providers/http-server-handler';
 import { HttpServerManager } from './providers/http-server-manager';
 import { HTTP_SERVER_PORT } from './providers/http-server-port';
-import { ScheduleExplorer } from './providers/schedule-explorer';
-import { Schedule } from './providers/schedule';
-import { ScheduleManager } from './providers/schedule-manager';
 
 describe('CaviaFactory', () => {
   afterEach(() => {
@@ -52,9 +49,6 @@ describe('CaviaFactory', () => {
       expect(await application.container.find(Logger)).toBeInstanceOf(Logger);
       expect(await application.container.find(LOGGER_LEVEL)).toEqual(LoggerLevel.ALL);
       expect(await application.container.find(LOGGER_MESSAGE_FACTORY)).toEqual(expect.any(Function));
-      expect(await application.container.find(Schedule)).toBeInstanceOf(Schedule);
-      expect(await application.container.find(ScheduleExplorer)).toBeInstanceOf(ScheduleExplorer);
-      expect(await application.container.find(ScheduleManager)).toBeInstanceOf(ScheduleManager);
       expect(await application.container.find(Storage)).toBeInstanceOf(Storage);
       expect(await application.container.find(Validator)).toBeInstanceOf(Validator);
       expect(await application.container.find(View)).toBeInstanceOf(View);

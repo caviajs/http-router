@@ -12,7 +12,6 @@ import { composeHttpClientTemplate } from './bin/compose-http-client-template';
 import { HttpClient, HttpResponse } from './main/providers/http-client';
 import { composeEndpointTemplate } from './bin/compose-endpoint-template';
 import { composeExceptionTemplate } from './bin/compose-exception-template';
-import { composeWorkerTemplate } from './bin/compose-worker-template';
 import { composeProviderTemplate } from './bin/compose-provider-template';
 import { composeParserTemplate } from './bin/compose-parser-template';
 import { composeInterceptorTemplate } from './bin/compose-interceptor-template';
@@ -46,9 +45,6 @@ async function generate(options: { template: string, path: string }): Promise<vo
       break;
     case 'provider':
       content = composeProviderTemplate(`${ componentNameAsPascalCase }Provider`);
-      break;
-    case 'worker':
-      content = composeWorkerTemplate(`${ componentNameAsPascalCase }Worker`);
       break;
   }
 
