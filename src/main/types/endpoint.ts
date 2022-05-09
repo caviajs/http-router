@@ -16,20 +16,14 @@ export interface EndpointMetadata {
   readonly schema?: {
     readonly request?: {
       readonly body?: Schema;
-      readonly cookies?: Schema;
       readonly headers?: Schema;
       readonly params?: Schema;
       readonly query?: Schema;
     };
     readonly responses?: {
       readonly [status: number]: {
-        readonly content?: {
-          readonly [mimeType: string]: {
-            readonly body?: Schema;
-            readonly headers?: Schema;
-          };
-        };
-        readonly description?: string;
+        readonly body?: Schema;
+        readonly headers?: Schema;
       };
     };
   };
