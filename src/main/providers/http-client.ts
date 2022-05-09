@@ -17,9 +17,9 @@ export class HttpClient {
   public request<T = any>(options: HttpOptions & { responseType?: 'json'; }): Promise<HttpResponse<T>>;
   public request(options: HttpOptions & { responseType?: 'stream'; }): Promise<HttpResponse<Readable>>;
   public request(options: HttpOptions & { responseType?: 'text'; }): Promise<HttpResponse<string>>;
-  public request(options: HttpOptions & { responseType?: any; }): Promise<HttpResponse<any>>;
-  public request(options: HttpOptions): Promise<HttpResponse<any>> {
-    return new Promise<HttpResponse<any>>((resolve, reject) => {
+  public request(options: HttpOptions & { responseType?: any; }): Promise<HttpResponse>;
+  public request(options: HttpOptions): Promise<HttpResponse> {
+    return new Promise<HttpResponse>((resolve, reject) => {
       options = {
         body: options.body,
         headers: options.headers,
@@ -153,7 +153,7 @@ export interface HttpOptions {
   url: string | URL;
 }
 
-export interface HttpResponse<T> {
+export interface HttpResponse<T = any> {
   readonly body: T;
   readonly headers: { readonly [key: string]: string | string[] };
   readonly statusCode: number;
