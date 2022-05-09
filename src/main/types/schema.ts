@@ -37,10 +37,10 @@ export type SchemaNumber = {
 }
 
 export type SchemaObject = {
-  additionalProperties?: boolean;
   nullable?: boolean;
   properties?: { [name: string]: Schema; };
   required?: boolean;
+  strict?: boolean;
   type: 'object';
 }
 

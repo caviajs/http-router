@@ -1,9 +1,21 @@
 import { Injectable } from '../decorators/injectable';
 import { Schema, SchemaArray, SchemaBoolean, SchemaEnum, SchemaNumber, SchemaObject, SchemaString } from '../types/schema';
 
-const DEFAULT_ADDITIONAL_PROPERTIES: boolean = true;
 const DEFAULT_NULLABLE: boolean = false;
 const DEFAULT_REQUIRED: boolean = false;
+const DEFAULT_STRICT: boolean = false;
+
+export function getSchemaNullable(schema: Schema): boolean {
+  return schema.hasOwnProperty('nullable') ? schema.nullable : DEFAULT_NULLABLE;
+}
+
+export function getSchemaRequired(schema: Schema): boolean {
+  return schema.hasOwnProperty('required') ? schema.required : DEFAULT_REQUIRED;
+}
+
+export function getSchemaStrict(schema: SchemaObject): boolean {
+  return schema.hasOwnProperty('strict') ? schema.strict : DEFAULT_STRICT;
+}
 
 @Injectable()
 export class Validator {
@@ -25,18 +37,6 @@ export class Validator {
     }
 
     return errors;
-  }
-
-  protected isAdditionalProperties(schema: SchemaObject): boolean {
-    return schema.hasOwnProperty('additionalProperties') ? schema.additionalProperties : DEFAULT_ADDITIONAL_PROPERTIES;
-  }
-
-  protected isNullable(schema: Schema): boolean {
-    return schema.hasOwnProperty('nullable') ? schema.nullable : DEFAULT_NULLABLE;
-  }
-
-  protected isRequired(schema: Schema): boolean {
-    return schema.hasOwnProperty('required') ? schema.required : DEFAULT_REQUIRED;
   }
 
   protected isSchemaArray(schema: any): schema is SchemaArray {
@@ -64,13 +64,13 @@ export class Validator {
   }
 
   protected validateSchemaArray(schema: SchemaArray, data: any, path: string[]): ValidationError[] {
-    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+    if ((getSchemaNullable(schema) === true && data === null) || (getSchemaRequired(schema) === false && data === undefined)) {
       return [];
     }
 
     const errors: ValidationError[] = [];
 
-    if (this.isRequired(schema) === true && data === undefined) {
+    if (getSchemaRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
@@ -96,13 +96,13 @@ export class Validator {
   }
 
   protected validateSchemaBoolean(schema: SchemaBoolean, data: any, path: string[]): ValidationError[] {
-    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+    if ((getSchemaNullable(schema) === true && data === null) || (getSchemaRequired(schema) === false && data === undefined)) {
       return [];
     }
 
     const errors: ValidationError[] = [];
 
-    if (this.isRequired(schema) === true && data === undefined) {
+    if (getSchemaRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
@@ -114,13 +114,13 @@ export class Validator {
   }
 
   protected validateSchemaEnum(schema: SchemaEnum, data: any, path: string[]): ValidationError[] {
-    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+    if ((getSchemaNullable(schema) === true && data === null) || (getSchemaRequired(schema) === false && data === undefined)) {
       return [];
     }
 
     const errors: ValidationError[] = [];
 
-    if (this.isRequired(schema) === true && data === undefined) {
+    if (getSchemaRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
@@ -132,13 +132,13 @@ export class Validator {
   }
 
   protected validateSchemaNumber(schema: SchemaNumber, data: any, path: string[]): ValidationError[] {
-    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+    if ((getSchemaNullable(schema) === true && data === null) || (getSchemaRequired(schema) === false && data === undefined)) {
       return [];
     }
 
     const errors: ValidationError[] = [];
 
-    if (this.isRequired(schema) === true && data === undefined) {
+    if (getSchemaRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
@@ -158,18 +158,18 @@ export class Validator {
   }
 
   protected validateSchemaObject(schema: SchemaObject, data: any, path: string[]): ValidationError[] {
-    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+    if ((getSchemaNullable(schema) === true && data === null) || (getSchemaRequired(schema) === false && data === undefined)) {
       return [];
     }
 
     const errors: ValidationError[] = [];
 
-    if (this.isRequired(schema) === true && data === undefined) {
+    if (getSchemaRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 
     if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
-      if (this.isAdditionalProperties(schema) === false) {
+      if (getSchemaStrict(schema) === true) {
         for (const propertyName of Object.keys(data)) {
           if ((schema.properties || {}).hasOwnProperty(propertyName) === false) {
             errors.push({ message: `The following property is not allowed: ${ propertyName }`, path: path.join('.') });
@@ -188,13 +188,13 @@ export class Validator {
   }
 
   protected validateSchemaString(schema: SchemaString, data: any, path: string[]): ValidationError[] {
-    if ((this.isNullable(schema) === true && data === null) || (this.isRequired(schema) === false && data === undefined)) {
+    if ((getSchemaNullable(schema) === true && data === null) || (getSchemaRequired(schema) === false && data === undefined)) {
       return [];
     }
 
     const errors: ValidationError[] = [];
 
-    if (this.isRequired(schema) === true && data === undefined) {
+    if (getSchemaRequired(schema) === true && data === undefined) {
       errors.push({ message: `The value is required`, path: path.join('.') });
     }
 

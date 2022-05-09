@@ -667,8 +667,8 @@ describe('Validator', () => {
   });
 
   describe('SchemaObject', () => {
-    it('should validate the additionalProperties condition correctly', () => {
-      // additionalProperties: true (default)
+    it('should validate the strict condition correctly', () => {
+      // strict: false (default)
       {
         const schema: SchemaObject = {
           type: 'object',
@@ -690,23 +690,26 @@ describe('Validator', () => {
         expect(validator.validate(schema, { foo: 'hello', bar: 'hello' }, path)).toEqual([]);
       }
 
-      // additionalProperties: true
+      // strict: false
       {
         const schema: SchemaObject = {
-          additionalProperties: true,
           type: 'object',
+          strict: false,
         };
 
         expect(validator.validate(schema, { foo: 'hello', bar: 'hello' })).toEqual([]);
         expect(validator.validate(schema, { foo: 'hello', bar: 'hello' }, path)).toEqual([]);
+
+        expect(validator.validate(schema, {})).toEqual([]);
+        expect(validator.validate(schema, {}, path)).toEqual([]);
       }
 
       {
         const schema: SchemaObject = {
-          additionalProperties: true,
           properties: {
             foo: { type: 'string' },
           },
+          strict: false,
           type: 'object',
         };
 
@@ -714,11 +717,11 @@ describe('Validator', () => {
         expect(validator.validate(schema, { foo: 'hello', bar: 'hello' }, path)).toEqual([]);
       }
 
-      // additionalProperties: false
+      // strict: true
       {
         const schema: SchemaObject = {
-          additionalProperties: false,
           type: 'object',
+          strict: true,
         };
 
         expect(validator.validate(schema, { foo: 'hello', bar: 'hello' })).toEqual([
@@ -729,18 +732,15 @@ describe('Validator', () => {
           { message: 'The following property is not allowed: foo', path: 'foo.bar' },
           { message: 'The following property is not allowed: bar', path: 'foo.bar' },
         ]);
-
-        expect(validator.validate(schema, {})).toEqual([]);
-        expect(validator.validate(schema, {}, path)).toEqual([]);
       }
 
       {
         const schema: SchemaObject = {
-          additionalProperties: false,
           properties: {
             foo: { type: 'string' },
             bar: { type: 'string' },
           },
+          strict: true,
           type: 'object',
         };
 
