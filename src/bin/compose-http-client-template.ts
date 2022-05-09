@@ -2,6 +2,7 @@ import { pascalCase } from '../main/utils/pascal-case';
 import { ApiSpec } from '../main/providers/http-server-router';
 import { camelCase } from '../main/utils/camel-case';
 import { Schema } from '../main/types/schema';
+import { getSchemaNullable, getSchemaRequired, getSchemaStrict } from '../main/providers/validator';
 
 export function composeHttpClientTemplate(name: string, apiSpec: ApiSpec): string {
   let content: string = '';
@@ -101,7 +102,31 @@ export function composeHttpClientTemplate(name: string, apiSpec: ApiSpec): strin
       content += `\n`;
     }
 
-    content += `export type ${ pascalCase(endpoint.name) }Response = HttpResponse<any>;\n`;
+    if (endpoint.schema?.responses) {
+      content += `export type ${ pascalCase(endpoint.name) }Response =\n`;
+
+      Object.entries(endpoint.schema?.responses || {}).forEach(([status, response], index, array) => {
+        content += `\t| ${ pascalCase(endpoint.name) }Response${ status }${ index === array.length - 1 ? ';' : '' }\n`;
+      });
+
+      for (const [status, response] of Object.entries(endpoint.schema?.responses || {})) {
+        content += `\n`;
+        content += `export interface ${ pascalCase(endpoint.name) }Response${ status } extends HttpResponse {\n`;
+        content += `\tbody: ${ pascalCase(endpoint.name) }Response${ status }Body,\n`;
+        content += `\theaders: ${ pascalCase(endpoint.name) }Response${ status }Headers,\n`;
+        content += `\tstatusCode: ${ status },\n`;
+        content += `\tstatusMessage: string,\n`;
+        content += `}\n`;
+
+        content += `\n`;
+        content += generateTypeBySchema(`${ pascalCase(endpoint.name) }Response${ status }Body`, response.body);
+
+        content += `\n`;
+        content += generateTypeBySchema(`${ pascalCase(endpoint.name) }Response${ status }Headers`, response.headers);
+      }
+    } else {
+      content += `export type ${ pascalCase(endpoint.name) }Response = HttpResponse;\n`;
+    }
   }
 
   content += `\n`;
@@ -112,7 +137,7 @@ export function composeHttpClientTemplate(name: string, apiSpec: ApiSpec): strin
 function generateTypeBySchema(name: string, schema: Schema): string {
   let content: string = '';
 
-  switch (schema.type) {
+  switch (schema?.type) {
     case 'array':
       content += `export type ${ pascalCase(name) } = ${ generateTypeStructureBySchema(schema) };\n`;
       break;
@@ -142,6 +167,9 @@ function generateTypeBySchema(name: string, schema: Schema): string {
 function generateTypeStructureBySchema(schema: Schema): string {
   let content: string = '';
 
+  const isNullable: boolean = getSchemaNullable(schema);
+  const isRequired: boolean = getSchemaRequired(schema);
+
   switch (schema.type) {
     case 'array':
       content += `Array<${ generateTypeStructureBySchema(schema.items) }>`;
@@ -169,11 +197,17 @@ function generateTypeStructureBySchema(schema: Schema): string {
       content += `number`;
       break;
     case 'object':
+      const isStrict: boolean = getSchemaStrict(schema);
+
       content += '{\n';
 
       Object.entries(schema.properties || {}).forEach(([key, value]) => {
-        content += `\t'${ key }'${ value.required ? '' : '?' }: ${ generateTypeStructureBySchema(value) },\n`;
+        content += `\t'${ key }'${ isRequired === true ? '' : '?' }: ${ generateTypeStructureBySchema(value) },\n`;
       });
+
+      if (isStrict === false) {
+        content += `\t'[name: string]: any,\n`;
+      }
 
       content += '}';
       break;
@@ -185,7 +219,7 @@ function generateTypeStructureBySchema(schema: Schema): string {
       break;
   }
 
-  if (schema.nullable) {
+  if (isNullable === true) {
     content += ' | null';
   }
 
