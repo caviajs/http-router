@@ -14,7 +14,6 @@
   "types": "dist/main.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "postbuild": "cpx 'src/bin/templates/*.edge' 'dist/bin/templates'",
     "prebuild": "rimraf dist",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -29,13 +28,11 @@
   },
   "dependencies": {
     "chalk": "~4.1.2",
-    "dotenv": "~16.0.0",
     "edge.js": "~5.3.5",
     "fs-extra": "~10.0.0",
     "iconv-lite": "~0.6.2",
     "is-stream": "~2.0.0",
     "no-case": "~3.0.4",
-    "node-cron": "~3.0.0",
     "parse-multipart-data": "~1.2.1",
     "path-to-regexp": "~6.2.0",
     "qs": "~6.10.1",
@@ -45,15 +42,12 @@
     "@types/fs-extra": "~9.0.13",
     "@types/jest": "~27.4.1",
     "@types/node": "~16.11.7",
-    "@types/node-cron": "~3.0.1",
     "@types/qs": "~6.9.6",
     "@types/yargs": "~17.0.9",
     "@typescript-eslint/eslint-plugin": "~4.21.0",
     "@typescript-eslint/parser": "~4.21.0",
-    "cpx": "~1.5.0",
     "eslint": "~7.24.0",
     "jest": "~27.5.1",
-    "reflect-metadata": "~0.1.13",
     "rimraf": "~3.0.2",
     "rxjs": "~7.5.4",
     "ts-jest": "~27.1.4",
@@ -61,7 +55,6 @@
     "typescript": "~4.2.4"
   },
   "peerDependencies": {
-    "reflect-metadata": "~0.1.13",
     "rxjs": "~7.5.4"
   },
   "jest": {

@@ -1,20 +1,14 @@
 #!/usr/bin/env node
-import 'reflect-metadata';
-
 import yargs from 'yargs';
 import { join, sep } from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
-import { pascalCase } from './main/utils/pascal-case';
-import { kebabCase } from './main/utils/kebab-case';
-import { ApiSpec } from './main/providers/http-server-router';
-import { composeHttpClientTemplate } from './bin/compose-http-client-template';
-import { HttpClient, HttpResponse } from './main/providers/http-client';
-import { composeEndpointTemplate } from './bin/compose-endpoint-template';
-import { composeExceptionTemplate } from './bin/compose-exception-template';
-import { composeProviderTemplate } from './bin/compose-provider-template';
-import { composeParserTemplate } from './bin/compose-parser-template';
-import { composeInterceptorTemplate } from './bin/compose-interceptor-template';
+import { pascalCase } from './utils/pascal-case';
+import { kebabCase } from './utils/kebab-case';
+import { ApiSpec } from './http-server/http-router';
+import { composeHttpClientTemplate } from './cli/compose-http-client-template';
+import { HttpClient, HttpResponse } from './http-client/http-client';
+import { composeExceptionTemplate } from './cli/compose-exception-template';
 
 async function generate(options: { template: string, path: string }): Promise<void> {
   const paths: string[] = options.path.replace(/(\/|\\)/g, sep).split(sep);
@@ -31,20 +25,8 @@ async function generate(options: { template: string, path: string }): Promise<vo
   let content: string = '';
 
   switch (options.template) {
-    case 'endpoint':
-      content = composeEndpointTemplate(`${ componentNameAsPascalCase }Endpoint`);
-      break;
     case 'exception':
       content = composeExceptionTemplate(`${ componentNameAsPascalCase }Exception`);
-      break;
-    case 'interceptor':
-      content = composeInterceptorTemplate(`${ componentNameAsPascalCase }Interceptor`);
-      break;
-    case 'parser':
-      content = composeParserTemplate(`${ componentNameAsPascalCase }Parser`);
-      break;
-    case 'provider':
-      content = composeProviderTemplate(`${ componentNameAsPascalCase }Provider`);
       break;
   }
 
@@ -64,9 +46,7 @@ yargs
         .positional('spec', { demandOption: false, type: 'string' });
     },
     handler: async args => {
-      const httpClient: HttpClient = new HttpClient();
-
-      const apiSpecResponse: HttpResponse<ApiSpec> = await httpClient.request({
+      const apiSpecResponse: HttpResponse<ApiSpec> = await HttpClient.request({
         method: 'GET',
         responseType: 'json',
         url: args.spec as string,
@@ -91,45 +71,10 @@ yargs
     },
   })
   .command({
-    aliases: ['m:en'],
-    command: 'make:endpoint <path>',
-    describe: 'generate endpoint',
-    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => generate({ template: 'endpoint', path: args.path as string }),
-  })
-  .command({
     aliases: ['m:ex'],
     command: 'make:exception <path>',
     describe: 'generate exception',
     builder: args => args.positional('path', { demandOption: false, type: 'string' }),
     handler: args => generate({ template: 'exception', path: args.path as string }),
-  })
-  .command({
-    aliases: ['m:i'],
-    command: 'make:interceptor <path>',
-    describe: 'generate interceptor',
-    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => generate({ template: 'interceptor', path: args.path as string }),
-  })
-  .command({
-    aliases: ['m:pa'],
-    command: 'make:parser <path>',
-    describe: 'generate parser',
-    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => generate({ template: 'parser', path: args.path as string }),
-  })
-  .command({
-    aliases: ['m:pr'],
-    command: 'make:provider <path>',
-    describe: 'generate provider',
-    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => generate({ template: 'provider', path: args.path as string }),
-  })
-  .command({
-    aliases: ['m:w'],
-    command: 'make:worker <path>',
-    describe: 'generate worker',
-    builder: args => args.positional('path', { demandOption: false, type: 'string' }),
-    handler: args => generate({ template: 'worker', path: args.path as string }),
   })
   .parse();
