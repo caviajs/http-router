@@ -30,6 +30,3 @@ export * from './utils/snake-case';
 // validator
 export * from './validator/schema';
 export * from './validator/validator';
-
-// view
-export * from './view/view';
