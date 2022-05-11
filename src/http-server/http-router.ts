@@ -30,7 +30,7 @@ export class HttpRouter {
     return this;
   }
 
-  public route(route: Route): void {
+  public route(route: Route): HttpRouter {
     if (route.path.startsWith('/') === false) {
       throw new Error(`The route path in '${ route.method } ${ route.path }' should start with '/'`);
     }
@@ -46,6 +46,8 @@ export class HttpRouter {
     }
 
     this.routes.push(route);
+
+    return this;
   }
 
   public async handle(request: http.IncomingMessage, response: http.ServerResponse): Promise<void> {
