@@ -18,9 +18,6 @@ export * from './http-server/parse-body';
 // logger
 export * from './logger/logger';
 
-// storage
-export * from './storage/storage';
-
 // utils
 export * from './utils/camel-case';
 export * from './utils/kebab-case';
