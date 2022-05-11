@@ -54,19 +54,19 @@ export function composeHttpClientTemplate(name: string, apiSpec: ApiSpec): strin
     content += '\t\treturn await HttpClient.request({\n';
 
     if (route.schema?.request?.body) {
-      content += '\t\t\t\tbody: body,\n';
+      content += '\t\t\tbody: body,\n';
     }
 
     if (route.schema?.request?.headers) {
-      content += '\t\t\t\theaders: headers,\n';
+      content += '\t\t\theaders: headers,\n';
     }
 
-    content += `\t\t\t\tmethod: '${ route.method }',\n`;
-    content += `\t\t\t\tresponseType: 'buffer',\n`;
-    content += `\t\t\t\t// timeout: undefined,\n`;
-    content += `\t\t\t\turl: url.toString(),\n`;
+    content += `\t\t\tmethod: '${ route.method }',\n`;
+    content += `\t\t\tresponseType: 'buffer',\n`;
+    content += `\t\t\t// timeout: undefined,\n`;
+    content += `\t\t\turl: url.toString(),\n`;
 
-    content += `\t\t\t}) as ${ pascalCase(route.name) }Response;\n`;
+    content += `\t\t}) as ${ pascalCase(route.name) }Response;\n`;
 
     content += `\t}\n`;
   }
