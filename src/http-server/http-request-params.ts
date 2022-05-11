@@ -12,14 +12,16 @@ declare module 'http' {
   }
 }
 
+const KEY: string = '_params';
+
 Object.defineProperty(http.IncomingMessage.prototype, 'params', {
   get: function (this: http.IncomingMessage): http.Params {
-    if (this.metadata?.path) {
-      if (!this['_params']) {
-        this['_params'] = ((match(this.metadata.path)(url.parse(this.url).pathname) as MatchResult)?.params || {}) as any;
+    if (this.route?.path) {
+      if (!this[KEY]) {
+        this[KEY] = ((match(this.route.path)(url.parse(this.url).pathname) as MatchResult)?.params || {}) as any;
       }
 
-      return this['_params'];
+      return this[KEY];
     }
 
     return {};

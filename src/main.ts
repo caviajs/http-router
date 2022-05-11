@@ -1,7 +1,7 @@
 import './http-server/http-request-cookies';
-import './http-server/http-request-metadata';
 import './http-server/http-request-params';
 import './http-server/http-request-query';
+import './http-server/http-request-route';
 import './http-server/http-response-remove-cookie';
 import './http-server/http-response-set-cookie';
 
@@ -17,7 +17,6 @@ export * from './http-server/get-content-type-parameter';
 export * from './http-server/http-exception';
 export * from './http-server/http-router';
 export * from './http-server/parse-body';
-export * from './http-server/serialize-cookie';
 
 // logger
 export * from './logger/logger';

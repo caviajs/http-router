@@ -12,12 +12,14 @@ declare module 'http' {
   }
 }
 
+const KEY: string = '_query';
+
 Object.defineProperty(http.IncomingMessage.prototype, 'query', {
   get: function (this: http.IncomingMessage): http.Query {
-    if (!this['_query']) {
-      this['_query'] = qsParse(urlParse(this.url || '').query) as http.Query;
+    if (!this[KEY]) {
+      this[KEY] = qsParse(urlParse(this.url || '').query) as http.Query;
     }
 
-    return this['_query'];
+    return this[KEY];
   },
 });

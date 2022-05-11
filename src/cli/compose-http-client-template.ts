@@ -17,38 +17,38 @@ export function composeHttpClientTemplate(name: string, apiSpec: ApiSpec): strin
   content += `\tconstructor(protected readonly httpClient: HttpClient) {\n`;
   content += `\t}\n`;
 
-  for (const endpoint of apiSpec.endpoints) {
+  for (const route of apiSpec.routes) {
     content += `\n`;
-    content += `\tpublic async ${ camelCase(endpoint.name) }(\n`;
+    content += `\tpublic async ${ camelCase(route.name) }(\n`;
 
-    if (endpoint.schema?.request?.body) {
-      content += `\t\tbody: ${ pascalCase(endpoint.name) }Body,\n`;
+    if (route.schema?.request?.body) {
+      content += `\t\tbody: ${ pascalCase(route.name) }Body,\n`;
     }
 
-    if (endpoint.schema?.request?.headers) {
-      content += `\t\theaders: ${ pascalCase(endpoint.name) }Headers,\n`;
+    if (route.schema?.request?.headers) {
+      content += `\t\theaders: ${ pascalCase(route.name) }Headers,\n`;
     }
 
-    if (endpoint.schema?.request?.params) {
-      content += `\t\tparams: ${ pascalCase(endpoint.name) }Params,\n`;
+    if (route.schema?.request?.params) {
+      content += `\t\tparams: ${ pascalCase(route.name) }Params,\n`;
     }
 
-    if (endpoint.schema?.request?.query) {
-      content += `\t\tquery: ${ pascalCase(endpoint.name) }Query,\n`;
+    if (route.schema?.request?.query) {
+      content += `\t\tquery: ${ pascalCase(route.name) }Query,\n`;
     }
 
-    content += `\t): Promise<${ pascalCase(endpoint.name) }Response> {\n`;
-    content += `\t\tconst url: URL = new URL('${ endpoint.path }', this.baseUrl);\n`;
+    content += `\t): Promise<${ pascalCase(route.name) }Response> {\n`;
+    content += `\t\tconst url: URL = new URL('${ route.path }', this.baseUrl);\n`;
     content += `\n`;
 
-    if (endpoint.schema?.request?.params) {
+    if (route.schema?.request?.params) {
       content += `\t\tObject.entries(params || {}).forEach(([key, value]) => {\n`;
       content += '\t\t\turl.pathname = url.pathname.replace(`:${ key }`, value);\n';
       content += `\t\t});\n`;
       content += `\n`;
     }
 
-    if (endpoint.schema?.request?.query) {
+    if (route.schema?.request?.query) {
       content += '\t\tObject.entries(query || {}).forEach(([key, value]) => {\n';
       content += '\t\t\turl.searchParams.set(key, value);\n';
       content += '\t\t});\n';
@@ -59,15 +59,15 @@ export function composeHttpClientTemplate(name: string, apiSpec: ApiSpec): strin
     content += '\t\t\t.httpClient\n';
     content += '\t\t\t.request({\n';
 
-    if (endpoint.schema?.request?.body) {
+    if (route.schema?.request?.body) {
       content += '\t\t\t\tbody: body,\n';
     }
 
-    if (endpoint.schema?.request?.headers) {
+    if (route.schema?.request?.headers) {
       content += '\t\t\t\theaders: headers,\n';
     }
 
-    content += `\t\t\t\tmethod: '${ endpoint.method }',\n`;
+    content += `\t\t\t\tmethod: '${ route.method }',\n`;
     content += `\t\t\t\tresponseType: 'buffer',\n`;
     content += `\t\t\t\t// timeout: undefined,\n`;
     content += `\t\t\t\turl: url.toString(),\n`;
@@ -79,53 +79,53 @@ export function composeHttpClientTemplate(name: string, apiSpec: ApiSpec): strin
 
   content += `}\n`;
 
-  for (const endpoint of apiSpec.endpoints) {
+  for (const route of apiSpec.routes) {
     content += `\n`;
 
-    if (endpoint.schema?.request?.body) {
-      content += generateTypeBySchema(`${ pascalCase(endpoint.name) }Body`, endpoint.schema?.request?.body);
+    if (route.schema?.request?.body) {
+      content += generateTypeBySchema(`${ pascalCase(route.name) }Body`, route.schema?.request?.body);
       content += `\n`;
     }
 
-    if (endpoint.schema?.request?.headers) {
-      content += generateTypeBySchema(`${ pascalCase(endpoint.name) }Headers`, endpoint.schema?.request?.headers);
+    if (route.schema?.request?.headers) {
+      content += generateTypeBySchema(`${ pascalCase(route.name) }Headers`, route.schema?.request?.headers);
       content += `\n`;
     }
 
-    if (endpoint.schema?.request?.params) {
-      content += generateTypeBySchema(`${ pascalCase(endpoint.name) }Params`, endpoint.schema?.request?.params);
+    if (route.schema?.request?.params) {
+      content += generateTypeBySchema(`${ pascalCase(route.name) }Params`, route.schema?.request?.params);
       content += `\n`;
     }
 
-    if (endpoint.schema?.request?.query) {
-      content += generateTypeBySchema(`${ pascalCase(endpoint.name) }Query`, endpoint.schema?.request?.query);
+    if (route.schema?.request?.query) {
+      content += generateTypeBySchema(`${ pascalCase(route.name) }Query`, route.schema?.request?.query);
       content += `\n`;
     }
 
-    if (endpoint.schema?.responses) {
-      content += `export type ${ pascalCase(endpoint.name) }Response =\n`;
+    if (route.schema?.responses) {
+      content += `export type ${ pascalCase(route.name) }Response =\n`;
 
-      Object.entries(endpoint.schema?.responses || {}).forEach(([status, response], index, array) => {
-        content += `\t| ${ pascalCase(endpoint.name) }Response${ status }${ index === array.length - 1 ? ';' : '' }\n`;
+      Object.entries(route.schema?.responses || {}).forEach(([status, response], index, array) => {
+        content += `\t| ${ pascalCase(route.name) }Response${ status }${ index === array.length - 1 ? ';' : '' }\n`;
       });
 
-      for (const [status, response] of Object.entries(endpoint.schema?.responses || {})) {
+      for (const [status, response] of Object.entries(route.schema?.responses || {})) {
         content += `\n`;
-        content += `export interface ${ pascalCase(endpoint.name) }Response${ status } extends HttpResponse {\n`;
-        content += `\tbody: ${ pascalCase(endpoint.name) }Response${ status }Body,\n`;
-        content += `\theaders: ${ pascalCase(endpoint.name) }Response${ status }Headers,\n`;
+        content += `export interface ${ pascalCase(route.name) }Response${ status } extends HttpResponse {\n`;
+        content += `\tbody: ${ pascalCase(route.name) }Response${ status }Body,\n`;
+        content += `\theaders: ${ pascalCase(route.name) }Response${ status }Headers,\n`;
         content += `\tstatusCode: ${ status },\n`;
         content += `\tstatusMessage: string,\n`;
         content += `}\n`;
 
         content += `\n`;
-        content += generateTypeBySchema(`${ pascalCase(endpoint.name) }Response${ status }Body`, response.body);
+        content += generateTypeBySchema(`${ pascalCase(route.name) }Response${ status }Body`, response.body);
 
         content += `\n`;
-        content += generateTypeBySchema(`${ pascalCase(endpoint.name) }Response${ status }Headers`, response.headers);
+        content += generateTypeBySchema(`${ pascalCase(route.name) }Response${ status }Headers`, response.headers);
       }
     } else {
-      content += `export type ${ pascalCase(endpoint.name) }Response = HttpResponse;\n`;
+      content += `export type ${ pascalCase(route.name) }Response = HttpResponse;\n`;
     }
   }
 

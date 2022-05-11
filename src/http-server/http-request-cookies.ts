@@ -10,11 +10,13 @@ declare module 'http' {
   }
 }
 
+const KEY: string = '_cookies';
+
 Object.defineProperty(http.IncomingMessage.prototype, 'cookies', {
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cookie
   get: function (this: http.IncomingMessage): http.Cookies {
-    if (!this['_cookies']) {
-      this['_cookies'] = Object
+    if (!this[KEY]) {
+      this[KEY] = Object
         .values((this.headers.cookie || '').split('; '))
         // skip things that don't look like key=value
         .filter((cookie: string) => cookie.includes('='))
@@ -25,7 +27,7 @@ Object.defineProperty(http.IncomingMessage.prototype, 'cookies', {
         }, {});
     }
 
-    return this['_cookies'];
+    return this[KEY];
   },
 });
 

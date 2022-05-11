@@ -13,8 +13,13 @@ export class HttpRouter {
 
   public get apiSpec(): ApiSpec {
     return {
-      endpoints: this.routes.map(endpoint => {
-        return { name: endpoint.constructor.name, ...endpoint };
+      routes: this.routes.map(route => {
+        return {
+          method: route.method,
+          name: route.name,
+          path: route.path,
+          schema: route.schema,
+        };
       }),
     };
   }
@@ -27,22 +32,26 @@ export class HttpRouter {
 
   public route(route: Route): void {
     if (route.path.startsWith('/') === false) {
-      throw new Error(`The path in '${ route.method } ${ route.path }' should start with '/'`);
+      throw new Error(`The route path in '${ route.method } ${ route.path }' should start with '/'`);
     }
 
     const matcher = match(route.path);
 
+    if (this.routes.some(it => it.name.toUpperCase() === route.name.toUpperCase())) {
+      throw new Error(`The route name '${ route.name }' has been duplicated`);
+    }
+
     if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
-      throw new Error(`Duplicated {${ route.method } ${ route.path }} http endpoint`);
+      throw new Error(`Duplicated {${ route.method } ${ route.path }} http route`);
     }
 
     this.routes.push(route);
   }
 
   public async handle(request: http.IncomingMessage, response: http.ServerResponse): Promise<void> {
-    const route: Route | undefined = this.resolveRoute(request.method as RouteMethod, request.url);
+    const route: Route | undefined = this.findRoute(request.method as RouteMethod, request.url);
 
-    request.metadata = route?.schema; // todo
+    request.route = route;
 
     const interceptors: Interceptor[] = [...this.interceptors, ...route?.interceptors || []];
     const handler: Promise<unknown> = this.composeHandler(request, response, interceptors, (): Promise<unknown> => {
@@ -71,21 +80,6 @@ export class HttpRouter {
           }),
         ),
     );
-  }
-
-  protected resolveRoute(method: RouteMethod, url: string): Route | undefined {
-    let route: Route | undefined;
-
-    const pathname: string = parse(url).pathname;
-
-    for (const it of this.routes.filter(r => r.method === method)) {
-      if (match(it.path)(pathname)) {
-        route = it;
-        break;
-      }
-    }
-
-    return route;
   }
 
   protected async composeHandler(request: http.IncomingMessage, response: http.ServerResponse, interceptors: Interceptor[], handler: () => Promise<any>): Promise<any> {
@@ -120,6 +114,21 @@ export class HttpRouter {
     };
 
     return nextFn(0);
+  }
+
+  protected findRoute(method: RouteMethod, url: string): Route | undefined {
+    let route: Route | undefined;
+
+    const pathname: string = parse(url).pathname;
+
+    for (const it of this.routes.filter(r => r.method === method)) {
+      if (match(it.path)(pathname)) {
+        route = it;
+        break;
+      }
+    }
+
+    return route;
   }
 
   protected serialize(response: http.ServerResponse, data: any): void {
@@ -163,7 +172,14 @@ export class HttpRouter {
 }
 
 export interface ApiSpec {
-  endpoints: ({ name: string } & Route)[];
+  routes: ApiSpecRoute[];
+}
+
+export interface ApiSpecRoute {
+  readonly method: RouteMethod;
+  readonly name: string;
+  readonly path: RoutePath;
+  readonly schema?: RouteSchema;
 }
 
 export interface Interceptor<T = any, R = any> {
@@ -176,8 +192,9 @@ export interface Next<T = any> {
 
 export interface Route {
   readonly handler: RouteHandler;
-  readonly interceptors: Interceptor[];
+  readonly interceptors?: Interceptor[];
   readonly method: RouteMethod;
+  readonly name: string;
   readonly path: RoutePath;
   readonly schema?: RouteSchema;
 }
