@@ -1,9 +1,11 @@
 import http from 'http';
 
 declare module 'http' {
+  export interface Metadata {
+  }
+
   export interface IncomingMessage {
-    metadata: any | undefined;
-    // metadata: EndpointMetadata | undefined;
+    metadata: Metadata | undefined;
   }
 }
 

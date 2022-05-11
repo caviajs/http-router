@@ -1,15 +1,15 @@
-import { match } from 'path-to-regexp';
+import http from 'http';
 import { parse } from 'url';
-import { Schema, SchemaObject } from '../validator/schema';
-import { HttpException } from './http-exception';
-import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
 import { Stream } from 'stream';
 import { readable } from 'is-stream';
-import http from 'http';
+import { match } from 'path-to-regexp';
+import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
+import { HttpException } from './http-exception';
+import { Schema, SchemaObject } from '../validator/schema';
 
 export class HttpRouter {
-  protected readonly routes: Route[] = [];
   protected readonly interceptors: Interceptor[] = [];
+  protected readonly routes: Route[] = [];
 
   public get apiSpec(): ApiSpec {
     return {
@@ -19,8 +19,14 @@ export class HttpRouter {
     };
   }
 
-  public route(method: Method, path: Path, route: Route): void {
-    if (!route.path.startsWith('/')) {
+  public intercept(interceptor: Interceptor): HttpRouter {
+    this.interceptors.push(interceptor);
+
+    return this;
+  }
+
+  public route(route: Route): void {
+    if (route.path.startsWith('/') === false) {
       throw new Error(`The path in '${ route.method } ${ route.path }' should start with '/'`);
     }
 
@@ -34,16 +40,17 @@ export class HttpRouter {
   }
 
   public async handle(request: http.IncomingMessage, response: http.ServerResponse): Promise<void> {
-    const route: Route | undefined = this.resolveRoute(request.method as Method, request.url);
+    const route: Route | undefined = this.resolveRoute(request.method as RouteMethod, request.url);
 
-    // request.metadata = route?.metadata;
+    request.metadata = route?.schema; // todo
 
-    const handler: Promise<unknown> = this.composeInterceptors(request, response, this.interceptors, (): Promise<unknown> => {
+    const interceptors: Interceptor[] = [...this.interceptors, ...route?.interceptors || []];
+    const handler: Promise<unknown> = this.composeHandler(request, response, interceptors, (): Promise<unknown> => {
       if (!route) {
         throw new HttpException(404, 'Route not found');
       }
 
-      return Promise.resolve(route.handle(request, response));
+      return Promise.resolve(route.handler(request, response));
     });
 
     await firstValueFrom(
@@ -66,7 +73,7 @@ export class HttpRouter {
     );
   }
 
-  protected resolveRoute(method: Method, url: string): Route | undefined {
+  protected resolveRoute(method: RouteMethod, url: string): Route | undefined {
     let route: Route | undefined;
 
     const pathname: string = parse(url).pathname;
@@ -81,7 +88,7 @@ export class HttpRouter {
     return route;
   }
 
-  protected async composeInterceptors(request: http.IncomingMessage, response: http.ServerResponse, interceptors: Interceptor[], handler: () => Promise<any>): Promise<any> {
+  protected async composeHandler(request: http.IncomingMessage, response: http.ServerResponse, interceptors: Interceptor[], handler: () => Promise<any>): Promise<any> {
     if (interceptors.length <= 0) {
       return defer(() => from(handler()).pipe(
         switchMap((result: any) => {
@@ -107,7 +114,7 @@ export class HttpRouter {
         ));
       }
 
-      return interceptors[index].intercept(request, response, {
+      return interceptors[index](request, response, {
         handle: () => from(nextFn(index + 1)).pipe(mergeAll()),
       });
     };
@@ -159,8 +166,8 @@ export interface ApiSpec {
   endpoints: ({ name: string } & Route)[];
 }
 
-export abstract class Interceptor<T = any, R = any> {
-  public abstract intercept(request: http.IncomingMessage, response: http.ServerResponse, next: Next<T>): Observable<R> | Promise<Observable<R>>;
+export interface Interceptor<T = any, R = any> {
+  (request: http.IncomingMessage, response: http.ServerResponse, next: Next<T>): Observable<R> | Promise<Observable<R>>;
 }
 
 export interface Next<T = any> {
@@ -168,27 +175,32 @@ export interface Next<T = any> {
 }
 
 export interface Route {
-  readonly data?: any;
-  readonly method: Method;
-  readonly path: string;
-  readonly schema?: {
-    readonly request?: {
-      readonly body?: Schema;
-      readonly headers?: SchemaObject;
-      readonly params?: SchemaObject;
-      readonly query?: SchemaObject;
-    };
-    readonly responses?: {
-      readonly [status: number]: {
-        readonly body?: Schema;
-        readonly headers?: SchemaObject;
-      };
-    };
-  };
-
-  handle(request: http.IncomingMessage, response: http.ServerResponse): any;
+  readonly handler: RouteHandler;
+  readonly interceptors: Interceptor[];
+  readonly method: RouteMethod;
+  readonly path: RoutePath;
+  readonly schema?: RouteSchema;
 }
 
-export type Method = 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT';
+export interface RouteHandler {
+  (request: http.IncomingMessage, response: http.ServerResponse): any;
+}
 
-export type Path = string;
+export interface RouteSchema {
+  readonly request?: {
+    readonly body?: Schema;
+    readonly headers?: SchemaObject;
+    readonly params?: SchemaObject;
+    readonly query?: SchemaObject;
+  };
+  readonly responses?: {
+    readonly [status: number]: {
+      readonly body?: Schema;
+      readonly headers?: SchemaObject;
+    };
+  };
+}
+
+export type RouteMethod = 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT';
+
+export type RoutePath = string;

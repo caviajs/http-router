@@ -1,7 +1,7 @@
-import chalk from 'chalk';
+import { Color, white, redBright, red, yellow, green, blue, gray, cyan } from 'colorette';
 
 // eslint-disable-next-line no-shadow
-export enum LoggerLevel {
+enum Level {
   OFF = 0,
   FATAL = 1,
   ERROR = 2,
@@ -13,89 +13,78 @@ export enum LoggerLevel {
 }
 
 export class Logger {
-  public static level: LoggerLevel = LoggerLevel.ALL;
+  protected static level: Level = Level[process.env.LOGGER_LEVEL || 'ALL'];
 
-  public static debug(message: string, context?: string): void {
-    if (LoggerLevel.DEBUG <= this.level) {
-      process.stdout.write(this.compose({ context, level: LoggerLevel.DEBUG, message }));
+  public static debug(message: string, params?: { [name: string]: string }): void {
+    if (Level.DEBUG <= this.level) {
+      process.stdout.write(this.compose(Level.DEBUG, message, params));
     }
   }
 
-  public static error(message: string, context?: string): void {
-    if (LoggerLevel.ERROR <= this.level) {
-      process.stdout.write(this.compose({ context, level: LoggerLevel.ERROR, message }));
+  public static error(message: string, params?: { [name: string]: string }): void {
+    if (Level.ERROR <= this.level) {
+      process.stdout.write(this.compose(Level.ERROR, message, params));
     }
   }
 
-  public static fatal(message: string, context?: string): void {
-    if (LoggerLevel.FATAL <= this.level) {
-      process.stdout.write(this.compose({ context, level: LoggerLevel.FATAL, message }));
+  public static fatal(message: string, params?: { [name: string]: string }): void {
+    if (Level.FATAL <= this.level) {
+      process.stdout.write(this.compose(Level.FATAL, message, params));
     }
   }
 
-  public static info(message: string, context?: string): void {
-    if (LoggerLevel.INFO <= this.level) {
-      process.stdout.write(this.compose({ context, level: LoggerLevel.INFO, message }));
+  public static info(message: string, params?: { [name: string]: string }): void {
+    if (Level.INFO <= this.level) {
+      process.stdout.write(this.compose(Level.INFO, message, params));
     }
   }
 
-  public static trace(message: string, context?: string): void {
-    if (LoggerLevel.TRACE <= this.level) {
-      process.stdout.write(this.compose({ context, level: LoggerLevel.TRACE, message }));
+  public static trace(message: string, params?: { [name: string]: string }): void {
+    if (Level.TRACE <= this.level) {
+      process.stdout.write(this.compose(Level.TRACE, message, params));
     }
   }
 
-  public static warn(message: string, context?: string): void {
-    if (LoggerLevel.WARN <= this.level) {
-      process.stdout.write(this.compose({ context, level: LoggerLevel.WARN, message }));
+  public static warn(message: string, params?: { [name: string]: string }): void {
+    if (Level.WARN <= this.level) {
+      process.stdout.write(this.compose(Level.WARN, message, params));
     }
   }
 
-  protected static compose({ context, level, message }: { context?: string; level: LoggerLevel; message: string; }): string {
-    let color: chalk.Chalk;
+  protected static compose(level: Level, message: string, params?: { [name: string]: string }): string {
+    let color: Color;
 
     switch (level) {
-      case LoggerLevel.FATAL:
-        color = chalk.red;
+      case Level.FATAL:
+        color = redBright;
         break;
-      case LoggerLevel.ERROR:
-        color = chalk.redBright;
+      case Level.ERROR:
+        color = red;
         break;
-      case LoggerLevel.WARN:
-        color = chalk.yellowBright;
+      case Level.WARN:
+        color = yellow;
         break;
-      case LoggerLevel.INFO:
-        color = chalk.blueBright;
+      case Level.INFO:
+        color = green;
         break;
-      case LoggerLevel.DEBUG:
-        color = chalk.magentaBright;
+      case Level.DEBUG:
+        color = blue;
         break;
-      case LoggerLevel.TRACE:
-        color = chalk.green;
+      case Level.TRACE:
+        color = gray;
         break;
     }
 
-    const datetime = new Date().toLocaleString(undefined, {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-    });
+    const datetime = new Date().toISOString();
 
-    let output: string = `${ color(`[Cavia] ${ process.pid } -`) } ${ datetime }`;
+    let output: string = `${ white(datetime) } ${ color(Level[level].padStart(5, ' ')) } ${ white(process.pid) }: ${ cyan(message) }`;
 
-    if (context) {
-      output += ` ${ chalk.yellow(`[${ context }]`) }`;
+    if (params) {
+      output += ` ${ white(Object.entries(params).map(([key, value]) => `${ key }=${ value }`).join(' ')) }`;
     }
 
-    output += ` ${ color(`- ${ message }`) }\n`;
+    output += '\n';
 
     return output;
   }
-}
-
-export interface LoggerMessageFactory {
-  (payload: { context?: string; level: LoggerLevel; message: string; }): string;
 }
