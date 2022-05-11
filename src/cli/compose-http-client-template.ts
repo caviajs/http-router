@@ -66,7 +66,7 @@ export function composeHttpClientTemplate(name: string, apiSpec: ApiSpec): strin
     content += `\t\t\t\t// timeout: undefined,\n`;
     content += `\t\t\t\turl: url.toString(),\n`;
 
-    content += `\t\t\t}) as Promise<${ pascalCase(route.name) }Response>;\n`;
+    content += `\t\t\t}) as ${ pascalCase(route.name) }Response;\n`;
 
     content += `\t}\n`;
   }
