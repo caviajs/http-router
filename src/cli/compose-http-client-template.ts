@@ -51,7 +51,7 @@ export function composeHttpClientTemplate(name: string, apiSpec: ApiSpec): strin
       content += `\n`;
     }
 
-    content += '\t\treturn HttpClient.request({\n';
+    content += '\t\treturn await HttpClient.request({\n';
 
     if (route.schema?.request?.body) {
       content += '\t\t\t\tbody: body,\n';
