@@ -5,9 +5,6 @@ import './http-server/http-request-route';
 import './http-server/http-response-remove-cookie';
 import './http-server/http-response-set-cookie';
 
-// env
-export * from './env/env';
-
 // http-client
 export * from './http-client/http-client';
 
