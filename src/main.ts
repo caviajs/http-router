@@ -1,29 +1,23 @@
-import './http-server/http-request-cookies';
-import './http-server/http-request-params';
-import './http-server/http-request-query';
-import './http-server/http-request-route';
-import './http-server/http-response-remove-cookie';
-import './http-server/http-response-set-cookie';
+import './lib/http-request-cookies';
+import './lib/http-request-params';
+import './lib/http-request-query';
+import './lib/http-request-route';
+import './lib/http-response-remove-cookie';
+import './lib/http-response-set-cookie';
 
 // http-client
-export * from './http-client/http-client';
+export * from './lib/http-client';
 
 // http-server
-export * from './http-server/get-content-type-mime';
-export * from './http-server/get-content-type-parameter';
-export * from './http-server/http-exception';
-export * from './http-server/http-router';
-export * from './http-server/parse-body';
+export * from './lib/body-parser';
+export * from './lib/get-content-type-mime';
+export * from './lib/get-content-type-parameter';
+export * from './lib/http-exception';
+export * from './lib/http-router';
 
 // logger
-export * from './logger/logger';
-
-// utils
-export * from './utils/camel-case';
-export * from './utils/kebab-case';
-export * from './utils/pascal-case';
-export * from './utils/snake-case';
+export * from './lib/logger';
 
 // validator
-export * from './validator/schema';
-export * from './validator/validator';
+export * from './lib/schema';
+export * from './lib/validator';

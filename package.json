@@ -8,7 +8,7 @@
     "dist/**/*"
   ],
   "bin": {
-    "cavia": "dist/bin.js"
+    "cavia-ghc": "dist/ghc.js"
   },
   "main": "dist/main.js",
   "types": "dist/main.d.ts",

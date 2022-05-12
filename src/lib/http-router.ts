@@ -5,7 +5,7 @@ import { readable } from 'is-stream';
 import { match } from 'path-to-regexp';
 import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
 import { HttpException } from './http-exception';
-import { Schema, SchemaObject } from '../validator/schema';
+import { Schema, SchemaObject } from './schema';
 
 export class HttpRouter {
   protected readonly interceptors: Interceptor[] = [];
