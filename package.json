@@ -8,7 +8,7 @@
     "dist/**/*"
   ],
   "bin": {
-    "cavia-ghc": "dist/ghc.js"
+    "generate-http-client": "dist/generate-http-client.js"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,6 +29,8 @@
     "yargs": "~17.3.1"
   },
   "devDependencies": {
+    "@caviajs/http-client": "~1.0.0",
+    "@caviajs/validator": "~1.0.0",
     "@types/node": "~16.11.7",
     "@types/qs": "~6.9.6",
     "@types/yargs": "~17.0.9",
@@ -41,6 +43,8 @@
     "typescript": "~4.2.4"
   },
   "peerDependencies": {
+    "@caviajs/http-client": "~1.0.0",
+    "@caviajs/validator": "~1.0.0",
     "rxjs": "~7.5.4"
   }
 }

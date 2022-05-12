@@ -5,9 +5,7 @@ import { readable } from 'is-stream';
 import { match } from 'path-to-regexp';
 import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
 import { HttpException } from './http-exception';
-
-type Schema = any; // todo
-type SchemaObject = any; // todo
+import { Schema, SchemaObject } from '@caviajs/validator';
 
 export class Router {
   protected readonly interceptors: Interceptor[] = [];
