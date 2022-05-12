@@ -10,8 +10,8 @@
   "bin": {
     "cavia-ghc": "dist/ghc.js"
   },
-  "main": "dist/main.js",
-  "types": "dist/main.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "prebuild": "rimraf dist",

@@ -5,7 +5,9 @@ import { readable } from 'is-stream';
 import { match } from 'path-to-regexp';
 import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
 import { HttpException } from './http-exception';
-import { Schema, SchemaObject } from './schema';
+
+type Schema = any; // todo
+type SchemaObject = any; // todo
 
 export class Router {
   protected readonly interceptors: Interceptor[] = [];
