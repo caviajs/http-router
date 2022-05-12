@@ -114,5 +114,5 @@ httpServer.listen(3000);
 ```
 
 <div align="center">
-  <sub>Built with ❤︎ by <a href="https://partyka.dev" target="_blank">Paweł Partyka</a></sub>
+  <sub>Built with ❤︎ by <a href="https://partyka.dev">Paweł Partyka</a></sub>
 </div>
