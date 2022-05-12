@@ -13,10 +13,7 @@ export * from './lib/body-parser';
 export * from './lib/get-content-type-mime';
 export * from './lib/get-content-type-parameter';
 export * from './lib/http-exception';
-export * from './lib/http-router';
-
-// logger
-export * from './lib/logger';
+export * from './lib/router';
 
 // validator
 export * from './lib/schema';

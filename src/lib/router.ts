@@ -7,7 +7,7 @@ import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, o
 import { HttpException } from './http-exception';
 import { Schema, SchemaObject } from './schema';
 
-export class HttpRouter {
+export class Router {
   protected readonly interceptors: Interceptor[] = [];
   protected readonly routes: Route[] = [];
 
@@ -24,13 +24,13 @@ export class HttpRouter {
     };
   }
 
-  public intercept(interceptor: Interceptor): HttpRouter {
+  public intercept(interceptor: Interceptor): Router {
     this.interceptors.push(interceptor);
 
     return this;
   }
 
-  public route(route: Route): HttpRouter {
+  public route(route: Route): Router {
     if (route.path.startsWith('/') === false) {
       throw new Error(`The route path in '${ route.method } ${ route.path }' should start with '/'`);
     }

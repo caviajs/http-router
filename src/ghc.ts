@@ -4,7 +4,7 @@ import yargs from 'yargs';
 import { join, sep } from 'path';
 import fs from 'fs';
 import { cyan } from 'colorette';
-import { ApiSpec } from './lib/http-router';
+import { ApiSpec } from './lib/router';
 import { HttpClient, HttpResponse } from './lib/http-client';
 import { Schema } from './lib/schema';
 import { getSchemaNullable, getSchemaRequired, getSchemaStrict } from './lib/validator';
