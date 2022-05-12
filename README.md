@@ -28,7 +28,7 @@ router.route({
   method: 'GET',
   name: 'helloCavia',
   path: '/hello',
-  schema: {/* ... */},
+  schema: { /* ... */ },
 });
 ```
 
