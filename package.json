@@ -1,7 +1,7 @@
 {
-  "name": "@caviajs/core",
-  "description": "next generation framework for node.js",
-  "version": "0.0.1",
+  "name": "@caviajs/http-server",
+  "description": "a micro framework for node.js",
+  "version": "1.0.0",
   "author": "Paweł Partyka",
   "license": "MIT",
   "files": [
