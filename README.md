@@ -28,7 +28,7 @@ router.route({
   method: 'GET',
   name: 'helloCavia',
   path: '/hello',
-  schema: {/* ... */ },
+  schema: {/* ... */},
 });
 ```
 
@@ -114,5 +114,5 @@ httpServer.listen(3000);
 ```
 
 <div align="center">
-  <sub>Built with ❤︎ by <a href="https://twitter.com/partyka95">Paweł Partyka</a>
+  <sub>Built with ❤︎ by <a href="https://twitter.com/partyka95">Paweł Partyka</a></sub>
 </div>
