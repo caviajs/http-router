@@ -25,10 +25,9 @@ httpRouter.route({
     return 'Hello Cavia';
   },
   interceptors: [/* ... */],
+  metadata: { /* ... */ },
   method: 'GET',
-  name: 'helloCavia',
-  path: '/hello',
-  schema: { /* ... */ },
+  path: '/hello-cavia',
 });
 ```
 
@@ -60,9 +59,17 @@ client with the status `500`.
 ```typescript
 import { HttpException } from '@caviajs/http-exception';
 
-// ...
-throw new HttpException(404, 'Guinea pig not found');
-// ...
+httpRouter.route({
+  handler: (request, response) => {
+    // ...
+    throw new HttpException(404, 'Guinea pig not found');
+    // ...
+  },
+  interceptors: [/* ... */],
+  metadata: { /* ... */ },
+  method: 'GET',
+  path: '/hello-cavia',
+});
 ```
 
 If you want to react to any exceptions returned, you can use the stream in the interceptors.
