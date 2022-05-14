@@ -8,7 +8,7 @@
 </div>
 
 ```shell
-npm install @caviajs/http-router rxjs --save
+npm install @caviajs/http-exception @caviajs/http-router rxjs --save
 ```
 
 <div align="center">
