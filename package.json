@@ -1,5 +1,5 @@
 {
-  "name": "@caviajs/http-server",
+  "name": "@caviajs/http-router",
   "description": "a micro framework for node.js",
   "version": "1.0.0",
   "author": "Paweł Partyka",
@@ -11,8 +11,6 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
     "publish:prod": "npm run build && npm publish"
   },
   "dependencies": {
@@ -23,9 +21,6 @@
   "devDependencies": {
     "@types/node": "~16.11.7",
     "@types/qs": "~6.9.6",
-    "@typescript-eslint/eslint-plugin": "~4.21.0",
-    "@typescript-eslint/parser": "~4.21.0",
-    "eslint": "~7.24.0",
     "rimraf": "~3.0.2",
     "rxjs": "~7.5.4",
     "ts-node": "~9.1.1",

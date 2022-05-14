@@ -1,5 +1,5 @@
 <div align="center">
-<h3>@caviajs/http-server</h3>
+<h3>@caviajs/http-router</h3>
 <p>a micro framework for node.js</p>
 </div>
 
@@ -8,7 +8,7 @@
 </div>
 
 ```shell
-npm install @caviajs/http-server rxjs --save
+npm install @caviajs/http-router rxjs --save
 ```
 
 <div align="center">
@@ -16,7 +16,7 @@ npm install @caviajs/http-server rxjs --save
 </div>
 
 ```typescript
-import { Router } from '@caviajs/http-server';
+import { Router } from '@caviajs/http-router';
 
 const router = new Router();
 
@@ -58,7 +58,7 @@ Any other exception than `HttpException` will be considered as unknown and will 
 client with the status `500`.
 
 ```typescript
-import { HttpException } from '@caviajs/http-server';
+import { HttpException } from '@caviajs/http-exception';
 
 // ...
 throw new HttpException(404, 'Guinea pig not found');
@@ -73,7 +73,7 @@ If you want to react to any exceptions returned, you can use the stream in the i
 
 ```typescript
 import { tap, catchError, throwError } from 'rxjs';
-import { Router } from '@caviajs/http-server';
+import { Router } from '@caviajs/http-router';
 
 const router = new Router();
 
