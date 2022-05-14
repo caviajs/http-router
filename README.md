@@ -16,11 +16,11 @@ npm install @caviajs/http-router rxjs --save
 </div>
 
 ```typescript
-import { Router } from '@caviajs/http-router';
+import { HttpRouter } from '@caviajs/http-router';
 
-const router = new Router();
+const httpRouter = new HttpRouter();
 
-router.route({
+httpRouter.route({
   handler: (request, response) => {
     return 'Hello Cavia';
   },
@@ -73,11 +73,11 @@ If you want to react to any exceptions returned, you can use the stream in the i
 
 ```typescript
 import { tap, catchError, throwError } from 'rxjs';
-import { Router } from '@caviajs/http-router';
+import { HttpRouter } from '@caviajs/http-router';
 
-const router = new Router();
+const httpRouter = new HttpRouter();
 
-router.intercept((request, response, next) => {
+httpRouter.intercept((request, response, next) => {
   // request...
 
   return next

@@ -4,9 +4,9 @@ import { Stream } from 'stream';
 import { readable } from 'is-stream';
 import { match } from 'path-to-regexp';
 import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
-import { HttpException } from './http-exception';
+import { HttpException } from '@caviajs/http-exception';
 
-export class Router {
+export class HttpRouter {
   protected readonly interceptors: Interceptor[] = [];
   protected readonly routes: Route[] = [];
 
@@ -16,13 +16,13 @@ export class Router {
     };
   }
 
-  public intercept(interceptor: Interceptor): Router {
+  public intercept(interceptor: Interceptor): HttpRouter {
     this.interceptors.push(interceptor);
 
     return this;
   }
 
-  public route(route: Route): Router {
+  public route(route: Route): HttpRouter {
     if (route.path.startsWith('/') === false) {
       throw new Error(`The route path in '${ route.method } ${ route.path }' should start with '/'`);
     }

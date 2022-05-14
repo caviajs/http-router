@@ -1,5 +1,5 @@
 import http from 'http';
-import { RouteMetadata } from '../router';
+import { RouteMetadata } from './http-router';
 
 declare module 'http' {
   export interface IncomingMessage {
