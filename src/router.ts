@@ -5,7 +5,6 @@ import { readable } from 'is-stream';
 import { match } from 'path-to-regexp';
 import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
 import { HttpException } from './http-exception';
-import { Schema, SchemaObject } from '@caviajs/validator';
 
 export class Router {
   protected readonly interceptors: Interceptor[] = [];
@@ -13,14 +12,7 @@ export class Router {
 
   public get apiSpec(): ApiSpec {
     return {
-      routes: this.routes.map(route => {
-        return {
-          method: route.method,
-          name: route.name,
-          path: route.path,
-          schema: route.schema,
-        };
-      }),
+      routes: this.routes.map(route => ({ metadata: route.metadata, method: route.method, path: route.path })),
     };
   }
 
@@ -37,9 +29,9 @@ export class Router {
 
     const matcher = match(route.path);
 
-    if (this.routes.some(it => it.name.toUpperCase() === route.name.toUpperCase())) {
-      throw new Error(`The route name '${ route.name }' has been duplicated`);
-    }
+    // if (this.routes.some(it => it.name.toUpperCase() === route.name.toUpperCase())) {
+    //   throw new Error(`The route name '${ route.name }' has been duplicated`);
+    // }
 
     if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
       throw new Error(`Duplicated {${ route.method } ${ route.path }} http route`);
@@ -53,7 +45,8 @@ export class Router {
   public async handle(request: http.IncomingMessage, response: http.ServerResponse): Promise<void> {
     const route: Route | undefined = this.findRoute(request.method as RouteMethod, request.url);
 
-    request.route = route;
+    request.metadata = route?.metadata;
+    request.path = route?.path;
 
     const interceptors: Interceptor[] = [...this.interceptors, ...route?.interceptors || []];
     const handler: Promise<unknown> = this.composeHandler(request, response, interceptors, (): Promise<unknown> => {
@@ -178,10 +171,9 @@ export interface ApiSpec {
 }
 
 export interface ApiSpecRoute {
+  readonly metadata?: RouteMetadata;
   readonly method: RouteMethod;
-  readonly name: string;
   readonly path: RoutePath;
-  readonly schema?: RouteSchema;
 }
 
 export interface Interceptor<T = any, R = any> {
@@ -195,29 +187,17 @@ export interface Next<T = any> {
 export interface Route {
   readonly handler: RouteHandler;
   readonly interceptors?: Interceptor[];
+  readonly metadata?: RouteMetadata;
   readonly method: RouteMethod;
-  readonly name: string;
   readonly path: RoutePath;
-  readonly schema?: RouteSchema;
 }
 
 export interface RouteHandler {
   (request: http.IncomingMessage, response: http.ServerResponse): any;
 }
 
-export interface RouteSchema {
-  readonly request?: {
-    readonly body?: Schema;
-    readonly headers?: SchemaObject;
-    readonly params?: SchemaObject;
-    readonly query?: SchemaObject;
-  };
-  readonly responses?: {
-    readonly [status: number]: {
-      readonly body?: Schema;
-      readonly headers?: SchemaObject;
-    };
-  };
+export interface RouteMetadata {
+  [key: string]: any;
 }
 
 export type RouteMethod = 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT';

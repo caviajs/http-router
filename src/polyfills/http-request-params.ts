@@ -16,9 +16,9 @@ const KEY: string = '_params';
 
 Object.defineProperty(http.IncomingMessage.prototype, 'params', {
   get: function (this: http.IncomingMessage): http.Params {
-    if (this.route?.path) {
+    if (this.path) {
       if (!this[KEY]) {
-        this[KEY] = ((match(this.route.path)(url.parse(this.url).pathname) as MatchResult)?.params || {}) as any;
+        this[KEY] = ((match(this.path)(url.parse(this.url).pathname) as MatchResult)?.params || {}) as any;
       }
 
       return this[KEY];
