@@ -1,5 +1,3 @@
-import './http-request-metadata';
-import './http-request-params';
-import './http-request-path';
+import './typings';
 
 export * from './http-router';
