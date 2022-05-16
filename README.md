@@ -12,7 +12,7 @@ npm install @caviajs/http-exception @caviajs/http-router rxjs --save
 ```
 
 <div align="center">
-<h4>Routes</h4>
+<h4>Routing</h4>
 </div>
 
 ```typescript
