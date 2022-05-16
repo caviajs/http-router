@@ -20,15 +20,31 @@ import { HttpRouter } from '@caviajs/http-router';
 
 const httpRouter = new HttpRouter();
 
-httpRouter.route({
-  handler: (request, response) => {
-    return 'Hello Cavia';
-  },
-  interceptors: [/* ... */],
-  metadata: { /* ... */ },
-  method: 'GET',
-  path: '/hello-cavia',
-});
+// ...
+
+httpRouter
+  .route({
+    handler: (request, response) => {
+      return [{ name: 'Cavia' }];
+    },
+    interceptors: [/* ... */],
+    metadata: { /* ... */ },
+    method: 'GET',
+    path: '/guinea-pigs',
+  })
+  .route({
+    handler: (request, response) => {
+      // request.params.id;
+
+      return { name: 'Cavia' };
+    },
+    interceptors: [/* ... */],
+    metadata: { /* ... */ },
+    method: 'GET',
+    path: '/guinea-pigs/:id',
+  });
+
+// ...
 ```
 
 <div align="center">
