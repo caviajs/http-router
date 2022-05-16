@@ -1,11 +1,10 @@
 import http from 'http';
-import { parse } from 'url';
+import { parse as parseUrl } from 'url';
 import { Stream } from 'stream';
 import { readable } from 'is-stream';
 import { match, MatchResult } from 'path-to-regexp';
 import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
 import { HttpException } from '@caviajs/http-exception';
-import url from 'url';
 
 export class HttpRouter {
   protected readonly interceptors: Interceptor[] = [];
@@ -47,7 +46,7 @@ export class HttpRouter {
     const route: Route | undefined = this.findRoute(request.method as RouteMethod, request.url);
 
     request.metadata = route?.metadata;
-    request.params = route ? ((match(route.path)(url.parse(request.url).pathname) as MatchResult)?.params || {}) as http.Params : {};
+    request.params = route ? ((match(route.path)(parseUrl(request.url).pathname) as MatchResult)?.params || {}) as http.Params : {};
     request.path = route?.path;
 
     const interceptors: Interceptor[] = [...this.interceptors, ...route?.interceptors || []];
@@ -114,9 +113,9 @@ export class HttpRouter {
   }
 
   protected findRoute(method: RouteMethod, url: string): Route | undefined {
-    let route: Route | undefined;
+    const pathname: string = parseUrl(url).pathname;
 
-    const pathname: string = parse(url).pathname;
+    let route: Route | undefined;
 
     for (const it of this.routes.filter(r => r.method === method)) {
       if (match(it.path)(pathname)) {
