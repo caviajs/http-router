@@ -73,40 +73,40 @@ describe('Routing', () => {
     }
   });
 
-  it('should thrown an HttpException(404) for a non-existent route', () => {
+  it('should thrown an HttpException(404) for a non-existent route', (done) => {
     const httpServer: http.Server = createServer();
 
     supertest(httpServer)
       .get('/non-existent-route')
-      .expect(404, 'Route not found');
+      .expect(404, { statusCode: 404, statusMessage: 'Route not found' }, done);
   });
 
-  it('should execute the handler of the appropriate route', () => {
+  it('should execute the handler of the appropriate route', (done) => {
     const httpServer: http.Server = createServer();
 
     // GET /pigs
     supertest(httpServer)
       .get('/pigs')
-      .expect(200, 'GET /pigs');
+      .expect(200, 'GET /pigs', done);
 
     // POST /pigs
     supertest(httpServer)
       .post('/pigs')
-      .expect(201, 'POST /pigs');
+      .expect(201, 'POST /pigs', done);
 
     // GET /pigs/:id
     supertest(httpServer)
       .get('/pigs/1245')
-      .expect(200, 'GET /pigs/1245');
+      .expect(200, 'GET /pigs/1245', done);
 
     // PUT /pigs/:id
     supertest(httpServer)
       .put('/pigs/4578')
-      .expect(200, 'PUT /pigs/4578');
+      .expect(200, 'PUT /pigs/4578', done);
 
     // DELETE /pigs/:id
     supertest(httpServer)
       .delete('/pigs/40')
-      .expect(200, 'DELETE /pigs/40');
+      .expect(200, 'DELETE /pigs/40', done);
   });
 });
