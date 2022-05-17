@@ -29,10 +29,6 @@ export class HttpRouter {
 
     const matcher = match(route.path);
 
-    // if (this.routes.some(it => it.name.toUpperCase() === route.name.toUpperCase())) {
-    //   throw new Error(`The route name '${ route.name }' has been duplicated`);
-    // }
-
     if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
       throw new Error(`Duplicated {${ route.method } ${ route.path }} http route`);
     }
