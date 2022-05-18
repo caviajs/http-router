@@ -1,8 +1,9 @@
 import http from 'http';
 import supertest from 'supertest';
 import { HttpRouter } from '../src';
+import { HttpException } from '@caviajs/http-exception';
 
-it('should correctly handle Error threw by handler', async () => {
+it('should correctly handle Error threw by handler', (done) => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
@@ -18,13 +19,11 @@ it('should correctly handle Error threw by handler', async () => {
     await httpRouter.handle(request, response);
   });
 
-  const response = await supertest(httpServer)
-    .get('/');
+  const EXCEPTION: HttpException = new HttpException(500);
 
-  const EXPECTED_BODY = { statusCode: 500, statusMessage: 'Internal Server Error' };
-
-  expect(response.body).toEqual(EXPECTED_BODY);
-  expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXPECTED_BODY)).toString());
-  expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
-  expect(response.statusCode).toBe(500);
+  supertest(httpServer)
+    .get('/')
+    .expect('Content-Length', Buffer.byteLength(JSON.stringify(EXCEPTION.getResponse())).toString())
+    .expect('Content-Type', 'application/json; charset=utf-8')
+    .expect(EXCEPTION.getStatus(), EXCEPTION.getResponse(), done);
 });
