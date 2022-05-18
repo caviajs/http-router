@@ -2,17 +2,26 @@ import http from 'http';
 import supertest from 'supertest';
 import { HttpRouter } from '../src';
 
-it('should correctly parse route parameters', (done) => {
+it('route params should be assigned to the request and available in handler', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
+  let params: http.Params;
+
   httpRouter
-    .route({ handler: (request) => request.params, method: 'GET', path: '/guinea/:first/pigs/:second' });
+    .route({
+      handler: (request) => {
+        params = request.params;
+      },
+      method: 'GET',
+      path: '/guinea/:first/pigs/:second',
+    });
 
   const httpServer: http.Server = http.createServer((request, response) => {
     httpRouter.handle(request, response);
   });
 
-  supertest(httpServer)
-    .get('/guinea/12/pigs/34')
-    .expect(200, { first: '12', second: '34' }, done);
+  await supertest(httpServer)
+    .get('/guinea/12/pigs/34');
+
+  expect(params).toEqual({ first: '12', second: '34' });
 });
