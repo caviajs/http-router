@@ -12,7 +12,7 @@ function wait(ms: number, cb: () => void): Promise<void> {
   });
 }
 
-it('should execute the interceptors in the correct sequence', async () => {
+it('should execute the interceptors in the correct sequence for the existing route', async () => {
   const SEQUENCE: number[] = [];
 
   const httpRouter: HttpRouter = new HttpRouter();
