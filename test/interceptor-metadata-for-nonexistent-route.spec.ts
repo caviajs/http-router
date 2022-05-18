@@ -2,7 +2,7 @@ import http from 'http';
 import supertest from 'supertest';
 import { HttpRouter, RouteMetadata } from '../src';
 
-it('route metadata should be undefined in case of non-existent route and available on interceptors', async () => {
+it('route metadata should be undefined in case of non-existent route and available in interceptors', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   let metadata: RouteMetadata;
