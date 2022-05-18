@@ -68,7 +68,7 @@ describe('Routing', () => {
     // POST /pigs
     supertest(httpServer)
       .post('/pigs')
-      .expect(201, 'POST /pigs', done);
+      .expect(200, 'POST /pigs', done);
 
     // GET /pigs/:id
     supertest(httpServer)

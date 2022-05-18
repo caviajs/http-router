@@ -5,56 +5,57 @@ import { HttpException } from '@caviajs/http-exception';
 import { HttpRouter } from '../src';
 
 it('should correctly handle HttpException threw by interceptor', async () => {
-  const sequence: string[] = [];
+  const EXCEPTION: HttpException = new HttpException(400, 'Hello Cavia');
+  const SEQUENCE: string[] = [];
 
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
     .intercept((request, response, next) => {
-      sequence.push('first:request');
+      SEQUENCE.push('first:request');
 
       return next
         .handle()
         .pipe(
           tap(() => {
-            sequence.push('first:response:success');
+            SEQUENCE.push('first:response:success');
           }),
           catchError((err) => {
-            sequence.push('first:response:failure');
+            SEQUENCE.push('first:response:failure');
 
             return throwError(err);
           }),
         );
     })
     .intercept((request, response, next) => {
-      sequence.push('second:request');
+      SEQUENCE.push('second:request');
 
       return next
         .handle()
         .pipe(
           tap(() => {
-            sequence.push('second:response:success');
+            SEQUENCE.push('second:response:success');
           }),
           catchError((err) => {
-            sequence.push('second:response:failure');
+            SEQUENCE.push('second:response:failure');
 
             return throwError(err);
           }),
         );
     })
     .intercept((request, response, next) => {
-      sequence.push('third:request');
+      SEQUENCE.push('third:request');
 
-      throw new HttpException(400, 'Hello Cavia');
+      throw EXCEPTION;
 
       return next
         .handle()
         .pipe(
           tap(() => {
-            sequence.push('third:response:success');
+            SEQUENCE.push('third:response:success');
           }),
           catchError((err) => {
-            sequence.push('third:response:failure');
+            SEQUENCE.push('third:response:failure');
 
             return throwError(err);
           }),
@@ -62,7 +63,7 @@ it('should correctly handle HttpException threw by interceptor', async () => {
     })
     .route({
       handler: () => {
-        sequence.push('handler');
+        SEQUENCE.push('handler');
       },
       method: 'GET',
       path: '/',
@@ -75,10 +76,12 @@ it('should correctly handle HttpException threw by interceptor', async () => {
   const response = await supertest(httpServer)
     .get('/');
 
-  expect(response.body).toEqual({ statusCode: 400, statusMessage: 'Hello Cavia' });
-  expect(response.statusCode).toBe(400);
+  expect(response.body).toEqual(EXCEPTION.getResponse());
+  expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXCEPTION.getResponse())).toString());
+  expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
+  expect(response.statusCode).toBe(EXCEPTION.getStatus());
 
-  expect(sequence).toEqual([
+  expect(SEQUENCE).toEqual([
     'first:request',
     'second:request',
     'third:request',

@@ -13,45 +13,45 @@ function wait(ms: number, cb: () => void): Promise<void> {
 }
 
 it('should execute the interceptors in the correct sequence', async () => {
-  const sequence: number[] = [];
+  const SEQUENCE: number[] = [];
 
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
     // sync
     .intercept((request, response, next) => {
-      sequence.push(10);
+      SEQUENCE.push(10);
 
-      return next.handle().pipe(tap(() => sequence.push(90)));
+      return next.handle().pipe(tap(() => SEQUENCE.push(90)));
     })
     // async
     .intercept(async (request, response, next) => {
-      sequence.push(20);
-      await wait(500, () => sequence.push(21));
+      SEQUENCE.push(20);
+      await wait(500, () => SEQUENCE.push(21));
 
-      return next.handle().pipe(tap(() => sequence.push(80)));
+      return next.handle().pipe(tap(() => SEQUENCE.push(80)));
     });
 
   httpRouter
     .route({
       handler: async () => {
-        sequence.push(50);
-        await wait(500, () => sequence.push(51));
-        sequence.push(52);
+        SEQUENCE.push(50);
+        await wait(500, () => SEQUENCE.push(51));
+        SEQUENCE.push(52);
       },
       interceptors: [
         // sync
         (request, response, next) => {
-          sequence.push(30);
+          SEQUENCE.push(30);
 
-          return next.handle().pipe(tap(() => sequence.push(70)));
+          return next.handle().pipe(tap(() => SEQUENCE.push(70)));
         },
         // async
         async (request, response, next) => {
-          sequence.push(40);
-          await wait(500, () => sequence.push(41));
+          SEQUENCE.push(40);
+          await wait(500, () => SEQUENCE.push(41));
 
-          return next.handle().pipe(tap(() => sequence.push(60)));
+          return next.handle().pipe(tap(() => SEQUENCE.push(60)));
         },
       ],
       method: 'GET',
@@ -64,5 +64,5 @@ it('should execute the interceptors in the correct sequence', async () => {
 
   await supertest(httpServer).get('/pigs');
 
-  expect(sequence).toEqual([10, 20, 21, 30, 40, 41, 50, 51, 52, 60, 70, 80, 90]);
+  expect(SEQUENCE).toEqual([10, 20, 21, 30, 40, 41, 50, 51, 52, 60, 70, 80, 90]);
 });
