@@ -7,7 +7,6 @@ import { of } from 'rxjs';
 const EXAMPLE_UNDEFINED: undefined = undefined;
 const EXAMPLE_BUFFER: Buffer = Buffer.from('Hello World');
 const EXAMPLE_STREAM_DATA: string = 'Hello World';
-const EXAMPLE_STREAM: Stream = Readable.from(EXAMPLE_STREAM_DATA);
 const EXAMPLE_STRING: string = 'Hello World';
 const EXAMPLE_TRUE: boolean = true;
 const EXAMPLE_FALSE: boolean = false;
@@ -33,10 +32,10 @@ describe('Response body serializing', () => {
     .route({ handler: () => Promise.resolve(of(EXAMPLE_BUFFER)), method: 'GET', path: '/buffer-observable-async' })
 
     // stream
-    .route({ handler: () => EXAMPLE_STREAM, method: 'GET', path: '/stream-sync' })
-    .route({ handler: () => Promise.resolve(EXAMPLE_STREAM), method: 'GET', path: '/stream-async' })
-    .route({ handler: () => of(EXAMPLE_STREAM), method: 'GET', path: '/stream-observable-sync' })
-    .route({ handler: () => Promise.resolve(of(EXAMPLE_STREAM)), method: 'GET', path: '/stream-observable-async' })
+    .route({ handler: () => Readable.from(EXAMPLE_STREAM_DATA), method: 'GET', path: '/stream-sync' })
+    .route({ handler: () => Promise.resolve(Readable.from(EXAMPLE_STREAM_DATA)), method: 'GET', path: '/stream-async' })
+    .route({ handler: () => of(Readable.from(EXAMPLE_STREAM_DATA)), method: 'GET', path: '/stream-observable-sync' })
+    .route({ handler: () => Promise.resolve(of(Readable.from(EXAMPLE_STREAM_DATA))), method: 'GET', path: '/stream-observable-async' })
 
     // string
     .route({ handler: () => EXAMPLE_STRING, method: 'GET', path: '/string-sync' })
