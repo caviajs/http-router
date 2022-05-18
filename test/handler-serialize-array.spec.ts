@@ -5,7 +5,7 @@ import { HttpRouter } from '../src';
 
 const EXAMPLE_ARRAY: number[] = [1, 2, 4, 5];
 
-it('should correctly serialize array', async () => {
+it('should correctly serialize array returned by handler', async () => {
   // sync
   {
     const httpRouter: HttpRouter = new HttpRouter();

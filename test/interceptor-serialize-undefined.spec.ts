@@ -5,7 +5,7 @@ import { HttpRouter } from '../src';
 
 const EXAMPLE_UNDEFINED: undefined = undefined;
 
-it('should correctly serialize undefined', async () => {
+it('should correctly serialize undefined returned by interceptor', async () => {
   // sync
   {
     const httpRouter: HttpRouter = new HttpRouter();

@@ -5,7 +5,7 @@ import { HttpRouter } from '../src';
 
 const EXAMPLE_NULL: boolean = false;
 
-it('should correctly serialize null', async () => {
+it('should correctly serialize null returned by interceptor', async () => {
   // sync
   {
     const httpRouter: HttpRouter = new HttpRouter();

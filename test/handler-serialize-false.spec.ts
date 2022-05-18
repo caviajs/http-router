@@ -5,7 +5,7 @@ import { HttpRouter } from '../src';
 
 const EXAMPLE_FALSE: boolean = false;
 
-it('should correctly serialize boolean (false)', async () => {
+it('should correctly serialize false returned by handler', async () => {
   // sync
   {
     const httpRouter: HttpRouter = new HttpRouter();

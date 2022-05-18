@@ -5,7 +5,7 @@ import { HttpRouter } from '../src';
 
 const EXAMPLE_OBJECT: object = { foo: 'bar' };
 
-it('should correctly serialize object', async () => {
+it('should correctly serialize object returned by interceptor', async () => {
   // sync
   {
     const httpRouter: HttpRouter = new HttpRouter();

@@ -4,7 +4,7 @@ import { catchError, tap, throwError } from 'rxjs';
 import { HttpException } from '@caviajs/http-exception';
 import { HttpRouter } from '../src';
 
-it('should correctly handle HttpException from interceptor', async () => {
+it('should correctly handle HttpException threw by interceptor', async () => {
   const sequence: string[] = [];
 
   const httpRouter: HttpRouter = new HttpRouter();

@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import { catchError, tap, throwError } from 'rxjs';
 import { HttpRouter } from '../src';
 
-it('should correctly handle Error from interceptor', async () => {
+it('should correctly handle Error threw by interceptor', async () => {
   const sequence: string[] = [];
 
   const httpRouter: HttpRouter = new HttpRouter();

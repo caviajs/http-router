@@ -34,7 +34,7 @@ function createServer(): http.Server {
   });
 }
 
-it('should correctly handle HttpException', (done) => {
+it('should correctly handle HttpException threw by handler', (done) => {
   const httpServer: http.Server = createServer();
 
   supertest(httpServer)

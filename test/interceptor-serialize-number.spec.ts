@@ -5,7 +5,7 @@ import { HttpRouter } from '../src';
 
 const EXAMPLE_NUMBER: number = 1245;
 
-it('should correctly serialize number', async () => {
+it('should correctly serialize number returned by interceptor', async () => {
   // sync
   {
     const httpRouter: HttpRouter = new HttpRouter();

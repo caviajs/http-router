@@ -5,7 +5,7 @@ import { HttpRouter } from '../src';
 
 const EXAMPLE_STRING: string = 'Hello World';
 
-it('should correctly serialize string', async () => {
+it('should correctly serialize string returned by handler', async () => {
   // sync
   {
     const httpRouter: HttpRouter = new HttpRouter();

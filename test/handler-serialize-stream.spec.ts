@@ -6,7 +6,7 @@ import { HttpRouter } from '../src';
 
 const EXAMPLE_STREAM_DATA: string = 'Hello World';
 
-it('should correctly serialize stream', async () => {
+it('should correctly serialize stream returned by handler', async () => {
   // sync
   {
     const httpRouter: HttpRouter = new HttpRouter();
