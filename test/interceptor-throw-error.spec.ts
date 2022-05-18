@@ -3,86 +3,85 @@ import supertest from 'supertest';
 import { catchError, tap, throwError } from 'rxjs';
 import { HttpRouter } from '../src';
 
-describe('Handling Error from interceptor', () => {
-  it('should handle Error from interceptor correctly', async () => {
-    const sequence: string[] = [];
+it('should correctly handle Error from interceptor', async () => {
+  const sequence: string[] = [];
 
-    const httpRouter: HttpRouter = new HttpRouter();
+  const httpRouter: HttpRouter = new HttpRouter();
 
-    httpRouter
-      .intercept((request, response, next) => {
-        sequence.push('first:request');
+  httpRouter
+    .intercept((request, response, next) => {
+      sequence.push('first:request');
 
-        return next
-          .handle()
-          .pipe(
-            tap(() => {
-              sequence.push('first:response:success');
-            }),
-            catchError((err) => {
-              sequence.push('first:response:failure');
+      return next
+        .handle()
+        .pipe(
+          tap(() => {
+            sequence.push('first:response:success');
+          }),
+          catchError((err) => {
+            sequence.push('first:response:failure');
 
-              return throwError(err);
-            }),
-          );
-      })
-      .intercept((request, response, next) => {
-        sequence.push('second:request');
+            return throwError(err);
+          }),
+        );
+    })
+    .intercept((request, response, next) => {
+      sequence.push('second:request');
 
-        return next
-          .handle()
-          .pipe(
-            tap(() => {
-              sequence.push('second:response:success');
-            }),
-            catchError((err) => {
-              sequence.push('second:response:failure');
+      return next
+        .handle()
+        .pipe(
+          tap(() => {
+            sequence.push('second:response:success');
+          }),
+          catchError((err) => {
+            sequence.push('second:response:failure');
 
-              return throwError(err);
-            }),
-          );
-      })
-      .intercept((request, response, next) => {
-        sequence.push('third:request');
+            return throwError(err);
+          }),
+        );
+    })
+    .intercept((request, response, next) => {
+      sequence.push('third:request');
 
-        throw new Error('Hello Cavia');
+      throw new Error('Hello Cavia');
 
-        return next
-          .handle()
-          .pipe(
-            tap(() => {
-              sequence.push('third:response:success');
-            }),
-            catchError((err) => {
-              sequence.push('third:response:failure');
+      return next
+        .handle()
+        .pipe(
+          tap(() => {
+            sequence.push('third:response:success');
+          }),
+          catchError((err) => {
+            sequence.push('third:response:failure');
 
-              return throwError(err);
-            }),
-          );
-      })
-      .route({
-        handler: () => {
-          sequence.push('handler');
-        },
-        method: 'GET',
-        path: '/error',
-      });
-
-    const httpServer: http.Server = http.createServer(async (request, response) => {
-      await httpRouter.handle(request, response);
+            return throwError(err);
+          }),
+        );
+    })
+    .route({
+      handler: () => {
+        sequence.push('handler');
+      },
+      method: 'GET',
+      path: '/',
     });
 
-    const response = await supertest(httpServer).get('/error');
-
-    expect(response.body).toEqual({ statusCode: 500, statusMessage: 'Internal Server Error' });
-    expect(response.statusCode).toBe(500);
-
-    expect(sequence).toEqual([
-      'first:request',
-      'second:request',
-      'third:request',
-      'second:response:failure',
-      'first:response:failure',
-    ]);
+  const httpServer: http.Server = http.createServer(async (request, response) => {
+    await httpRouter.handle(request, response);
   });
+
+  const response = await supertest(httpServer)
+    .get('/');
+
+  expect(response.body).toEqual({ statusCode: 500, statusMessage: 'Internal Server Error' });
+  expect(response.statusCode).toBe(500);
+
+  expect(sequence).toEqual([
+    'first:request',
+    'second:request',
+    'third:request',
+    'second:response:failure',
+    'first:response:failure',
+  ]);
 });
