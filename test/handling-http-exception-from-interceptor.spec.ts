@@ -1,10 +1,11 @@
 import http from 'http';
 import supertest from 'supertest';
 import { catchError, tap, throwError } from 'rxjs';
+import { HttpException } from '@caviajs/http-exception';
 import { HttpRouter } from '../src';
 
-describe('Handling Error from interceptor', () => {
-  it('should handle Error from interceptor correctly', async () => {
+describe('Handling HttpException from interceptor', () => {
+  it('should handle HttpException from interceptor correctly', async () => {
     const sequence: string[] = [];
 
     const httpRouter: HttpRouter = new HttpRouter();
@@ -45,7 +46,7 @@ describe('Handling Error from interceptor', () => {
       .intercept((request, response, next) => {
         sequence.push('third:request');
 
-        throw new Error('Hello Cavia');
+        throw new HttpException(400, 'Hello Cavia');
 
         return next
           .handle()
@@ -74,8 +75,8 @@ describe('Handling Error from interceptor', () => {
 
     const response = await supertest(httpServer).get('/error');
 
-    expect(response.body).toEqual({ statusCode: 500, statusMessage: 'Internal Server Error' });
-    expect(response.statusCode).toBe(500);
+    expect(response.body).toEqual({ statusCode: 400, statusMessage: 'Hello Cavia' });
+    expect(response.statusCode).toBe(400);
 
     expect(sequence).toEqual([
       'first:request',
