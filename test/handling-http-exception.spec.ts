@@ -27,13 +27,6 @@ function createServer(): http.Server {
       },
       method: 'GET',
       path: '/exception-3',
-    })
-    .route({
-      handler: () => {
-        throw new Error('Hello Cavia');
-      },
-      method: 'GET',
-      path: '/error',
     });
 
   return http.createServer(async (request, response) => {
@@ -41,7 +34,7 @@ function createServer(): http.Server {
   });
 }
 
-describe('Handling errors', () => {
+describe('Handling HttpException', () => {
   it('should handle HttpException correctly', (done) => {
     const httpServer: http.Server = createServer();
 
@@ -56,13 +49,5 @@ describe('Handling errors', () => {
     supertest(httpServer)
       .get('/exception-3')
       .expect(409, { hello: 'cavia' }, done);
-  });
-
-  it('should handle Error correctly', (done) => {
-    const httpServer: http.Server = createServer();
-
-    supertest(httpServer)
-      .get('/error')
-      .expect(500, { statusCode: 500, statusMessage: 'Internal Server Error' }, done);
   });
 });
