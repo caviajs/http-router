@@ -19,12 +19,10 @@ function createServer(): http.Server {
   });
 }
 
-describe('Handling Error', () => {
-  it('should handle Error correctly', (done) => {
-    const httpServer: http.Server = createServer();
+it('should correctly handle Error', (done) => {
+  const httpServer: http.Server = createServer();
 
-    supertest(httpServer)
-      .get('/error')
-      .expect(500, { statusCode: 500, statusMessage: 'Internal Server Error' }, done);
-  });
+  supertest(httpServer)
+    .get('/error')
+    .expect(500, { statusCode: 500, statusMessage: 'Internal Server Error' }, done);
 });
