@@ -10,7 +10,7 @@ export class HttpRouter {
   protected readonly interceptors: Interceptor[] = [];
   protected readonly routes: Route[] = [];
 
-  public get apiSpec(): ApiSpec {
+  public get specification(): Specification {
     return {
       routes: this.routes.map(route => ({ metadata: route.metadata, method: route.method, path: route.path })),
     };
@@ -157,16 +157,6 @@ export class HttpRouter {
   }
 }
 
-export interface ApiSpec {
-  routes: ApiSpecRoute[];
-}
-
-export interface ApiSpecRoute {
-  readonly metadata?: RouteMetadata;
-  readonly method: RouteMethod;
-  readonly path: RoutePath;
-}
-
 export interface Interceptor<T = any, R = any> {
   (request: http.IncomingMessage, response: http.ServerResponse, next: Next<T>): Observable<R> | Promise<Observable<R>>;
 }
@@ -189,6 +179,16 @@ export interface RouteHandler {
 
 export interface RouteMetadata {
   [key: string]: any;
+}
+
+export interface Specification {
+  routes: SpecificationRoute[];
+}
+
+export interface SpecificationRoute {
+  readonly metadata?: RouteMetadata;
+  readonly method: RouteMethod;
+  readonly path: RoutePath;
 }
 
 export type RouteMethod = 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT';
