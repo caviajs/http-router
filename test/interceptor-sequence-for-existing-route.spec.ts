@@ -13,45 +13,44 @@ function wait(ms: number, cb: () => void): Promise<void> {
 }
 
 it('should execute the interceptors in the correct sequence for the existing route', async () => {
-  const SEQUENCE: number[] = [];
+  const SEQUENCE: string[] = [];
 
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
     // sync
     .intercept((request, response, next) => {
-      SEQUENCE.push(10);
+      SEQUENCE.push('first:request');
 
-      return next.handle().pipe(tap(() => SEQUENCE.push(90)));
+      return next.handle().pipe(tap(() => SEQUENCE.push('first:response:success')));
     })
     // async
     .intercept(async (request, response, next) => {
-      SEQUENCE.push(20);
-      await wait(500, () => SEQUENCE.push(21));
+      SEQUENCE.push('second:request');
+      await wait(500, () => SEQUENCE.push('second:request-wait'));
 
-      return next.handle().pipe(tap(() => SEQUENCE.push(80)));
+      return next.handle().pipe(tap(() => SEQUENCE.push('second:response:success')));
     });
 
   httpRouter
     .route({
       handler: async () => {
-        SEQUENCE.push(50);
-        await wait(500, () => SEQUENCE.push(51));
-        SEQUENCE.push(52);
+        SEQUENCE.push('handler');
+        await wait(500, () => SEQUENCE.push('handler-wait'));
       },
       interceptors: [
         // sync
         (request, response, next) => {
-          SEQUENCE.push(30);
+          SEQUENCE.push('third:request');
 
-          return next.handle().pipe(tap(() => SEQUENCE.push(70)));
+          return next.handle().pipe(tap(() => SEQUENCE.push('third:response:success')));
         },
         // async
         async (request, response, next) => {
-          SEQUENCE.push(40);
-          await wait(500, () => SEQUENCE.push(41));
+          SEQUENCE.push('fourth:request');
+          await wait(500, () => SEQUENCE.push('fourth:request-wait'));
 
-          return next.handle().pipe(tap(() => SEQUENCE.push(60)));
+          return next.handle().pipe(tap(() => SEQUENCE.push('fourth:response:success')));
         },
       ],
       method: 'GET',
@@ -64,5 +63,18 @@ it('should execute the interceptors in the correct sequence for the existing rou
 
   await supertest(httpServer).get('/pigs');
 
-  expect(SEQUENCE).toEqual([10, 20, 21, 30, 40, 41, 50, 51, 52, 60, 70, 80, 90]);
+  expect(SEQUENCE).toEqual([
+    'first:request',
+    'second:request',
+    'second:request-wait',
+    'third:request',
+    'fourth:request',
+    'fourth:request-wait',
+    'handler',
+    'handler-wait',
+    'fourth:response:success',
+    'third:response:success',
+    'second:response:success',
+    'first:response:success',
+  ]);
 });
