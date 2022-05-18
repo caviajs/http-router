@@ -3,26 +3,23 @@ import { of } from 'rxjs';
 import supertest from 'supertest';
 import { HttpRouter } from '../src';
 
-const httpRouter: HttpRouter = new HttpRouter();
-
 const EXAMPLE_NUMBER: number = 1245;
 
-httpRouter
-  .route({ handler: () => EXAMPLE_NUMBER, method: 'GET', path: '/number-sync' })
-  .route({ handler: () => Promise.resolve(EXAMPLE_NUMBER), method: 'GET', path: '/number-async' })
-  .route({ handler: () => of(EXAMPLE_NUMBER), method: 'GET', path: '/number-observable-sync' })
-  .route({ handler: () => Promise.resolve(of(EXAMPLE_NUMBER)), method: 'GET', path: '/number-observable-async' });
-
-const httpServer: http.Server = http.createServer((request, response) => {
-  httpRouter.handle(request, response);
-});
-
 it('should correctly serialize number', async () => {
+  // sync
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => EXAMPLE_NUMBER, method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const raw: string = JSON.stringify(EXAMPLE_NUMBER);
 
     const response = await supertest(httpServer)
-      .get('/number-sync');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_NUMBER);
     expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
@@ -30,11 +27,20 @@ it('should correctly serialize number', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // async
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => Promise.resolve(EXAMPLE_NUMBER), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const raw: string = JSON.stringify(EXAMPLE_NUMBER);
 
     const response = await supertest(httpServer)
-      .get('/number-async');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_NUMBER);
     expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
@@ -42,11 +48,20 @@ it('should correctly serialize number', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // sync + observable
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => of(EXAMPLE_NUMBER), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const raw: string = JSON.stringify(EXAMPLE_NUMBER);
 
     const response = await supertest(httpServer)
-      .get('/number-observable-sync');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_NUMBER);
     expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
@@ -54,11 +69,20 @@ it('should correctly serialize number', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // async + observable
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => Promise.resolve(of(EXAMPLE_NUMBER)), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const raw: string = JSON.stringify(EXAMPLE_NUMBER);
 
     const response = await supertest(httpServer)
-      .get('/number-observable-async');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_NUMBER);
     expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());

@@ -3,26 +3,23 @@ import { of } from 'rxjs';
 import supertest from 'supertest';
 import { HttpRouter } from '../src';
 
-const httpRouter: HttpRouter = new HttpRouter();
-
 const EXAMPLE_FALSE: boolean = false;
 
-httpRouter
-  .route({ handler: () => EXAMPLE_FALSE, method: 'GET', path: '/false-sync' })
-  .route({ handler: () => Promise.resolve(EXAMPLE_FALSE), method: 'GET', path: '/false-async' })
-  .route({ handler: () => of(EXAMPLE_FALSE), method: 'GET', path: '/false-observable-sync' })
-  .route({ handler: () => Promise.resolve(of(EXAMPLE_FALSE)), method: 'GET', path: '/false-observable-async' });
-
-const httpServer: http.Server = http.createServer((request, response) => {
-  httpRouter.handle(request, response);
-});
-
 it('should correctly serialize boolean (false)', async () => {
+  // sync
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => EXAMPLE_FALSE, method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const raw: string = JSON.stringify(EXAMPLE_FALSE);
 
     const response = await supertest(httpServer)
-      .get('/false-sync');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_FALSE);
     expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
@@ -30,11 +27,20 @@ it('should correctly serialize boolean (false)', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // async
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => Promise.resolve(EXAMPLE_FALSE), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const raw: string = JSON.stringify(EXAMPLE_FALSE);
 
     const response = await supertest(httpServer)
-      .get('/false-async');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_FALSE);
     expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
@@ -42,11 +48,20 @@ it('should correctly serialize boolean (false)', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // sync + observable
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => of(EXAMPLE_FALSE), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const raw: string = JSON.stringify(EXAMPLE_FALSE);
 
     const response = await supertest(httpServer)
-      .get('/false-observable-sync');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_FALSE);
     expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
@@ -54,11 +69,20 @@ it('should correctly serialize boolean (false)', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // async + observable
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => Promise.resolve(of(EXAMPLE_FALSE)), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const raw: string = JSON.stringify(EXAMPLE_FALSE);
 
     const response = await supertest(httpServer)
-      .get('/false-observable-async');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_FALSE);
     expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());

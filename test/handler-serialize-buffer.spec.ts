@@ -3,24 +3,21 @@ import { of } from 'rxjs';
 import supertest from 'supertest';
 import { HttpRouter } from '../src';
 
-const httpRouter: HttpRouter = new HttpRouter();
-
-const EXAMPLE_BUFFER: Buffer = Buffer.from('Hello World');
-
-httpRouter
-  .route({ handler: () => EXAMPLE_BUFFER, method: 'GET', path: '/buffer-sync' })
-  .route({ handler: () => Promise.resolve(EXAMPLE_BUFFER), method: 'GET', path: '/buffer-async' })
-  .route({ handler: () => of(EXAMPLE_BUFFER), method: 'GET', path: '/buffer-observable-sync' })
-  .route({ handler: () => Promise.resolve(of(EXAMPLE_BUFFER)), method: 'GET', path: '/buffer-observable-async' });
-
-const httpServer: http.Server = http.createServer((request, response) => {
-  httpRouter.handle(request, response);
-});
+const EXAMPLE_BUFFER: Buffer = Buffer.from('Hello Cavia');
 
 it('should correctly serialize buffer', async () => {
+  // sync
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => EXAMPLE_BUFFER, method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const response = await supertest(httpServer)
-      .get('/buffer-sync');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_BUFFER);
     expect(response.headers['content-length']).toBe(EXAMPLE_BUFFER.length.toString());
@@ -28,9 +25,18 @@ it('should correctly serialize buffer', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // async
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => Promise.resolve(EXAMPLE_BUFFER), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const response = await supertest(httpServer)
-      .get('/buffer-async');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_BUFFER);
     expect(response.headers['content-length']).toBe(EXAMPLE_BUFFER.length.toString());
@@ -38,9 +44,18 @@ it('should correctly serialize buffer', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // sync + observable
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => of(EXAMPLE_BUFFER), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const response = await supertest(httpServer)
-      .get('/buffer-observable-sync');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_BUFFER);
     expect(response.headers['content-length']).toBe(EXAMPLE_BUFFER.length.toString());
@@ -48,9 +63,18 @@ it('should correctly serialize buffer', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // async + observable
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => Promise.resolve(of(EXAMPLE_BUFFER)), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const response = await supertest(httpServer)
-      .get('/buffer-observable-async');
+      .get('/');
 
     expect(response.body).toEqual(EXAMPLE_BUFFER);
     expect(response.headers['content-length']).toBe(EXAMPLE_BUFFER.length.toString());

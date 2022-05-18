@@ -4,24 +4,21 @@ import { Readable } from 'stream';
 import supertest from 'supertest';
 import { HttpRouter } from '../src';
 
-const httpRouter: HttpRouter = new HttpRouter();
-
 const EXAMPLE_STREAM_DATA: string = 'Hello World';
 
-httpRouter
-  .route({ handler: () => Readable.from(EXAMPLE_STREAM_DATA), method: 'GET', path: '/stream-sync' })
-  .route({ handler: () => Promise.resolve(Readable.from(EXAMPLE_STREAM_DATA)), method: 'GET', path: '/stream-async' })
-  .route({ handler: () => of(Readable.from(EXAMPLE_STREAM_DATA)), method: 'GET', path: '/stream-observable-sync' })
-  .route({ handler: () => Promise.resolve(of(Readable.from(EXAMPLE_STREAM_DATA))), method: 'GET', path: '/stream-observable-async' });
-
-const httpServer: http.Server = http.createServer((request, response) => {
-  httpRouter.handle(request, response);
-});
-
 it('should correctly serialize stream', async () => {
+  // sync
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => Readable.from(EXAMPLE_STREAM_DATA), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const response = await supertest(httpServer)
-      .get('/stream-sync');
+      .get('/');
 
     expect(response.body.toString()).toEqual(EXAMPLE_STREAM_DATA);
     expect(response.headers['content-length']).toBeUndefined();
@@ -29,9 +26,18 @@ it('should correctly serialize stream', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // async
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => Promise.resolve(Readable.from(EXAMPLE_STREAM_DATA)), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const response = await supertest(httpServer)
-      .get('/stream-async');
+      .get('/');
 
     expect(response.body.toString()).toEqual(EXAMPLE_STREAM_DATA);
     expect(response.headers['content-length']).toBeUndefined();
@@ -39,9 +45,18 @@ it('should correctly serialize stream', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // sync + observable
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => of(Readable.from(EXAMPLE_STREAM_DATA)), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const response = await supertest(httpServer)
-      .get('/stream-observable-sync');
+      .get('/');
 
     expect(response.body.toString()).toEqual(EXAMPLE_STREAM_DATA);
     expect(response.headers['content-length']).toBeUndefined();
@@ -49,9 +64,18 @@ it('should correctly serialize stream', async () => {
     expect(response.statusCode).toBe(200);
   }
 
+  // async + observable
   {
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter.route({ handler: () => Promise.resolve(of(Readable.from(EXAMPLE_STREAM_DATA))), method: 'GET', path: '/' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
     const response = await supertest(httpServer)
-      .get('/stream-observable-async');
+      .get('/');
 
     expect(response.body.toString()).toEqual(EXAMPLE_STREAM_DATA);
     expect(response.headers['content-length']).toBeUndefined();
