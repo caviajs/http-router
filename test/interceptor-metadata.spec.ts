@@ -2,16 +2,19 @@ import http from 'http';
 import supertest from 'supertest';
 import { HttpRouter, RouteMetadata } from '../src';
 
-it('route metadata should be assigned to the request and available in handler', async () => {
+it('route metadata should be assigned to the request and available in interceptors', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   let metadata: RouteMetadata;
 
   httpRouter
+    .intercept((request, response, next) => {
+      metadata = request.metadata;
+
+      return next.handle();
+    })
     .route({
-      handler: (request) => {
-        metadata = request.metadata;
-      },
+      handler: () => undefined,
       metadata: {
         permissions: ['read:pigs'],
       },
