@@ -34,20 +34,18 @@ function createServer(): http.Server {
   });
 }
 
-describe('Handling HttpException', () => {
-  it('should handle HttpException correctly', (done) => {
-    const httpServer: http.Server = createServer();
+it('should correctly handle HttpException', (done) => {
+  const httpServer: http.Server = createServer();
 
-    supertest(httpServer)
-      .get('/exception-1')
-      .expect(401, { statusCode: 401, statusMessage: 'Unauthorized' }, done);
+  supertest(httpServer)
+    .get('/exception-1')
+    .expect(401, { statusCode: 401, statusMessage: 'Unauthorized' }, done);
 
-    supertest(httpServer)
-      .get('/exception-2')
-      .expect(401, { statusCode: 401, statusMessage: 'Hello Cavia' }, done);
+  supertest(httpServer)
+    .get('/exception-2')
+    .expect(401, { statusCode: 401, statusMessage: 'Hello Cavia' }, done);
 
-    supertest(httpServer)
-      .get('/exception-3')
-      .expect(409, { hello: 'cavia' }, done);
-  });
+  supertest(httpServer)
+    .get('/exception-3')
+    .expect(409, { hello: 'cavia' }, done);
 });
