@@ -1,18 +1,27 @@
 import http from 'http';
 import supertest from 'supertest';
-import { HttpRouter } from '../src';
+import { HttpRouter, RoutePath } from '../src';
 
-it('should assign an appropriate path to the request', (done) => {
+it('route path should be assigned to the request and available in handler', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
+  let path: RoutePath;
+
   httpRouter
-    .route({ handler: (request) => request.path, method: 'GET', path: '/guinea/:first/pigs/:second' });
+    .route({
+      handler: (request) => {
+        path = request.path;
+      },
+      method: 'GET',
+      path: '/pigs/:id',
+    });
 
   const httpServer: http.Server = http.createServer((request, response) => {
     httpRouter.handle(request, response);
   });
 
-  supertest(httpServer)
-    .get('/guinea/1/pigs/2')
-    .expect(200, '/guinea/:first/pigs/:second', done);
+  await supertest(httpServer)
+    .get('/pigs/1');
+
+  expect(path).toBe('/pigs/:id');
 });
