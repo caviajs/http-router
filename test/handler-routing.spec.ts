@@ -1,53 +1,7 @@
 import http from 'http';
 import supertest from 'supertest';
+import { HttpException } from '@caviajs/http-exception';
 import { HttpRouter } from '../src';
-
-function createServer(): http.Server {
-  const httpRouter: HttpRouter = new HttpRouter();
-
-  httpRouter
-    .route({
-      handler: (request, response) => {
-        return 'GET /pigs';
-      },
-      method: 'GET',
-      path: '/pigs',
-    })
-    .route({
-      handler: (request, response) => {
-        response.statusCode = 201;
-
-        return 'POST /pigs';
-      },
-      method: 'POST',
-      path: '/pigs',
-    })
-    .route({
-      handler: (request, response) => {
-        return `GET /pigs/${ request.params.id }`;
-      },
-      method: 'GET',
-      path: '/pigs/:id',
-    })
-    .route({
-      handler: (request, response) => {
-        return `PUT /pigs/${ request.params.id }`;
-      },
-      method: 'PUT',
-      path: '/pigs/:id',
-    })
-    .route({
-      handler: (request, response) => {
-        return `DELETE /pigs/${ request.params.id }`;
-      },
-      method: 'DELETE',
-      path: '/pigs/:id',
-    });
-
-  return http.createServer((request, response) => {
-    httpRouter.handle(request, response);
-  });
-}
 
 describe('Routing', () => {
   it('should thrown an Error if path does not start with /', () => {
@@ -74,15 +28,37 @@ describe('Routing', () => {
   });
 
   it('should thrown an HttpException(404) for a non-existent route', (done) => {
-    const httpServer: http.Server = createServer();
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter
+      .route({ handler: () => 'GET /pigs', method: 'GET', path: '/pigs' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
+
+    const EXCEPTION: HttpException = new HttpException(404, 'Route not found');
 
     supertest(httpServer)
       .get('/non-existent-route')
-      .expect(404, { statusCode: 404, statusMessage: 'Route not found' }, done);
+      .expect('Content-Length', Buffer.byteLength(JSON.stringify(EXCEPTION.getResponse())).toString())
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(EXCEPTION.getStatus(), EXCEPTION.getResponse(), done);
   });
 
   it('should execute the handler of the appropriate route', (done) => {
-    const httpServer: http.Server = createServer();
+    const httpRouter: HttpRouter = new HttpRouter();
+
+    httpRouter
+      .route({ handler: () => 'GET /pigs', method: 'GET', path: '/pigs' })
+      .route({ handler: () => 'POST /pigs', method: 'POST', path: '/pigs' })
+      .route({ handler: (request) => `GET /pigs/${ request.params.id }`, method: 'GET', path: '/pigs/:id' })
+      .route({ handler: (request) => `PUT /pigs/${ request.params.id }`, method: 'PUT', path: '/pigs/:id' })
+      .route({ handler: (request) => `DELETE /pigs/${ request.params.id }`, method: 'DELETE', path: '/pigs/:id' });
+
+    const httpServer: http.Server = http.createServer((request, response) => {
+      httpRouter.handle(request, response);
+    });
 
     // GET /pigs
     supertest(httpServer)

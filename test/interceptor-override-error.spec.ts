@@ -5,23 +5,24 @@ import { HttpException } from '@caviajs/http-exception';
 import { HttpRouter } from '../src';
 
 it('interceptor should correctly override the Error returned by the handler', async () => {
-  const sequence: number[] = [];
+  const EXCEPTION: HttpException = new HttpException(409, 'Hello Cavia');
+  const SEQUENCE: number[] = [];
 
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
     .intercept((request, response, next) => {
-      sequence.push(1);
+      SEQUENCE.push(1);
 
       return next.handle().pipe(catchError(() => {
-        sequence.push(3);
+        SEQUENCE.push(3);
 
-        return throwError(new HttpException(409, 'Hello Cavia'));
+        return throwError(EXCEPTION);
       }));
     })
     .route({
       handler: () => {
-        sequence.push(2);
+        SEQUENCE.push(2);
 
         throw new Error('Hello World');
       },
@@ -36,12 +37,10 @@ it('interceptor should correctly override the Error returned by the handler', as
   const response = await supertest(httpServer)
     .get('/');
 
-  const EXPECTED_BODY = { statusCode: 409, statusMessage: 'Hello Cavia' };
-
-  expect(response.body).toEqual(EXPECTED_BODY);
-  expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXPECTED_BODY)).toString());
+  expect(response.body).toEqual(EXCEPTION.getResponse());
+  expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXCEPTION.getResponse())).toString());
   expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
-  expect(response.statusCode).toBe(409);
+  expect(response.statusCode).toBe(EXCEPTION.getStatus());
 
-  expect(sequence).toEqual([1, 2, 3]);
+  expect(SEQUENCE).toEqual([1, 2, 3]);
 });
