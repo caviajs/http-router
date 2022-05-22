@@ -123,7 +123,7 @@ export class HttpRouter {
     return route;
   }
 
-  protected serialize(response: http.ServerResponse, data: any): void {
+  protected async serialize(response: http.ServerResponse, data: any): Promise<void> {
     if (data === undefined) {
       response
         .end();
@@ -136,7 +136,8 @@ export class HttpRouter {
       response
         .setHeader('Content-Type', response.getHeader('Content-Type') || 'application/octet-stream');
 
-      data.pipe(response);
+      data
+        .pipe(response);
     } else if (typeof data === 'string') {
       response
         .setHeader('Content-Length', response.getHeader('Content-Length') || Buffer.byteLength(data))
