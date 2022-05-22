@@ -52,7 +52,7 @@ httpRouter
 </div>
 
 * **buffer** - dumped into the response stream;
-  * Content-Type: **[manually specified]** | **[inferred]** | **application/octet-stream**
+  * Content-Type: **[manually specified]** | **application/octet-stream**
   * Content-Length: **[manually specified]** | **[calc buffer length]**
 * **stream** - dumped into the response stream,
   * Content-Type: **[manually specified]** | **application/octet-stream**
