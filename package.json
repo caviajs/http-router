@@ -15,7 +15,8 @@
     "test:coverage": "jest --coverage",
     "test:debug": "node --inspect-brk -r ts-node/register jest --runInBand",
     "test:watch": "jest --watch",
-    "release": "npm run build && npm publish"
+    "release": "npm run build && npm publish",
+    "prepare": "husky install"
   },
   "dependencies": {
     "is-stream": "~2.0.0",
@@ -24,10 +25,13 @@
   },
   "devDependencies": {
     "@caviajs/http-exception": "~1.0.0",
+    "@commitlint/cli": "~17.0.0",
+    "@commitlint/config-conventional": "~17.0.0",
     "@types/jest": "~27.4.1",
     "@types/node": "~16.11.7",
     "@types/qs": "~6.9.6",
     "@types/supertest": "^2.0.12",
+    "husky": "~8.0.1",
     "jest": "~27.5.1",
     "rimraf": "~3.0.2",
     "rxjs": "~7.5.4",
