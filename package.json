@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "is-stream": "~2.0.0",
-    "path-to-regexp": "~6.2.0",
+    "path-to-regexp": "~6.2.1",
     "qs": "~6.10.1"
   },
   "devDependencies": {
