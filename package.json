@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "author": "Paweł Partyka",
   "license": "MIT",
+  "homepage": "https://caviajs.com",
   "repository": "caviajs/http-router",
   "files": [
     "dist/**/*"
