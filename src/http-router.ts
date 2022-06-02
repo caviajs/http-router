@@ -1,7 +1,6 @@
 import http from 'http';
 import { parse as parseUrl } from 'url';
-import { Stream } from 'stream';
-import { readable } from 'is-stream';
+import { Readable } from 'stream';
 import { match, MatchResult } from 'path-to-regexp';
 import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
 import { HttpException } from '@caviajs/http-exception';
@@ -132,7 +131,7 @@ export class HttpRouter {
         .setHeader('Content-Length', response.getHeader('Content-Length') || data.length)
         .setHeader('Content-Type', response.getHeader('Content-Type') || 'application/octet-stream')
         .end(data);
-    } else if (data instanceof Stream || readable(data)) {
+    } else if (data instanceof Readable) {
       response
         .setHeader('Content-Type', response.getHeader('Content-Type') || 'application/octet-stream');
 
