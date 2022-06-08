@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "path-to-regexp": "~6.2.1",
-    "qs": "~6.10.1"
+    "qs": "~6.10.5"
   },
   "devDependencies": {
     "@caviajs/http-exception": "~0.1.1",
