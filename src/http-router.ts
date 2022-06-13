@@ -128,27 +128,27 @@ export class HttpRouter {
         .end();
     } else if (Buffer.isBuffer(data)) {
       response
-        .setHeader('Content-Length', response.getHeader('Content-Length') || data.length)
-        .setHeader('Content-Type', response.getHeader('Content-Type') || 'application/octet-stream')
+        .setHeader('Content-Length', response.hasHeader('Content-Length') ? response.getHeader('Content-Length') : data.length)
+        .setHeader('Content-Type', response.hasHeader('Content-Type') ? response.getHeader('Content-Type') : 'application/octet-stream')
         .end(data);
     } else if (data instanceof Readable) {
       response
-        .setHeader('Content-Type', response.getHeader('Content-Type') || 'application/octet-stream');
+        .setHeader('Content-Type', response.hasHeader('Content-Type') ? response.getHeader('Content-Type') : 'application/octet-stream');
 
       data
         .pipe(response);
     } else if (typeof data === 'string') {
       response
-        .setHeader('Content-Length', response.getHeader('Content-Length') || Buffer.byteLength(data))
-        .setHeader('Content-Type', response.getHeader('Content-Type') || 'text/plain')
+        .setHeader('Content-Length', response.hasHeader('Content-Length') ? response.getHeader('Content-Length') : Buffer.byteLength(data))
+        .setHeader('Content-Type', response.hasHeader('Content-Type') ? response.getHeader('Content-Type') : 'text/plain')
         .end(data);
     } else if (typeof data === 'boolean' || typeof data === 'number' || typeof data === 'object') {
       // JSON (true, false, number, null, array, object) but without string
       const raw: string = JSON.stringify(data);
 
       response
-        .setHeader('Content-Length', response.getHeader('Content-Length') || Buffer.byteLength(raw))
-        .setHeader('Content-Type', response.getHeader('Content-Type') || 'application/json; charset=utf-8')
+        .setHeader('Content-Length', response.hasHeader('Content-Length') ? response.getHeader('Content-Length') : Buffer.byteLength(raw))
+        .setHeader('Content-Type', response.hasHeader('Content-Type') ? response.getHeader('Content-Type') : 'application/json; charset=utf-8')
         .end(raw);
     } else {
       response
