@@ -83,3 +83,29 @@ it('should correctly serialize stream returned by handler', async () => {
     expect(response.statusCode).toBe(200);
   }
 });
+
+it('should correctly overwrite headers after stream serialization, if specified in a handler', async () => {
+  const httpRouter: HttpRouter = new HttpRouter();
+
+  httpRouter.route({
+    handler: (req, res) => {
+      res
+        .setHeader('content-length', '4')
+        .setHeader('content-type', 'guinea/pig');
+
+      return Readable.from(EXAMPLE_STREAM_DATA);
+    },
+    method: 'GET',
+    path: '/',
+  });
+
+  const httpServer: http.Server = http.createServer((request, response) => {
+    httpRouter.handle(request, response);
+  });
+
+  const response = await supertest(httpServer)
+    .get('/');
+
+  expect(response.headers['content-length']).toBe('4');
+  expect(response.headers['content-type']).toBe('guinea/pig');
+});
