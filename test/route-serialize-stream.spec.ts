@@ -88,8 +88,8 @@ it('should correctly overwrite headers after stream serialization, if specified 
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter.route({
-    handler: (req, res) => {
-      res
+    handler: (request, response) => {
+      response
         .setHeader('content-length', '4')
         .setHeader('content-type', 'guinea/pig');
 

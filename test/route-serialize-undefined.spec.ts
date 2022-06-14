@@ -87,8 +87,8 @@ it('should correctly overwrite headers after undefined serialization, if specifi
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter.route({
-    handler: (req, res) => {
-      res
+    handler: (request, response) => {
+      response
         .setHeader('content-length', '0')
         .setHeader('content-type', 'guinea/pig');
 
