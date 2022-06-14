@@ -91,7 +91,7 @@ it('should correctly overwrite headers after stream serialization, if specified 
     handler: (request, response) => {
       response
         .setHeader('content-length', '4')
-        .setHeader('content-type', 'guinea/pig');
+        .setHeader('content-type', 'application/javascript');
 
       return Readable.from(EXAMPLE_STREAM_DATA);
     },
@@ -107,5 +107,5 @@ it('should correctly overwrite headers after stream serialization, if specified 
     .get('/');
 
   expect(response.headers['content-length']).toBe('4');
-  expect(response.headers['content-type']).toBe('guinea/pig');
+  expect(response.headers['content-type']).toBe('application/javascript');
 });

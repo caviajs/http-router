@@ -98,7 +98,7 @@ it('should correctly overwrite headers after true serialization, if specified in
     handler: (request, response) => {
       response
         .setHeader('content-length', '4')
-        .setHeader('content-type', 'guinea/pig');
+        .setHeader('content-type', 'application/javascript');
 
       return EXAMPLE_TRUE;
     },
@@ -114,5 +114,5 @@ it('should correctly overwrite headers after true serialization, if specified in
     .get('/');
 
   expect(response.headers['content-length']).toBe('4');
-  expect(response.headers['content-type']).toBe('guinea/pig');
+  expect(response.headers['content-type']).toBe('application/javascript');
 });

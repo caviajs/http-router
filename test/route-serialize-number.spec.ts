@@ -98,7 +98,7 @@ it('should correctly overwrite headers after number serialization, if specified 
     handler: (request, response) => {
       response
         .setHeader('content-length', '4')
-        .setHeader('content-type', 'guinea/pig');
+        .setHeader('content-type', 'application/javascript');
 
       return EXAMPLE_NUMBER;
     },
@@ -114,5 +114,5 @@ it('should correctly overwrite headers after number serialization, if specified 
     .get('/');
 
   expect(response.headers['content-length']).toBe('4');
-  expect(response.headers['content-type']).toBe('guinea/pig');
+  expect(response.headers['content-type']).toBe('application/javascript');
 });

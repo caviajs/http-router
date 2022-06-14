@@ -115,7 +115,7 @@ it('should correctly overwrite headers after undefined serialization, if specifi
       return next.handle().pipe(map(() => {
         response
           .setHeader('content-length', '0')
-          .setHeader('content-type', 'guinea/pig');
+          .setHeader('content-type', 'application/javascript');
 
         return EXAMPLE_UNDEFINED;
       }));
@@ -130,5 +130,5 @@ it('should correctly overwrite headers after undefined serialization, if specifi
     .get('/');
 
   expect(response.headers['content-length']).toBe('0');
-  expect(response.headers['content-type']).toBe('guinea/pig');
+  expect(response.headers['content-type']).toBe('application/javascript');
 });

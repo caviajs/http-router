@@ -115,7 +115,7 @@ it('should correctly overwrite headers after object serialization, if specified 
       return next.handle().pipe(map(() => {
         response
           .setHeader('content-length', '4')
-          .setHeader('content-type', 'guinea/pig');
+          .setHeader('content-type', 'application/javascript');
 
         return EXAMPLE_OBJECT;
       }));
@@ -130,5 +130,5 @@ it('should correctly overwrite headers after object serialization, if specified 
     .get('/');
 
   expect(response.headers['content-length']).toBe('4');
-  expect(response.headers['content-type']).toBe('guinea/pig');
+  expect(response.headers['content-type']).toBe('application/javascript');
 });
