@@ -106,3 +106,29 @@ it('should correctly serialize undefined returned by interceptor', async () => {
     expect(response.statusCode).toBe(200);
   }
 });
+
+it('should correctly overwrite headers after undefined serialization, if specified in the interceptor', async () => {
+  const httpRouter: HttpRouter = new HttpRouter();
+
+  httpRouter
+    .intercept((request, response, next) => {
+      return next.handle().pipe(map(() => {
+        response
+          .setHeader('content-length', '0')
+          .setHeader('content-type', 'guinea/pig');
+
+        return EXAMPLE_UNDEFINED;
+      }));
+    })
+    .route({ handler: () => undefined, method: 'GET', path: '/' });
+
+  const httpServer: http.Server = http.createServer((request, response) => {
+    httpRouter.handle(request, response);
+  });
+
+  const response = await supertest(httpServer)
+    .get('/');
+
+  expect(response.headers['content-length']).toBe('0');
+  expect(response.headers['content-type']).toBe('guinea/pig');
+});

@@ -106,3 +106,29 @@ it('should correctly serialize buffer returned by interceptor', async () => {
     expect(response.statusCode).toBe(200);
   }
 });
+
+it('should correctly overwrite headers after buffer serialization, if specified in the interceptor', async () => {
+  const httpRouter: HttpRouter = new HttpRouter();
+
+  httpRouter
+    .intercept((request, response, next) => {
+      return next.handle().pipe(map(() => {
+        response
+          .setHeader('content-length', '4')
+          .setHeader('content-type', 'guinea/pig');
+
+        return EXAMPLE_BUFFER;
+      }));
+    })
+    .route({ handler: () => undefined, method: 'GET', path: '/' });
+
+  const httpServer: http.Server = http.createServer((request, response) => {
+    httpRouter.handle(request, response);
+  });
+
+  const response = await supertest(httpServer)
+    .get('/');
+
+  expect(response.headers['content-length']).toBe('4');
+  expect(response.headers['content-type']).toBe('guinea/pig');
+});
