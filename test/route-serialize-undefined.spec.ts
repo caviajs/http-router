@@ -19,7 +19,7 @@ it('should correctly serialize undefined returned by handler', async () => {
     const response = await supertest(httpServer)
       .get('/');
 
-    expect(response.type).toBe('');
+    expect(response.body).toEqual({});
     expect(response.headers['content-length']).toBe('0');
     expect(response.headers['content-type']).toBeUndefined();
     expect(response.statusCode).toBe(200);
@@ -38,7 +38,7 @@ it('should correctly serialize undefined returned by handler', async () => {
     const response = await supertest(httpServer)
       .get('/');
 
-    expect(response.type).toBe('');
+    expect(response.body).toEqual({});
     expect(response.headers['content-length']).toBe('0');
     expect(response.headers['content-type']).toBeUndefined();
     expect(response.statusCode).toBe(200);
@@ -57,7 +57,7 @@ it('should correctly serialize undefined returned by handler', async () => {
     const response = await supertest(httpServer)
       .get('/');
 
-    expect(response.type).toBe('');
+    expect(response.body).toEqual({});
     expect(response.headers['content-length']).toBe('0');
     expect(response.headers['content-type']).toBeUndefined();
     expect(response.statusCode).toBe(200);
@@ -76,21 +76,20 @@ it('should correctly serialize undefined returned by handler', async () => {
     const response = await supertest(httpServer)
       .get('/');
 
-    expect(response.type).toBe('');
+    expect(response.body).toEqual({});
     expect(response.headers['content-length']).toBe('0');
     expect(response.headers['content-type']).toBeUndefined();
     expect(response.statusCode).toBe(200);
   }
 });
 
-it('should correctly overwrite headers after undefined serialization, if specified in a handler', async () => {
+it('should correctly overwrite the inferred content-type header after undefined serialization', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter.route({
     handler: (request, response) => {
       response
-        .setHeader('content-length', '0')
-        .setHeader('content-type', 'application/javascript');
+        .setHeader('content-type', 'application/json');
 
       return EXAMPLE_UNDEFINED;
     },
@@ -105,6 +104,8 @@ it('should correctly overwrite headers after undefined serialization, if specifi
   const response = await supertest(httpServer)
     .get('/');
 
+  expect(response.body).toEqual('');
   expect(response.headers['content-length']).toBe('0');
-  expect(response.headers['content-type']).toBe('application/javascript');
+  expect(response.headers['content-type']).toBe('application/json');
+  expect(response.statusCode).toBe(200);
 });

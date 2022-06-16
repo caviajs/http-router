@@ -16,13 +16,11 @@ it('should correctly serialize number returned by handler', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_NUMBER);
-
     const response = await supertest(httpServer)
       .get('/');
 
     expect(response.body).toEqual(EXAMPLE_NUMBER);
-    expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
+    expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXAMPLE_NUMBER)).toString());
     expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
     expect(response.statusCode).toBe(200);
   }
@@ -37,13 +35,11 @@ it('should correctly serialize number returned by handler', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_NUMBER);
-
     const response = await supertest(httpServer)
       .get('/');
 
     expect(response.body).toEqual(EXAMPLE_NUMBER);
-    expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
+    expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXAMPLE_NUMBER)).toString());
     expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
     expect(response.statusCode).toBe(200);
   }
@@ -58,13 +54,11 @@ it('should correctly serialize number returned by handler', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_NUMBER);
-
     const response = await supertest(httpServer)
       .get('/');
 
     expect(response.body).toEqual(EXAMPLE_NUMBER);
-    expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
+    expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXAMPLE_NUMBER)).toString());
     expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
     expect(response.statusCode).toBe(200);
   }
@@ -79,26 +73,23 @@ it('should correctly serialize number returned by handler', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_NUMBER);
-
     const response = await supertest(httpServer)
       .get('/');
 
     expect(response.body).toEqual(EXAMPLE_NUMBER);
-    expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
+    expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXAMPLE_NUMBER)).toString());
     expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
     expect(response.statusCode).toBe(200);
   }
 });
 
-it('should correctly overwrite headers after number serialization, if specified in a handler', async () => {
+it('should correctly overwrite the inferred content-type header after number serialization', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter.route({
     handler: (request, response) => {
       response
-        .setHeader('content-length', '4')
-        .setHeader('content-type', 'application/javascript');
+        .setHeader('content-type', 'application/json');
 
       return EXAMPLE_NUMBER;
     },
@@ -113,6 +104,8 @@ it('should correctly overwrite headers after number serialization, if specified 
   const response = await supertest(httpServer)
     .get('/');
 
-  expect(response.headers['content-length']).toBe('4');
-  expect(response.headers['content-type']).toBe('application/javascript');
+  expect(response.body).toEqual(EXAMPLE_NUMBER);
+  expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXAMPLE_NUMBER)).toString());
+  expect(response.headers['content-type']).toBe('application/json');
+  expect(response.statusCode).toBe(200);
 });
