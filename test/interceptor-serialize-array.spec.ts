@@ -20,13 +20,11 @@ it('should correctly serialize array returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_ARRAY);
-
     const response = await supertest(httpServer)
       .get('/');
 
     expect(response.body).toEqual(EXAMPLE_ARRAY);
-    expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
+    expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXAMPLE_ARRAY)).toString());
     expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
     expect(response.statusCode).toBe(200);
   }
@@ -45,13 +43,11 @@ it('should correctly serialize array returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_ARRAY);
-
     const response = await supertest(httpServer)
       .get('/');
 
     expect(response.body).toEqual(EXAMPLE_ARRAY);
-    expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
+    expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXAMPLE_ARRAY)).toString());
     expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
     expect(response.statusCode).toBe(200);
   }
@@ -70,13 +66,11 @@ it('should correctly serialize array returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_ARRAY);
-
     const response = await supertest(httpServer)
       .get('/');
 
     expect(response.body).toEqual(EXAMPLE_ARRAY);
-    expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
+    expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXAMPLE_ARRAY)).toString());
     expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
     expect(response.statusCode).toBe(200);
   }
@@ -95,27 +89,24 @@ it('should correctly serialize array returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_ARRAY);
-
     const response = await supertest(httpServer)
       .get('/');
 
     expect(response.body).toEqual(EXAMPLE_ARRAY);
-    expect(response.headers['content-length']).toBe(Buffer.byteLength(raw).toString());
+    expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXAMPLE_ARRAY)).toString());
     expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
     expect(response.statusCode).toBe(200);
   }
 });
 
-it('should correctly overwrite headers after array serialization, if specified in the interceptor', async () => {
+it('should correctly overwrite the inferred content-type header after array serialization', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
     .intercept((request, response, next) => {
       return next.handle().pipe(map(() => {
         response
-          .setHeader('content-length', '9')
-          .setHeader('content-type', 'application/javascript');
+          .setHeader('content-type', 'application/json');
 
         return EXAMPLE_ARRAY;
       }));
@@ -129,6 +120,8 @@ it('should correctly overwrite headers after array serialization, if specified i
   const response = await supertest(httpServer)
     .get('/');
 
-  expect(response.headers['content-length']).toBe('9');
-  expect(response.headers['content-type']).toBe('application/javascript');
+  expect(response.body).toEqual(EXAMPLE_ARRAY);
+  expect(response.headers['content-length']).toBe(Buffer.byteLength(JSON.stringify(EXAMPLE_ARRAY)).toString());
+  expect(response.headers['content-type']).toBe('application/json');
+  expect(response.statusCode).toBe(200);
 });

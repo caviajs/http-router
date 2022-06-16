@@ -20,8 +20,6 @@ it('should correctly serialize string returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_STRING);
-
     const response = await supertest(httpServer)
       .get('/');
 
@@ -44,8 +42,6 @@ it('should correctly serialize string returned by interceptor', async () => {
     const httpServer: http.Server = http.createServer((request, response) => {
       httpRouter.handle(request, response);
     });
-
-    const raw: string = JSON.stringify(EXAMPLE_STRING);
 
     const response = await supertest(httpServer)
       .get('/');
@@ -70,8 +66,6 @@ it('should correctly serialize string returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_STRING);
-
     const response = await supertest(httpServer)
       .get('/');
 
@@ -95,8 +89,6 @@ it('should correctly serialize string returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_STRING);
-
     const response = await supertest(httpServer)
       .get('/');
 
@@ -107,15 +99,14 @@ it('should correctly serialize string returned by interceptor', async () => {
   }
 });
 
-it('should correctly overwrite headers after string serialization, if specified in the interceptor', async () => {
+it('should correctly overwrite the inferred content-type header after string serialization', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
     .intercept((request, response, next) => {
       return next.handle().pipe(map(() => {
         response
-          .setHeader('content-length', '11')
-          .setHeader('content-type', 'application/javascript');
+          .setHeader('content-type', 'text/css');
 
         return EXAMPLE_STRING;
       }));
@@ -129,6 +120,8 @@ it('should correctly overwrite headers after string serialization, if specified 
   const response = await supertest(httpServer)
     .get('/');
 
-  expect(response.headers['content-length']).toBe('11');
-  expect(response.headers['content-type']).toBe('application/javascript');
+  expect(response.text).toBe(EXAMPLE_STRING);
+  expect(response.headers['content-length']).toBe(Buffer.byteLength(EXAMPLE_STRING).toString());
+  expect(response.headers['content-type']).toBe('text/css');
+  expect(response.statusCode).toBe(200);
 });

@@ -100,15 +100,14 @@ it('should correctly serialize stream returned by interceptor', async () => {
   }
 });
 
-it('should correctly overwrite headers after stream serialization, if specified in the interceptor', async () => {
+it('should correctly overwrite the inferred content-type header after stream serialization', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
     .intercept((request, response, next) => {
       return next.handle().pipe(map(() => {
         response
-          .setHeader('content-length', '11')
-          .setHeader('content-type', 'application/javascript');
+          .setHeader('content-type', 'text/css');
 
         return Readable.from(EXAMPLE_STREAM_DATA);
       }));
@@ -122,6 +121,8 @@ it('should correctly overwrite headers after stream serialization, if specified 
   const response = await supertest(httpServer)
     .get('/');
 
-  expect(response.headers['content-length']).toBe('11');
-  expect(response.headers['content-type']).toBe('application/javascript');
+  expect(response.text).toEqual(EXAMPLE_STREAM_DATA);
+  expect(response.headers['content-length']).toBeUndefined();
+  expect(response.headers['content-type']).toBe('text/css');
+  expect(response.statusCode).toBe(200);
 });

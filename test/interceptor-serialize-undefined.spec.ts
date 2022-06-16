@@ -20,12 +20,10 @@ it('should correctly serialize undefined returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_UNDEFINED);
-
     const response = await supertest(httpServer)
       .get('/');
 
-    expect(response.type).toBe('');
+    expect(response.body).toEqual({});
     expect(response.headers['content-length']).toBe('0');
     expect(response.headers['content-type']).toBeUndefined();
     expect(response.statusCode).toBe(200);
@@ -45,12 +43,10 @@ it('should correctly serialize undefined returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_UNDEFINED);
-
     const response = await supertest(httpServer)
       .get('/');
 
-    expect(response.type).toBe('');
+    expect(response.body).toEqual({});
     expect(response.headers['content-length']).toBe('0');
     expect(response.headers['content-type']).toBeUndefined();
     expect(response.statusCode).toBe(200);
@@ -70,12 +66,10 @@ it('should correctly serialize undefined returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_UNDEFINED);
-
     const response = await supertest(httpServer)
       .get('/');
 
-    expect(response.type).toBe('');
+    expect(response.body).toEqual({});
     expect(response.headers['content-length']).toBe('0');
     expect(response.headers['content-type']).toBeUndefined();
     expect(response.statusCode).toBe(200);
@@ -95,19 +89,17 @@ it('should correctly serialize undefined returned by interceptor', async () => {
       httpRouter.handle(request, response);
     });
 
-    const raw: string = JSON.stringify(EXAMPLE_UNDEFINED);
-
     const response = await supertest(httpServer)
       .get('/');
 
-    expect(response.type).toBe('');
+    expect(response.body).toEqual({});
     expect(response.headers['content-length']).toBe('0');
     expect(response.headers['content-type']).toBeUndefined();
     expect(response.statusCode).toBe(200);
   }
 });
 
-it('should correctly overwrite headers after undefined serialization, if specified in the interceptor', async () => {
+it('should correctly overwrite the inferred content-type header after undefined serialization', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
@@ -115,7 +107,7 @@ it('should correctly overwrite headers after undefined serialization, if specifi
       return next.handle().pipe(map(() => {
         response
           .setHeader('content-length', '0')
-          .setHeader('content-type', 'application/javascript');
+          .setHeader('content-type', 'application/json');
 
         return EXAMPLE_UNDEFINED;
       }));
@@ -129,6 +121,8 @@ it('should correctly overwrite headers after undefined serialization, if specifi
   const response = await supertest(httpServer)
     .get('/');
 
+  expect(response.body).toEqual('');
   expect(response.headers['content-length']).toBe('0');
-  expect(response.headers['content-type']).toBe('application/javascript');
+  expect(response.headers['content-type']).toBe('application/json');
+  expect(response.statusCode).toBe(200);
 });
