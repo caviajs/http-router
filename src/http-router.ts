@@ -128,7 +128,7 @@ export class HttpRouter {
         .end();
     } else if (Buffer.isBuffer(data)) {
       response
-        .setHeader('Content-Length', response.hasHeader('Content-Length') ? response.getHeader('Content-Length') : data.length)
+        .setHeader('Content-Length', data.length)
         .setHeader('Content-Type', response.hasHeader('Content-Type') ? response.getHeader('Content-Type') : 'application/octet-stream')
         .end(data);
     } else if (data instanceof Readable) {
@@ -139,7 +139,7 @@ export class HttpRouter {
         .pipe(response);
     } else if (typeof data === 'string') {
       response
-        .setHeader('Content-Length', response.hasHeader('Content-Length') ? response.getHeader('Content-Length') : Buffer.byteLength(data))
+        .setHeader('Content-Length', Buffer.byteLength(data))
         .setHeader('Content-Type', response.hasHeader('Content-Type') ? response.getHeader('Content-Type') : 'text/plain')
         .end(data);
     } else if (typeof data === 'boolean' || typeof data === 'number' || typeof data === 'object') {
@@ -147,7 +147,7 @@ export class HttpRouter {
       const raw: string = JSON.stringify(data);
 
       response
-        .setHeader('Content-Length', response.hasHeader('Content-Length') ? response.getHeader('Content-Length') : Buffer.byteLength(raw))
+        .setHeader('Content-Length', Buffer.byteLength(raw))
         .setHeader('Content-Type', response.hasHeader('Content-Type') ? response.getHeader('Content-Type') : 'application/json; charset=utf-8')
         .end(raw);
     } else {
