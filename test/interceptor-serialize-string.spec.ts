@@ -114,7 +114,7 @@ it('should correctly overwrite headers after string serialization, if specified 
     .intercept((request, response, next) => {
       return next.handle().pipe(map(() => {
         response
-          .setHeader('content-length', '4')
+          .setHeader('content-length', '11')
           .setHeader('content-type', 'application/javascript');
 
         return EXAMPLE_STRING;
@@ -129,6 +129,6 @@ it('should correctly overwrite headers after string serialization, if specified 
   const response = await supertest(httpServer)
     .get('/');
 
-  expect(response.headers['content-length']).toBe('4');
+  expect(response.headers['content-length']).toBe('11');
   expect(response.headers['content-type']).toBe('application/javascript');
 });

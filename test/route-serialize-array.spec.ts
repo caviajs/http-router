@@ -97,7 +97,7 @@ it('should correctly overwrite headers after array serialization, if specified i
   httpRouter.route({
     handler: (request, response) => {
       response
-        .setHeader('content-length', '4')
+        .setHeader('content-length', '9')
         .setHeader('content-type', 'application/javascript');
 
       return EXAMPLE_ARRAY;
@@ -113,6 +113,6 @@ it('should correctly overwrite headers after array serialization, if specified i
   const response = await supertest(httpServer)
     .get('/');
 
-  expect(response.headers['content-length']).toBe('4');
+  expect(response.headers['content-length']).toBe('9');
   expect(response.headers['content-type']).toBe('application/javascript');
 });

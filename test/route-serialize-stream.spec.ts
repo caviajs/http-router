@@ -90,7 +90,7 @@ it('should correctly overwrite headers after stream serialization, if specified 
   httpRouter.route({
     handler: (request, response) => {
       response
-        .setHeader('content-length', '4')
+        .setHeader('content-length', '11')
         .setHeader('content-type', 'application/javascript');
 
       return Readable.from(EXAMPLE_STREAM_DATA);
@@ -106,6 +106,6 @@ it('should correctly overwrite headers after stream serialization, if specified 
   const response = await supertest(httpServer)
     .get('/');
 
-  expect(response.headers['content-length']).toBe('4');
+  expect(response.headers['content-length']).toBe('11');
   expect(response.headers['content-type']).toBe('application/javascript');
 });
