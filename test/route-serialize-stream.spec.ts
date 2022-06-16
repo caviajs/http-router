@@ -84,7 +84,7 @@ it('should correctly serialize stream returned by handler', async () => {
   }
 });
 
-it('should correctly overwrite the inferred content-type header after stream serialization', async () => {
+it('should correctly overwrite the inferred content-type header', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter.route({

@@ -99,7 +99,7 @@ it('should correctly serialize false returned by interceptor', async () => {
   }
 });
 
-it('should correctly overwrite the inferred content-type header after false serialization', async () => {
+it('should correctly overwrite the inferred content-type header', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
