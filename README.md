@@ -53,15 +53,15 @@ httpRouter
 
 * **buffer** - dumped into the response stream;
   * Content-Type: **[manually specified]** || **application/octet-stream**
-  * Content-Length: **[manually specified]** || **[calc buffer length]**
+  * Content-Length: **[calc buffer length]**
 * **stream** - dumped into the response stream,
   * Content-Type: **[manually specified]** || **application/octet-stream**
 * **string** - dumped into the response stream,
   * Content-Type: **[manually specified]** || **text/plain**
-  * Content-Length: **[manually specified]** || **[calc string byte length]**
+  * Content-Length: **[calc string byte length]**
 * **true, false, number, null, array, object** - parsed by JSON.stringify and dumped into the response stream,
   * Content-Type: **[manually specified]** || **application/json; charset=utf-8**
-  * Content-Length: **[manually specified]** || **[calc string byte length]**
+  * Content-Length: **[calc string byte length]**
 
 <div align="center">
 <h4>Handling errors</h4>
