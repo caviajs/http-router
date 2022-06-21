@@ -25,7 +25,7 @@
     "qs": "~6.10.5"
   },
   "devDependencies": {
-    "@caviajs/http-exception": "~0.1.1",
+    "@caviajs/http-exception": "~0.1.2",
     "@commitlint/cli": "~17.0.2",
     "@commitlint/config-conventional": "~17.0.2",
     "@types/jest": "~27.4.1",
@@ -42,7 +42,7 @@
     "typescript": "~4.7.4"
   },
   "peerDependencies": {
-    "@caviajs/http-exception": "~0.1.1",
+    "@caviajs/http-exception": "~0.1.2",
     "rxjs": "~7.5.4"
   },
   "jest": {
