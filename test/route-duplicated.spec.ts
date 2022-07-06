@@ -12,7 +12,7 @@ it('should thrown an Error if duplicate routes are detected', () => {
   }
 });
 
-it('should thrown an Error if duplicate routes with optional parameters are detected', () => {
+it('should thrown an Error if duplicate routes are detected (optional parameters)', () => {
   try {
     const httpRouter: HttpRouter = new HttpRouter();
 
