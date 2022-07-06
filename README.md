@@ -3,53 +3,104 @@
 <p>ecosystem for your guinea pig</p>
 </div>
 
-<div align="center">
-<h4>Installation</h4>
-</div>
+## Introduction
+
+This package includes an `HttpRouter`, which allows you to route HTTP requests and use interceptors.
+
+## Usage
+
+### Installation
 
 ```shell
 npm install @caviajs/http-exception @caviajs/http-router rxjs --save
 ```
 
-<div align="center">
-<h4>Routing</h4>
-</div>
+### Routing
 
 ```typescript
 import { HttpRouter } from '@caviajs/http-router';
 
-const httpRouter = new HttpRouter();
-
-// ...
+const httpRouter: HttpRouter = new HttpRouter();
 
 httpRouter
   .route({
     handler: (request, response) => {
-      return [{ name: 'Cavia' }];
+      return 'Hello Cavia';
     },
     interceptors: [/* ... */],
     metadata: { /* ... */ },
     method: 'GET',
-    path: '/guinea-pigs',
-  })
-  .route({
-    handler: (request, response) => {
-      // request.params.id;
-
-      return { name: 'Cavia' };
-    },
-    interceptors: [/* ... */],
-    metadata: { /* ... */ },
-    method: 'GET',
-    path: '/guinea-pigs/:id',
+    path: '/',
   });
-
-// ...
 ```
 
-<div align="center">
-<h4>Response body serializing</h4>
-</div>
+#### Route parameters
+
+To indicate the position of a parameter in the path, add a colon in front of the parameter name.
+
+```typescript
+httpRouter
+  .route({
+    handler: (request, response) => {
+      // request.params.id
+    },
+    interceptors: [/* ... */],
+    metadata: { /* ... */ },
+    method: 'GET',
+    path: '/:id',
+  });
+```
+
+#### Optional parameters
+
+You can also create a route with optional parameters by using a question mark.
+
+```typescript
+httpRouter
+  .route({
+    handler: (request, response) => {
+      // request.params.id
+    },
+    interceptors: [/* ... */],
+    metadata: { /* ... */ },
+    method: 'GET',
+    path: '/:id?', // <- optional parameter
+  });
+```
+
+#### Duplicated routes
+
+`HttpRouter` makes sure that the routes are unique, so if it detects a duplicate it will throw an error.
+
+### Interceptors
+
+Interceptors are a mechanism by which you can execute code before and after the handler is executed.
+
+```typescript
+import { tap, catchError, throwError } from 'rxjs';
+
+/* ... */
+
+httpRouter
+  .intercept((request, response, next) => {
+    // request...
+
+    return next
+      .handle()
+      .pipe(
+        tap(() => {
+          // response...
+        }),
+        catchError((error) => {
+          // catch error...
+
+          return throwError(error);
+        }),
+      );
+  });
+```
+
+### Response body serializing
 
 * **buffer** - dumped into the response stream;
   * Content-Type: **[manually specified]** || **application/octet-stream**
@@ -63,9 +114,7 @@ httpRouter
   * Content-Type: **[manually specified]** || **application/json; charset=utf-8**
   * Content-Length: **[calc string byte length]**
 
-<div align="center">
-<h4>Handling errors</h4>
-</div>
+### Handling errors
 
 You can throw an `HttpException` in route `handler` and it will be caught by the built-in exception catching mechanism.
 
@@ -75,59 +124,29 @@ client with the status `500`.
 ```typescript
 import { HttpException } from '@caviajs/http-exception';
 
-httpRouter.route({
-  handler: (request, response) => {
-    // ...
-    throw new HttpException(404, 'Guinea pig not found');
-    // ...
-  },
-  interceptors: [/* ... */],
-  metadata: { /* ... */ },
-  method: 'GET',
-  path: '/hello-cavia',
-});
+httpRouter
+  .route({
+    handler: (request, response) => {
+      // ...
+      throw new HttpException(404, 'Guinea pig not found');
+      // ...
+    },
+    interceptors: [/* ... */],
+    metadata: { /* ... */ },
+    method: 'GET',
+    path: '/hello-cavia',
+  });
 ```
 
 If you want to react to any exceptions returned, you can use the stream in the interceptors.
 
-<div align="center">
-<h4>Interceptors</h4>
-</div>
-
-```typescript
-import { tap, catchError, throwError } from 'rxjs';
-import { HttpRouter } from '@caviajs/http-router';
-
-const httpRouter = new HttpRouter();
-
-httpRouter.intercept((request, response, next) => {
-  // request...
-
-  return next
-    .handle()
-    .pipe(
-      tap(() => {
-        // response...
-      }),
-      catchError((error) => {
-        // catch error...
-
-        return throwError(error);
-      }),
-    );
-});
-
-// ...
-```
-
-<div align="center">
-<h4>Handle request</h4>
-</div>
+### Bind HttpRouter to http server
 
 ```typescript
 import * as http from 'http';
 
-// ...
+const httpRouter = new HttpRouter();
+/* ... */
 
 const httpServer: http.Server = http.createServer((req, res) => {
   httpRouter.handle(req, res);
