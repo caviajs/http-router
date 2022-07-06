@@ -2,7 +2,7 @@ import http from 'http';
 import supertest from 'supertest';
 import { HttpRouter } from '../src';
 
-it('should execute the handler of the appropriate route', (done) => {
+it('should execute the handler of the appropriate route', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
@@ -18,37 +18,37 @@ it('should execute the handler of the appropriate route', (done) => {
   });
 
   // DELETE /pigs/:id
-  supertest(httpServer)
+  await supertest(httpServer)
     .delete('/pigs/1')
-    .expect(200, 'DELETE /pigs/:id', done);
+    .expect(200, 'DELETE /pigs/:id');
 
   // GET /pigs
-  supertest(httpServer)
+  await supertest(httpServer)
     .get('/pigs')
-    .expect(200, 'GET /pigs', done);
+    .expect(200, 'GET /pigs');
 
   // GET /pigs/:id
-  supertest(httpServer)
+  await supertest(httpServer)
     .get('/pigs/1')
-    .expect(200, 'GET /pigs/:id', done);
+    .expect(200, 'GET /pigs/:id');
 
   // PATCH /pigs/:id
-  supertest(httpServer)
+  await supertest(httpServer)
     .patch('/pigs/1')
-    .expect(200, 'PATCH /pigs/:id', done);
+    .expect(200, 'PATCH /pigs/:id');
 
   // POST /pigs
-  supertest(httpServer)
+  await supertest(httpServer)
     .post('/pigs')
-    .expect(200, 'POST /pigs', done);
+    .expect(200, 'POST /pigs');
 
   // PUT /pigs/:id
-  supertest(httpServer)
+  await supertest(httpServer)
     .put('/pigs/1')
-    .expect(200, 'PUT /pigs/:id', done);
+    .expect(200, 'PUT /pigs/:id');
 });
 
-it('should execute the handler of the appropriate route (optional parameters)', (done) => {
+it('should execute the handler of the appropriate route (optional parameters)', async () => {
   const httpRouter: HttpRouter = new HttpRouter();
 
   httpRouter
@@ -58,11 +58,11 @@ it('should execute the handler of the appropriate route (optional parameters)', 
     httpRouter.handle(request, response);
   });
 
-  supertest(httpServer)
+  await supertest(httpServer)
     .get('/pigs')
-    .expect(200, 'GET /pigs/:id?', done);
+    .expect(200, 'GET /pigs/:id?');
 
-  supertest(httpServer)
+  await supertest(httpServer)
     .get('/pigs/1')
-    .expect(200, 'GET /pigs/:id?', done);
+    .expect(200, 'GET /pigs/:id?');
 });
