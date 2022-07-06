@@ -47,3 +47,22 @@ it('should execute the handler of the appropriate route', (done) => {
     .put('/pigs/1')
     .expect(200, 'PUT /pigs/:id', done);
 });
+
+it('should execute the handler of the appropriate route (optional parameters)', (done) => {
+  const httpRouter: HttpRouter = new HttpRouter();
+
+  httpRouter
+    .route({ handler: () => 'GET /pigs/:id?', method: 'GET', path: '/pigs/:id?' });
+
+  const httpServer: http.Server = http.createServer((request, response) => {
+    httpRouter.handle(request, response);
+  });
+
+  supertest(httpServer)
+    .get('/pigs')
+    .expect(200, 'GET /pigs/:id?', done);
+
+  supertest(httpServer)
+    .get('/pigs/1')
+    .expect(200, 'GET /pigs/:id?', done);
+});
