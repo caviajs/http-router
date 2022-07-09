@@ -5,7 +5,7 @@
 
 ## Introduction
 
-This package includes an `HttpRouter`, which allows you to route HTTP requests and use interceptors.
+Routing, interceptors and exception handling.
 
 ## Usage
 
@@ -140,7 +140,7 @@ httpRouter
 
 If you want to react to any exceptions returned, you can use the stream in the interceptors.
 
-### Bind HttpRouter to http server
+### Bind the HttpRouter
 
 ```typescript
 import * as http from 'http';
