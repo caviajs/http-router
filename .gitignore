@@ -11,9 +11,11 @@
 !/.editorconfig
 !/.eslintrc
 !/.gitignore
+!/.release-it.json
 !/LICENSE
 !/package.json
 !/package-lock.json
 !/README.md
+!/release.sh
 !/tsconfig.build.json
 !/tsconfig.json
