@@ -1,7 +1,7 @@
 {
   "name": "@caviajs/http",
   "description": "ecosystem for your guinea pig",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": "Paweł Partyka",
   "license": "MIT",
   "homepage": "https://caviajs.com",
@@ -39,6 +39,7 @@
     "@types/node": "~18.7.23",
     "@types/qs": "~6.9.6",
     "@types/supertest": "~2.0.12",
+    "@types/yargs": "^17.0.13",
     "@typescript-eslint/eslint-plugin": "~5.38.1",
     "@typescript-eslint/parser": "~5.38.1",
     "eslint": "~8.24.0",

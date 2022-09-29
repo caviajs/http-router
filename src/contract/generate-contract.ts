@@ -5,11 +5,11 @@ import { join, sep } from 'path';
 import fs from 'fs';
 import { cyan } from 'colorette';
 import { hideBin } from 'yargs/helpers';
-import { HttpClient } from '@caviajs/http-client';
-import { Specification } from '@caviajs/http-router';
 import { pascalCase } from '../utils/pascal-case';
 import { kebabCase } from '../utils/kebab-case';
 import { generateHttpClient } from './generate-http-client';
+import { HttpClient } from '../client/http-client';
+import { Specification } from '../router/http-router';
 
 (async (): Promise<void> => {
   const argv = yargs(hideBin(process.argv))
