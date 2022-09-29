@@ -10,14 +10,13 @@ declare module 'http' {
   }
 
   export interface IncomingMessage {
+    // todo: inferred by contract?
+    body: any | undefined;
     cookies: Cookies | undefined;
+    // headers: http.IncomingHttpHeaders;
     metadata: RouteMetadata | undefined;
     params: Params;
     path: RoutePath | undefined;
-
-    // todo: inferred by contract?
-    body: any | undefined;
-    // headers: http.IncomingHttpHeaders;
     // params: http.Params | { [name: string]: boolean | number; };
     query: { [name: string]: boolean | number | string; } | undefined;
   }
