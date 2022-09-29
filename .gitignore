@@ -5,6 +5,7 @@
 # include whitelist
 !/.github/**
 !/.husky/**
+!/docs/**
 !/src/**
 !/test/**
 !/.commitlintrc.json
