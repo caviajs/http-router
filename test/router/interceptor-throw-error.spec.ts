@@ -1,8 +1,7 @@
 import http from 'http';
 import supertest from 'supertest';
 import { catchError, tap, throwError } from 'rxjs';
-import { HttpRouter } from '../../src';
-import { HttpException } from '@caviajs/http-exception';
+import { HttpException, HttpRouter } from '../../src';
 
 it('should correctly handle Error threw by interceptor', async () => {
   const SEQUENCE: string[] = [];
