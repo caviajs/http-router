@@ -1,4 +1,4 @@
-import { getContentTypeParameter } from '../../src/contract/get-content-type-parameter';
+import { getContentTypeParameter } from '../../src/utils/get-content-type-parameter';
 
 it('should return undefined for invalid content-type header', () => {
   expect(getContentTypeParameter(undefined, 'charset')).toBeUndefined();

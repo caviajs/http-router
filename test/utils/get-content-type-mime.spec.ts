@@ -1,4 +1,4 @@
-import { getContentTypeMime } from '../../src/contract/get-content-type-mime';
+import { getContentTypeMime } from '../../src/utils/get-content-type-mime';
 
 it('should return undefined for invalid content-type header', () => {
   expect(getContentTypeMime(undefined)).toBeUndefined();
