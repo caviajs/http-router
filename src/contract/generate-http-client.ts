@@ -230,7 +230,7 @@ function generateResponseTypes(route: SpecificationRoute): string {
 export function generateHttpClient(name: string, specification: Specification): string {
   let content: string = '';
 
-  content += `import { HttpClient, HttpResponse } from '@caviajs/http-client';`;
+  content += `import { HttpClient, HttpResponse } from '@caviajs/http';`;
   content += `import { Readable } from 'stream';`;
   content += `import http from 'http';`;
   content += `import https from 'https';`;
