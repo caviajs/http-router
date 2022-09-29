@@ -1,7 +1,7 @@
 import zlib from 'zlib';
 import http from 'http';
 import { HttpClient } from '../../src';
-import { getHttpServerUrl } from './_utils/get-http-server-url';
+import { getHttpServerUrl } from '../_utils/get-http-server-url';
 
 it('should decompress the encoded content if the content-encoding header is specified - gzip', async () => {
   const httpServer: http.Server = http.createServer((request, response) => {

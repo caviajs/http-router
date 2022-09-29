@@ -1,6 +1,6 @@
 import http from 'http';
 import { HttpClient } from '../../src';
-import { getHttpServerUrl } from './_utils/get-http-server-url';
+import { getHttpServerUrl } from '../_utils/get-http-server-url';
 
 it('should send overwritten content-length header and should not be case sensitive', async () => {
   let contentLength: string;

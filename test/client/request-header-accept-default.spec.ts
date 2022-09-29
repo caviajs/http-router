@@ -1,6 +1,6 @@
 import http from 'http';
 import { HttpClient } from '../../src';
-import { getHttpServerUrl } from './_utils/get-http-server-url';
+import { getHttpServerUrl } from '../_utils/get-http-server-url';
 
 it('should send the accept header by default', async () => {
   let accept: string;

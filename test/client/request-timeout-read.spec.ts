@@ -1,6 +1,6 @@
 import http from 'http';
 import { HttpClient } from '../../src';
-import { getHttpServerUrl } from './_utils/get-http-server-url';
+import { getHttpServerUrl } from '../_utils/get-http-server-url';
 
 function wait(ms: number, cb: () => void): Promise<void> {
   return new Promise(resolve => {

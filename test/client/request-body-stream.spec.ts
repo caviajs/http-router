@@ -1,7 +1,7 @@
 import http from 'http';
 import { Readable } from 'stream';
 import { HttpClient } from '../../src';
-import { getHttpServerUrl } from './_utils/get-http-server-url';
+import { getHttpServerUrl } from '../_utils/get-http-server-url';
 
 it('should execute the request with the given body - stream', async () => {
   let contentType: string;

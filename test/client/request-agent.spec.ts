@@ -1,6 +1,6 @@
 import http from 'http';
 import { HttpClient } from '../../src';
-import { getHttpServerUrl } from './_utils/get-http-server-url';
+import { getHttpServerUrl } from '../_utils/get-http-server-url';
 
 it('should use an agent if specified', async () => {
   const httpRequestSpy: jest.SpyInstance = jest.spyOn(http, 'request');

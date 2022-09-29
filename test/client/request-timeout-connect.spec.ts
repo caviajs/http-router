@@ -1,6 +1,6 @@
 import http from 'http';
 import { HttpClient } from '../../src';
-import { getHttpServerUrl } from './_utils/get-http-server-url';
+import { getHttpServerUrl } from '../_utils/get-http-server-url';
 
 it('should thrown an Error if connect timeout occurs', async () => {
   const httpServer: http.Server = http.createServer(async (request, response) => {
