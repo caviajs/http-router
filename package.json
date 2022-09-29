@@ -9,6 +9,9 @@
   "files": [
     "dist/**/*"
   ],
+  "bin": {
+    "generate-contract": "dist/contract/generate-contract.js"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
