@@ -12,7 +12,6 @@
 !/.editorconfig
 !/.eslintrc
 !/.gitignore
-!/.npmrc
 !/.release-it.json
 !/LICENSE
 !/package.json
