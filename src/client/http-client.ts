@@ -183,6 +183,7 @@ export class HttpClient {
 
     return {
       agent: options.agent,
+      auth: requestUrl.username ? `${ requestUrl.username }:${ requestUrl.password || '' }` : undefined,
       host: requestUrl.hostname,
       port: requestUrl.port,
       protocol: requestUrl.protocol,
