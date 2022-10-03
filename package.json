@@ -1,7 +1,7 @@
 {
   "name": "@caviajs/http",
   "description": "ecosystem for your guinea pig",
-  "version": "0.1.11",
+  "version": "0.2.0",
   "author": "Paweł Partyka",
   "license": "MIT",
   "homepage": "https://caviajs.com",
