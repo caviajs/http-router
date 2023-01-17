@@ -1,4 +1,4 @@
-const HTTP_STATUS_MESSAGES = {
+export const HTTP_STATUS_MESSAGES = {
   '100': 'Continue',
   '101': 'Switching Protocols',
   '102': 'Processing',
