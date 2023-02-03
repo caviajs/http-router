@@ -1,6 +1,7 @@
 import http from 'http';
 import supertest from 'supertest';
-import { HttpException, HttpRouter } from '../src';
+import { HttpRouter } from '../src';
+import { HttpException } from '@caviajs/http-exception';
 
 it('should correctly handle Error threw by handler', (done) => {
   const httpRouter: HttpRouter = new HttpRouter();

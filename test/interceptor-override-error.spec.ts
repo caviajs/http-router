@@ -1,7 +1,8 @@
 import http from 'http';
 import supertest from 'supertest';
 import { catchError, throwError } from 'rxjs';
-import { HttpException, HttpRouter } from '../src';
+import { HttpRouter } from '../src';
+import { HttpException } from '@caviajs/http-exception';
 
 it('interceptor should correctly override the Error returned by the handler', async () => {
   const EXCEPTION: HttpException = new HttpException(409, 'Hello Cavia');

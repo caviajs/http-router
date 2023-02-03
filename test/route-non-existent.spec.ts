@@ -1,6 +1,7 @@
 import http from 'http';
 import supertest from 'supertest';
-import { HttpException, HttpRouter } from '../src';
+import { HttpRouter } from '../src';
+import { HttpException } from '@caviajs/http-exception';
 
 it('should thrown an HttpException(404) for a non-existent route', (done) => {
   const httpRouter: HttpRouter = new HttpRouter();

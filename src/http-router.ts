@@ -3,7 +3,7 @@ import { parse as parseUrl } from 'url';
 import { Readable } from 'stream';
 import { match, MatchResult } from 'path-to-regexp';
 import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
-import { HttpException } from './http-exception';
+import { HttpException } from '@caviajs/http-exception';
 
 export class HttpRouter {
   protected readonly interceptors: Interceptor[] = [];

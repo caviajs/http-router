@@ -26,6 +26,7 @@
     "path-to-regexp": "~6.2.1"
   },
   "devDependencies": {
+    "@caviajs/http-exception": "^1.0.0",
     "@commitlint/cli": "~17.1.2",
     "@commitlint/config-conventional": "~17.1.0",
     "@release-it/conventional-changelog": "~4.3.0",
