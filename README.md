@@ -12,7 +12,7 @@ Routing, interceptors and exception handling.
 ### Installation
 
 ```shell
-npm install @caviajs/http-exception @caviajs/http-router rxjs --save
+npm install @caviajs/http-router rxjs --save
 ```
 
 ### Routing
@@ -122,7 +122,7 @@ Any other exception than `HttpException` will be considered as unknown and will 
 client with the status `500`.
 
 ```typescript
-import { HttpException } from '@caviajs/http-exception';
+import { HttpException } from '@caviajs/http-router';
 
 httpRouter
   .route({
