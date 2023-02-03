@@ -155,7 +155,3 @@ const httpServer: http.Server = http.createServer((req, res) => {
 
 httpServer.listen(3000);
 ```
-
-<div align="center">
-  <sub>Built with ❤︎ by <a href="https://partyka.dev">Paweł Partyka</a></sub>
-</div>
