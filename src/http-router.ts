@@ -34,16 +34,32 @@ export class HttpRouter {
 
   public route(route: Route): HttpRouter {
     if (route.path.startsWith('/') === false) {
-      throw new Error(`The route path in '${ route.method } ${ route.path }' should start with '/'`);
+      throw new Error(`The route path in '${route.method} ${route.path}' should start with '/'`);
     }
 
     const matcher = match(route.path);
 
     if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
-      throw new Error(`Duplicated {${ route.method } ${ route.path }} http route`);
+      throw new Error(`Duplicated {${route.method} ${route.path}} http route`);
     }
 
     this.routes.push(route);
+
+    return this;
+  }
+
+  public merge(httpRouter: HttpRouter): HttpRouter {
+    const specification: Specification = httpRouter.specification;
+
+    for (const route of specification.routes) {
+      this.route({
+        handler: route.handler,
+        interceptors: [...specification.interceptors || [], ...route.interceptors || []],
+        metadata: route.metadata,
+        method: route.method,
+        path: route.path,
+      });
+    }
 
     return this;
   }
