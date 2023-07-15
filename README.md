@@ -100,6 +100,25 @@ httpRouter
   });
 ```
 
+### Multiple routers
+
+Multiple routers means merging interceptors and routes from one `HttpRouter` into one route set
+and using them in another `HttpRouter`.
+
+```typescript
+mainHttpRouter
+  .merge(
+    new HttpRouter()
+      .intercept(/* ... */)
+      .route(/* ... */)
+  )
+  .merge(
+    new HttpRouter()
+      .intercept(/* ... */)
+      .route(/* ... */)
+  )
+```
+
 ### Response body serializing
 
 * **buffer** - dumped into the response stream;
