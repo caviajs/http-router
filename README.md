@@ -106,7 +106,7 @@ Multiple routers means merging interceptors and routes from one `HttpRouter` int
 and using them in another `HttpRouter`.
 
 ```typescript
-mainHttpRouter
+httpRouter
   .merge(
     new HttpRouter()
       .intercept(/* ... */)
