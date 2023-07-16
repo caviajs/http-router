@@ -48,8 +48,8 @@ export class HttpRouter {
     return this;
   }
 
-  public merge(httpRouter: HttpRouter): HttpRouter {
-    const specification: Specification = httpRouter.specification;
+  public group(builder: GroupBuilder): HttpRouter {
+    const specification: Specification = builder(new HttpRouter()).specification;
 
     for (const route of specification.routes) {
       this.route({
@@ -182,6 +182,10 @@ export class HttpRouter {
         .end();
     }
   }
+}
+
+export interface GroupBuilder {
+  (builder: HttpRouter): HttpRouter;
 }
 
 export interface Interceptor<T = any, R = any> {

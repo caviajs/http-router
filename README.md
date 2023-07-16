@@ -68,6 +68,19 @@ httpRouter
   });
 ```
 
+### Route groups
+
+Grouping routes means putting interceptors under one set of routes.
+
+```typescript
+httpRouter
+  .group(builder => {
+    return builder
+      .intercept(/* ... */)
+      .route(/* ... */);
+  });
+```
+
 #### Duplicated routes
 
 `HttpRouter` makes sure that the routes are unique, so if it detects a duplicate it will throw an error.
@@ -98,25 +111,6 @@ httpRouter
         }),
       );
   });
-```
-
-### Multiple routers
-
-Multiple routers means merging interceptors and routes from one `HttpRouter` into one route set
-and using them in another `HttpRouter`.
-
-```typescript
-httpRouter
-  .merge(
-    new HttpRouter()
-      .intercept(/* ... */)
-      .route(/* ... */)
-  )
-  .merge(
-    new HttpRouter()
-      .intercept(/* ... */)
-      .route(/* ... */)
-  )
 ```
 
 ### Response body serializing
