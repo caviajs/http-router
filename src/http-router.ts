@@ -198,7 +198,7 @@ export interface Next<T = any> {
 
 export interface Route {
   readonly handler: RouteHandler;
-  readonly interceptors?: Interceptor[];
+  readonly interceptors?: ReadonlyArray<Interceptor>;
   readonly metadata?: RouteMetadata;
   readonly method: RouteMethod;
   readonly path: RoutePath;
@@ -213,8 +213,8 @@ export interface RouteMetadata {
 }
 
 export interface Specification {
-  readonly interceptors: Interceptor[];
-  readonly routes: Route[];
+  readonly interceptors: ReadonlyArray<Interceptor>;
+  readonly routes: ReadonlyArray<Route>;
 }
 
 export type RouteMethod = 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'POST' | 'PUT';
