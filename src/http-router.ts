@@ -5,6 +5,18 @@ import { match, MatchResult } from 'path-to-regexp';
 import { catchError, defer, EMPTY, firstValueFrom, from, mergeAll, Observable, of, switchMap, tap } from 'rxjs';
 import { HttpException } from '@caviajs/http-exception';
 
+declare module 'http' {
+  export interface Params {
+    [key: string]: string;
+  }
+
+  export interface IncomingMessage {
+    metadata: RouteMetadata | undefined;
+    params: Params;
+    path: RoutePath | undefined;
+  }
+}
+
 export class HttpRouter {
   protected readonly interceptors: Interceptor[] = [];
   protected readonly routes: Route[] = [];
