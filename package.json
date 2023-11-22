@@ -1,6 +1,6 @@
 {
   "name": "@caviajs/http-router",
-  "description": "ecosystem for your guinea pig",
+  "description": "a micro framework for node.js",
   "version": "1.2.2",
   "author": "Paweł Partyka",
   "license": "MIT",
