@@ -21,6 +21,9 @@
     "release": "npm run build && npm publish",
     "prepare": "husky install"
   },
+  "engines": {
+    "node": ">= 16"
+  },
   "dependencies": {
     "path-to-regexp": "~6.2.1"
   },
