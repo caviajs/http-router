@@ -51,7 +51,7 @@ export class HttpRouter {
 
     const matcher = match(route.path);
 
-    if (this.routes.some(it => it.method === route.method && matcher(it.path))) {
+    if (this.routes.some(it => it.method === route.method && (matcher(it.path) || match(it.path)(route.path)))) {
       throw new Error(`Duplicated {${route.method} ${route.path}} http route`);
     }
 
